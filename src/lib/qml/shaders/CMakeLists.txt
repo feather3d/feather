@@ -1,3 +1,3 @@
-add_subdirectory(frag)
-add_subdirectory(geom)
-add_subdirectory(vert)
+PROJECT(feather_spv_shaders)
+FILE(GLOB SPIRV_FILES "*.spv")
+INSTALL(FILES ${SPIRV_FILES} DESTINATION /usr/local/feather/shaders/spv)

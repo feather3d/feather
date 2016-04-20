@@ -1,10 +1,10 @@
 /***********************************************************************
  *
- * Filename: lambert.glsl
+ * Filename: pointlight.hpp
  *
- * Description: Fragment shader for lambert surfaces.
+ * Description: vulkan point light node.
  *
- * Copyright (C) 2015 Richard Layman, rlayman2000@yahoo.com 
+ * Copyright (C) 2016 Richard Layman, rlayman2000@yahoo.com 
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,12 +21,31 @@
  *
  ***********************************************************************/
 
-#version 120
-//#extension GL_EXT_gpu_shader4 : enable
-//#extension GL_EXT_fragment_shader4 : enable
+#ifndef POINTLIGHT_HPP
+#define POINTLIGHT_HPP
 
-varying vec3 lightintensity;
+#include "deps.hpp"
+#include "vulkan_deps.hpp"
+#include "node.hpp"
 
-void main(){
-    gl_FragColor = vec4(lightintensity, 1.0);
-}
+namespace feather
+{
+
+    namespace vulkan
+    {
+
+        class PointLight: public Node
+        {
+            public:
+                PointLight(uint32_t _id);
+                ~PointLight();
+                void prepareVertices(VkDevice device, VkPhysicalDeviceMemoryProperties deviceMemoryProperties);
+                void updateVertices(VkDevice device, VkPhysicalDeviceMemoryProperties deviceMemoryProperties, float step=1.0);
+                void build();
+        };
+
+    } // namespace vulkan
+
+} // namespace feather
+
+#endif

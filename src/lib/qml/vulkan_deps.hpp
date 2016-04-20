@@ -1,10 +1,10 @@
 /***********************************************************************
  *
- * Filename: wireframe.glsl
+ * Filename: deps.hpp
  *
- * Description: Fragment shader for wireframe surfaces.
+ * Description: Contains all the dependencies.
  *
- * Copyright (C) 2015 Richard Layman, rlayman2000@yahoo.com 
+ * Copyright (C) 2016 Richard Layman, rlayman2000@yahoo.com 
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,8 +21,12 @@
  *
  ***********************************************************************/
 
-varying vec4 c;
- 
-void main(void) {
-  gl_FragColor = c;
-}
+#ifndef VULKAN_DEPS_HPP
+#define VULKAN_DEPS_HPP
+
+#include <vulkan/vulkan.h>
+#include <gli/gli.hpp>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
+#endif

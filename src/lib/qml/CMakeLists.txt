@@ -1,10 +1,21 @@
 project(feather_qml)
 
 SET(CMAKE_AUTOMOC ON)
+SET(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+SET(CMAKE_CXX_LINK_FLAGS "-lvulkan")
+SET(CMAKE_CXX_LINK_FLAGS "-lassimp")
+SET(CMAKE_CXX_LINK_FLAGS "-lxcb")
+
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DVK_USE_PLATFORM_XCB_KHR")
+
+MESSAGE(STATUS ${VULKAN_LIB})
+
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DNOMINMAX -DVK_PROTOTYPES -D_USE_MATH_DEFINES")
 
 #SET(CMAKE_AUTOMOC_RELAX_MODE ON)
 
-SET(CMAKE_INCLUDE_CURRENT_DIR ON)
+ADD_DEFINITIONS(-D_CRT_SECURE_NO_WARNINGS)
 
 FIND_PACKAGE(Qt5Widgets REQUIRED)
 FIND_PACKAGE(Qt5Qml REQUIRED)
@@ -12,9 +23,21 @@ FIND_PACKAGE(Qt5Quick REQUIRED)
 #FIND_PACKAGE(Qt53DQuick REQUIRED)
 #FIND_PACKAGE(Qt5OpenGL REQUIRED)
 
-SET(QT_USE_QTOPENGL TRUE)
+#SET(QT_USE_QTOPENGL TRUE)
 
 SET(feather_qml_SRCS
+    # vulkan
+    tools.cpp
+    debug.cpp
+    node.cpp
+    axis.cpp
+    grid.cpp
+    mesh.cpp
+    pointlight.cpp
+    pipelines.cpp
+    window.cpp
+
+    # qml
     commands.cpp
     curves.cpp
     field_model.cpp
@@ -91,7 +114,7 @@ SET(feather_qml_LIBS
  #${QT3DInput_LIBRARIES}
 )
 
-TARGET_LINK_LIBRARIES(feather_qml ${feather_qml_LIBS})
+TARGET_LINK_LIBRARIES(feather_qml "-lvulkan" ${feather_qml_LIBS})
 
 SET(CMAKE_CXX_FLAGS "-I/usr/include/boost")
 
