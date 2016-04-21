@@ -26,6 +26,7 @@ import QtQuick.Window 2.2
 import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.2
 import feather.scenegraph 1.0
+import feather.viewport 1.0
 
 Item {
 //Window {
@@ -244,6 +245,14 @@ Item {
 
     //function updateGL() { viewport.updateGL() }
 
+    // vulkan viewport
+    Viewport { 
+        id: viewport
+        //anchors.top: toolBar.bottom
+        //anchors.left: parent.left
+        //anchors.right: parent.right
+        //anchors.bottom: parent.bottom
+    } 
 
     Component.onCompleted: { 
         //editor.update(); updateGL()

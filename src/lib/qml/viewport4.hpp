@@ -1,8 +1,8 @@
 /***********************************************************************
  *
- * Filename: window.hpp
+ * Filename: viewport.hpp
  *
- * Description: base vulkan window.
+ * Description: vulkan viewport.
  *
  * Copyright (C) 2016 Richard Layman, rlayman2000@yahoo.com 
  *
@@ -21,8 +21,8 @@
  *
  ***********************************************************************/
 
-#ifndef VULKAN_HPP
-#define VULKAN_HPP
+#ifndef VIEWPORT_HPP
+#define VIEWPORT_HPP
 
 #include "deps.hpp"
 #include "qml_deps.hpp"
@@ -46,15 +46,16 @@ namespace feather
     namespace vulkan
     {
 
-        class Window : public QWindow
+        //class Window : public QWindow
+        class Viewport: public QQuickWindow
         {
             Q_OBJECT
 
             public:
                 enum Mode { POINT=0x0001, WIREFRAME=0x0002, SHADED=0x0004, POINT_NORMALS=0x0008, FACE_NORMALS=0x0010 };
  
-                Window(unsigned int _width=1280, unsigned int _height=720, float _zoom=-2.0, bool _validation=false, QWindow* parent=0);
-                ~Window();
+                Viewport(unsigned int _width=1280, unsigned int _height=720, float _zoom=-2.0, bool _validation=false, QWindow* parent=0);
+                ~Viewport();
                 std::vector<unsigned int> cameras();
                 unsigned int current_camera();
                 void set_camera(unsigned int uid);
@@ -224,6 +225,20 @@ namespace feather
         };
 
     } // namespace vulkan
+
+
+    class VulkanViewport : public QQuickItem
+    {
+        Q_OBJECT
+
+        public:
+            VulkanViewport();
+            ~VulkanViewport();
+
+        private:
+            vulkan::Viewport* m_pWindow;
+    };
+
 
 } // namespace feather
 

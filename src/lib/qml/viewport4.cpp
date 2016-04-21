@@ -1,8 +1,8 @@
 /***********************************************************************
  *
- * Filename: window.hpp
+ * Filename: viewport.hpp
  *
- * Description: base vulkan window.
+ * Description: vulkan viewport.
  *
  * Copyright (C) 2015 Richard Layman, rlayman2000@yahoo.com 
  *
@@ -21,16 +21,29 @@
  *
  ***********************************************************************/
 
-#include "window.hpp"
+#include "viewport4.hpp"
 #include "debug.hpp"
+#include <QtGui/5.6.0/QtGui/qpa/qplatformnativeinterface.h>
 
 // KEYCODES
 #define KEY_c 0x36
 #define KEY_space 0x41
 
+using namespace feather;
 using namespace feather::vulkan;
 
-Window::Window(unsigned int _width, unsigned int _height, float _zoom, bool _validation, QWindow* parent) : QWindow(parent),
+VulkanViewport::VulkanViewport()
+{
+    m_pWindow = new Viewport(width(),height(),false,this); 
+}
+
+VulkanViewport::~VulkanViewport()
+{
+
+}
+
+
+Viewport::Viewport(unsigned int _width, unsigned int _height, float _zoom, bool _validation, QWindow* parent) : QQuickWindow(parent),
 //m_title(_title),
 m_width(_width),
 m_height(_height),
@@ -72,7 +85,7 @@ m_defaultClearColor({ { 0.325f, 0.325f, 0.325f, 1.0f } })
 }
 
 
-Window::~Window()
+Viewport::~Viewport()
 {
     // Clean up used Vulkan resources 
     // Note : Inherited destructor cleans up resources stored in base class
@@ -114,32 +127,34 @@ Window::~Window()
 }
 
 
-std::vector<unsigned int> Window::cameras()
+std::vector<unsigned int> Viewport::cameras()
 {
     return std::vector<unsigned int>();
 }
 
 
-unsigned int Window::current_camera()
+unsigned int Viewport::current_camera()
 {
     return 0;
 }
 
 
-void Window::set_camera(unsigned int uid)
+void Viewport::set_camera(unsigned int uid)
 {
 
 }
 
 
-void Window::initConnection()
+void Viewport::initConnection()
 {
     const xcb_setup_t *setup;
     xcb_screen_iterator_t iter;
     int scr;
 
     // get connection
-    m_pConnection = xcb_connect(NULL, &scr);
+    QPlatformNativeInterface *native = QGuiApplication::platformNativeInterface();
+    m_pConnection = static_cast<xcb_connection_t*>(native->nativeResourceForWindow("connection",this));
+    //m_pConnection = xcb_connect(NULL, &scr);
     if (m_pConnection == NULL) {
         printf("Could not find a compatible Vulkan ICD!\n");
         fflush(stdout);
@@ -154,7 +169,7 @@ void Window::initConnection()
 }
 
 
-void Window::initVulkan(bool validation)
+void Viewport::initVulkan(bool validation)
 {
     VkResult err;
 
@@ -250,7 +265,7 @@ void Window::initVulkan(bool validation)
 }
 
 
-xcb_window_t Window::setupWindow()
+xcb_window_t Viewport::setupWindow()
 {
     uint32_t value_mask, value_list[32];
 
@@ -311,7 +326,7 @@ xcb_window_t Window::setupWindow()
     return(m_window);
 }
 
-VkResult Window::createInstance(bool enabled)
+VkResult Viewport::createInstance(bool enabled)
 {
     m_validation = enabled;
 
@@ -350,7 +365,7 @@ VkResult Window::createInstance(bool enabled)
     return vkCreateInstance(&instanceCreateInfo, nullptr, &m_instance);
 }
 
-VkResult Window::createDevice(VkDeviceQueueCreateInfo requestedQueues, bool validation)
+VkResult Viewport::createDevice(VkDeviceQueueCreateInfo requestedQueues, bool validation)
 {
     std::vector<const char*> enabledExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
 
@@ -375,12 +390,12 @@ VkResult Window::createDevice(VkDeviceQueueCreateInfo requestedQueues, bool vali
     return vkCreateDevice(m_physicalDevice, &deviceCreateInfo, nullptr, &m_device);
 }
 
-void Window::initSwapChain()
+void Viewport::initSwapChain()
 {
     m_swapChain.initSurface(m_pConnection, m_window);
 }
 
-void Window::prepare()
+void Viewport::prepare()
 {
     if (m_validation)
     {
@@ -420,7 +435,7 @@ void Window::prepare()
     m_prepared = prep;
 }
 
-void Window::createCommandPool()
+void Viewport::createCommandPool()
 {
     VkCommandPoolCreateInfo cmdPoolInfo = {};
     cmdPoolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
@@ -430,7 +445,7 @@ void Window::createCommandPool()
     assert(!vkRes);
 }
 
-void Window::createSetupCommandBuffer()
+void Viewport::createSetupCommandBuffer()
 {
     if (m_setupCommandBuffer != VK_NULL_HANDLE)
     {
@@ -457,12 +472,12 @@ void Window::createSetupCommandBuffer()
     assert(!vkRes);
 }
 
-void Window::setupSwapChain()
+void Viewport::setupSwapChain()
 {
     m_swapChain.create(m_setupCommandBuffer, &m_width, &m_height);
 }
 
-void Window::createCommandBuffers()
+void Viewport::createCommandBuffers()
 {
     // Create one command buffer per frame buffer 
     // in the swap chain
@@ -491,7 +506,7 @@ void Window::createCommandBuffers()
     assert(!vkRes);
 }
 
-void Window::setupDepthStencil()
+void Viewport::setupDepthStencil()
 {
     VkImageCreateInfo image = {};
     image.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
@@ -547,7 +562,7 @@ void Window::setupDepthStencil()
 }
 
 
-void Window::setupSelection()
+void Viewport::setupSelection()
 {
 
     VkImageCreateInfo isci{
@@ -707,7 +722,7 @@ void Window::setupSelection()
 }
 
 
-VkBool32 Window::getMemoryType(uint32_t typeBits, VkFlags properties, uint32_t *typeIndex)
+VkBool32 Viewport::getMemoryType(uint32_t typeBits, VkFlags properties, uint32_t *typeIndex)
 {
     for (uint32_t i = 0; i < 32; i++)
     {
@@ -724,7 +739,7 @@ VkBool32 Window::getMemoryType(uint32_t typeBits, VkFlags properties, uint32_t *
     return false;
 }
 
-void Window::setupRenderPass()
+void Viewport::setupRenderPass()
 {
     VkAttachmentDescription attachments[3];
     attachments[0].format = m_colorFormat;
@@ -809,7 +824,7 @@ void Window::setupRenderPass()
     assert(!err);
 }
 
-void Window::setupFrameBuffer()
+void Viewport::setupFrameBuffer()
 {
     VkImageView attachments[3];
 
@@ -837,7 +852,7 @@ void Window::setupFrameBuffer()
     }
 }
 
-void Window::flushSetupCommandBuffer()
+void Viewport::flushSetupCommandBuffer()
 {
     VkResult err;
 
@@ -863,7 +878,7 @@ void Window::flushSetupCommandBuffer()
 }
 
 
-void Window::prepareSemaphore()
+void Viewport::prepareSemaphore()
 {
     VkSemaphoreCreateInfo semaphoreCreateInfo = {};
     semaphoreCreateInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
@@ -880,7 +895,7 @@ void Window::prepareSemaphore()
     assert(!err);
 }
 
-void Window::prepareVertices()
+void Viewport::prepareVertices()
 {
     for(auto node : m_aNodes) {
         switch(node->type())
@@ -962,7 +977,7 @@ void Window::prepareVertices()
 }
 
 
-VkBool32 Window::createBuffer(VkBufferUsageFlags usage, VkDeviceSize size, void * data, VkBuffer *buffer, VkDeviceMemory *memory)
+VkBool32 Viewport::createBuffer(VkBufferUsageFlags usage, VkDeviceSize size, void * data, VkBuffer *buffer, VkDeviceMemory *memory)
 {
     // Prepare and initialize uniform buffer containing shader uniforms
     VkMemoryRequirements memReqs;
@@ -997,7 +1012,7 @@ VkBool32 Window::createBuffer(VkBufferUsageFlags usage, VkDeviceSize size, void 
 }
 
 
-VkBool32 Window::createBuffer(VkBufferUsageFlags usage, VkDeviceSize size, void * data, VkBuffer * buffer, VkDeviceMemory * memory, VkDescriptorBufferInfo * descriptor)
+VkBool32 Viewport::createBuffer(VkBufferUsageFlags usage, VkDeviceSize size, void * data, VkBuffer * buffer, VkDeviceMemory * memory, VkDescriptorBufferInfo * descriptor)
 {
 	VkBool32 res = createBuffer(usage, size, data, buffer, memory);
 	if (res)
@@ -1014,7 +1029,7 @@ VkBool32 Window::createBuffer(VkBufferUsageFlags usage, VkDeviceSize size, void 
 }
 
 
-void Window::prepareUniformBuffers()
+void Viewport::prepareUniformBuffers()
 {
     // Vertex shader uniform buffer block
     createBuffer(
@@ -1037,7 +1052,7 @@ void Window::prepareUniformBuffers()
     updateUniformBuffers();
 }
 
-void Window::updateUniformBuffers()
+void Viewport::updateUniformBuffers()
 {
 
     void* data;
@@ -1132,7 +1147,7 @@ void Window::updateUniformBuffers()
 }
 
 
-void Window::updateNodeBuffers()
+void Viewport::updateNodeBuffers()
 {
     // Map uniform buffer and update it
     uint8_t *pData;
@@ -1145,7 +1160,7 @@ void Window::updateNodeBuffers()
 }
 
 
-void Window::setupDescriptorSetLayout()
+void Viewport::setupDescriptorSetLayout()
 {
 
     // Setup layout of descriptors used in this example
@@ -1184,7 +1199,7 @@ void Window::setupDescriptorSetLayout()
     m_pPipelines->createLayout(m_device, pPipelineLayoutCreateInfo);
 }
 
-void Window::setupDescriptorPool()
+void Viewport::setupDescriptorPool()
 {
     // uses two ubos
     std::vector<VkDescriptorPoolSize> poolSizes =
@@ -1229,7 +1244,7 @@ void Window::setupDescriptorPool()
     */
 }
 
-void Window::setupDescriptorSet()
+void Viewport::setupDescriptorSet()
 {
     // Update descriptor sets determining the shader binding points
     // For every binding point used in a shader there needs to be one
@@ -1295,7 +1310,7 @@ void Window::setupDescriptorSet()
     */
 }
 
-void Window::buildCommandBuffers()
+void Viewport::buildCommandBuffers()
 {
     VkCommandBufferBeginInfo cmdBufInfo = {};
     cmdBufInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
@@ -1414,7 +1429,7 @@ void Window::buildCommandBuffers()
 }
 
 
-void Window::renderLoop()
+void Viewport::renderLoop()
 {
     xcb_flush(m_pConnection);
     while (!m_quit)
@@ -1434,7 +1449,7 @@ void Window::renderLoop()
    }
 }
 
-void Window::render()
+void Viewport::render()
 {
     // TODO
     // add rendering code here
@@ -1449,7 +1464,7 @@ void Window::render()
     updateUniformBuffers();
 }
 
-void Window::draw()
+void Viewport::draw()
 {
     VkResult err;
     // Get next image in the swap chain (back/front buffer)
@@ -1542,7 +1557,7 @@ void Window::draw()
 
 }
 
-void Window::handleEvent(const xcb_generic_event_t *event)
+void Viewport::handleEvent(const xcb_generic_event_t *event)
 {
     switch (event->response_type & 0x7f)
     {
@@ -1601,7 +1616,7 @@ void Window::handleEvent(const xcb_generic_event_t *event)
     }
 }
 
-void Window::keyPressed(uint32_t keyCode)
+void Viewport::keyPressed(uint32_t keyCode)
 {
     // TODO
     std::cout << "keycode: " << keyCode  << std::endl;
@@ -1621,12 +1636,12 @@ void Window::keyPressed(uint32_t keyCode)
     } 
 }
 
-void Window::viewChanged()
+void Viewport::viewChanged()
 {
     updateUniformBuffers();
 }
 
-void Window::set_selection()
+void Viewport::set_selection()
 {
     for(auto node : m_aNodes){
         switch(node->type())
@@ -1645,7 +1660,7 @@ void Window::set_selection()
     }
 }
 
-void Window::nodeChanged()
+void Viewport::nodeChanged()
 {
     // update the vertex buffer
     for (int32_t i = 0; i < m_drawCommandBuffers.size(); ++i)
