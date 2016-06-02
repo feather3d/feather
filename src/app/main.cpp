@@ -32,7 +32,7 @@
 #include "tree_model.hpp"
 #include "qml.hpp"
 #include "commands.hpp"
-#include "viewport4.hpp"
+//#include "viewport4.hpp"
 #include <QApplication>
 #include <QQmlApplicationEngine>
 #include <QtQuick/QQuickView>
@@ -207,7 +207,7 @@ int main(int argc, char **argv)
     //qmlRegisterType<Viewport2>("feather.viewport", 1, 0, "Viewport2");
     //qmlRegisterType<DeferredRenderer>("feather.viewport", 1, 0, "DeferredRenderer");
     //qmlRegisterType<Viewport3>("feather.viewport", 1, 0, "Viewport3");
-    qmlRegisterType<VulkanViewport>("feather.viewport", 1, 0, "Viewport");
+    //qmlRegisterType<VulkanViewport>("feather.viewport", 1, 0, "Viewport");
     qmlRegisterType<SceneGraphEditor>("feather.editors", 1, 0, "SceneGraphEditor");
     qmlRegisterSingletonType<SceneGraph>("feather.scenegraph", 1, 0, "SceneGraph", get_scenegraph);
     qmlRegisterType<TreeModel>("feather.outliner", 1, 0, "OutlinerModel");

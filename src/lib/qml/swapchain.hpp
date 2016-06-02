@@ -200,6 +200,9 @@ class VulkanSwapChain
             GET_INSTANCE_PROC_ADDR(instance, GetPhysicalDeviceSurfaceCapabilitiesKHR);
             GET_INSTANCE_PROC_ADDR(instance, GetPhysicalDeviceSurfaceFormatsKHR);
             GET_INSTANCE_PROC_ADDR(instance, GetPhysicalDeviceSurfacePresentModesKHR);
+            //GET_INSTANCE_PROC_ADDR(instance, GetSwapchainKHR);
+            //GET_INSTANCE_PROC_ADDR(instance, GetDeviceProcAddr);
+
             GET_DEVICE_PROC_ADDR(device, CreateSwapchainKHR);
             GET_DEVICE_PROC_ADDR(device, DestroySwapchainKHR);
             GET_DEVICE_PROC_ADDR(device, GetSwapchainImagesKHR);

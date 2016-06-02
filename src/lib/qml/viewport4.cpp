@@ -1,6 +1,6 @@
 /***********************************************************************
  *
- * Filename: viewport.hpp
+ * Filename: viewport.cpp
  *
  * Description: vulkan viewport.
  *
@@ -31,6 +31,38 @@
 
 using namespace feather;
 using namespace feather::vulkan;
+
+/*
+#define GET_DEVICE_PROC_ADDR(entrypoint)                                       \
+    {                                                                          \
+        fp##entrypoint =                                                       \
+            (PFN_vk##entrypoint)                                               \
+            Viewport::fpGetDeviceProcAddr(m_device, "vk" #entrypoint);  \
+        if (fp##entrypoint == nullptr) {                                       \
+            qFatal("vkGetDeviceProcAddr failed to find vk" #entrypoint);       \
+        }                                                                      \
+    }
+
+*/
+
+
+VkBool32 feather::vulkan::checkLayers(QVector<const char*>& check_names, QVector<VkLayerProperties> layers) {
+    foreach(const char* name, check_names) {
+        VkBool32 found = 0;
+        foreach (const VkLayerProperties& layer, layers) {
+            if (strcmp(name, layer.layerName) == 0) {
+                found = 1;
+                break;
+            }
+        }
+        if (!found) {
+            qDebug() << "Cannot find layer:" << name;
+            return 0;
+        }
+    }
+    return 1;
+}
+
 
 VulkanViewport::VulkanViewport()
 {
@@ -78,7 +110,7 @@ m_defaultClearColor({ { 0.325f, 0.325f, 0.325f, 1.0f } })
     m_pPipelines = new Pipelines();
 
     // startup
-    setupWindow();
+    //setupWindow(); // This was not in Qt Example
     initSwapChain();
     prepare();
     renderLoop();
@@ -161,11 +193,15 @@ void Viewport::initConnection()
         exit(1);
     }
 
+    // This was not used in Qt Example
+    /*
     setup = xcb_get_setup(m_pConnection);
     iter = xcb_setup_roots_iterator(setup);
+    //while (scr-- > 0)
     while (scr-- > 0)
-        xcb_screen_next(&iter);
+       xcb_screen_next(&iter);
     m_pScreen = iter.data;
+    */
 }
 
 
@@ -226,6 +262,9 @@ void Viewport::initVulkan(bool validation)
     queueCreateInfo.queueFamilyIndex = graphicsQueueIndex;
     queueCreateInfo.queueCount = 1;
     queueCreateInfo.pQueuePriorities = queuePriorities.data();
+
+
+
 
     err = createDevice(queueCreateInfo, validation);
     assert(!err);
@@ -326,12 +365,120 @@ xcb_window_t Viewport::setupWindow()
     return(m_window);
 }
 
+
+void Viewport::initLayers()
+{
+    uint32_t count = 0;
+    VkResult err;
+    err = vkEnumerateInstanceLayerProperties(&count, nullptr);
+    Q_ASSERT(!err);
+
+    if (count > 0) {
+        m_layers.resize(count);
+        err = vkEnumerateInstanceLayerProperties(&count, m_layers.data());
+        Q_ASSERT(!err);
+        Q_ASSERT(count == m_layers.size());
+
+        foreach (const VkLayerProperties& layer, m_layers) {
+            qDebug()<<"layer:"<<layer.layerName<<layer.description;
+        }
+    }
+}
+
+
+
+void Viewport::initExtensions()
+{
+    uint32_t count = 0;
+    VkResult err;
+    err = vkEnumerateInstanceExtensionProperties(nullptr, &count, nullptr);
+    Q_ASSERT(!err);
+
+    if (count > 0) {
+        m_extensions.resize(count);
+        err = vkEnumerateInstanceExtensionProperties(nullptr, &count, m_extensions.data());
+        Q_ASSERT(!err);
+        Q_ASSERT(count == m_extensions.size());
+
+        foreach (const VkExtensionProperties& ext, m_extensions) {
+            qDebug()<<"instance extension:"<<ext.extensionName<<ext.specVersion;
+        }
+    }
+}
+
+
 VkResult Viewport::createInstance(bool enabled)
 {
     m_validation = enabled;
 
+    uint32_t enabled_extension_count = 0;
+
+    QVector<const char*> validationLayers;
+    validationLayers
+        << "VK_LAYER_GOOGLE_threading"
+        //<< "VK_LAYER_LUNARG_param_checker" // this could not be found
+        << "VK_LAYER_LUNARG_device_limits"
+        << "VK_LAYER_LUNARG_object_tracker"
+        << "VK_LAYER_LUNARG_image"
+        << "VK_LAYER_LUNARG_core_validation"
+        << "VK_LAYER_LUNARG_swapchain"
+        << "VK_LAYER_GOOGLE_unique_objects";
+
+
+    /* Look for validation layers */
+    VkBool32 validation_found = 0;
+ 
+    initLayers();
+    initExtensions();
+
+    if (m_validation) {
+        validation_found = feather::vulkan::checkLayers(validationLayers, m_layers);
+    }
+
+    if (m_validation && !validation_found) {
+        qFatal("vkEnumerateInstanceLayerProperties failed to find"
+                 "required validation layer.\n\n"
+                 "Please look at the Getting Started guide for additional "
+                 "information.\n"
+                 "vkCreateInstance Failure");
+    }
+
+
+    // create layers
+    //QVector<const char*> instance_layers;
+    //QVector<const char*> instance_extensions;
+
+    // get the extension names
+    QStringList result;
+
+    foreach (const VkExtensionProperties& ext, m_extensions) {
+        result<<QString::fromLatin1(ext.extensionName);
+    }
+ 
+    QStringList exts = result;
+
+    if(exts.contains(VK_KHR_SURFACE_EXTENSION_NAME)) {
+        m_instance_extensions.append(VK_KHR_SURFACE_EXTENSION_NAME);
+    }
+    if(exts.contains(VK_KHR_XCB_SURFACE_EXTENSION_NAME)) {
+        m_instance_extensions.append(VK_KHR_XCB_SURFACE_EXTENSION_NAME);
+    }
+    if(exts.contains(VK_EXT_DEBUG_REPORT_EXTENSION_NAME)) {
+        m_instance_extensions.append(VK_EXT_DEBUG_REPORT_EXTENSION_NAME);
+    }
+
+    QCoreApplication *qapp = QCoreApplication::instance();
+
     VkApplicationInfo appInfo = {};
     appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
+    // added for Qt
+    appInfo.pNext = nullptr;
+    appInfo.pApplicationName = qapp->applicationName().toLocal8Bit();
+    appInfo.applicationVersion = qapp->applicationVersion().toUInt();
+    appInfo.pEngineName = qapp->applicationName().toLocal8Bit();
+    appInfo.engineVersion = qapp->applicationVersion().toUInt();
+    // end
+
     //appInfo.pApplicationName = m_title.c_str();
     //appInfo.pEngineName = m_title.c_str();
     // Temporary workaround for drivers not supporting SDK 1.0.3 upon launch
@@ -346,8 +493,11 @@ VkResult Viewport::createInstance(bool enabled)
 
     VkInstanceCreateInfo instanceCreateInfo = {};
     instanceCreateInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
-    instanceCreateInfo.pNext = NULL;
+    instanceCreateInfo.pNext = nullptr;
     instanceCreateInfo.pApplicationInfo = &appInfo;
+    
+    // Not in Qt Example
+    /*
     if (enabledExtensions.size() > 0)
     {
         if (m_validation)
@@ -362,7 +512,34 @@ VkResult Viewport::createInstance(bool enabled)
         instanceCreateInfo.enabledLayerCount = feather::vulkan::debug::validationLayerCount; // todo : change validation layer names!
         instanceCreateInfo.ppEnabledLayerNames = feather::vulkan::debug::validationLayerNames;
     }
-    return vkCreateInstance(&instanceCreateInfo, nullptr, &m_instance);
+    */
+    instanceCreateInfo.enabledLayerCount = m_instance_layers.size();
+    instanceCreateInfo.ppEnabledLayerNames = m_instance_layers.constData();
+    instanceCreateInfo.enabledExtensionCount = m_instance_extensions.size();
+    instanceCreateInfo.ppEnabledExtensionNames = m_instance_extensions.constData();
+ 
+    //return vkCreateInstance(&instanceCreateInfo, nullptr, &m_instance);
+    VkResult err;
+    err = vkCreateInstance(&instanceCreateInfo, nullptr, &m_instance);
+
+    if (err == VK_ERROR_INCOMPATIBLE_DRIVER) {
+        qDebug("Cannot find a compatible Vulkan installable client driver "
+                 "(ICD).\n\nPlease look at the Getting Started guide for "
+                 "additional information.\n"
+                 "vkCreateInstance Failure");
+    } else if (err == VK_ERROR_EXTENSION_NOT_PRESENT) {
+        qDebug("Cannot find a specified extension library"
+                 ".\nMake sure your layers path is set appropriately.\n"
+                 "vkCreateInstance Failure");
+    } else if (err) {
+        qDebug("vkCreateInstance failed.\n\nDo you have a compatible Vulkan "
+                 "installable client driver (ICD) installed?\nPlease look at "
+                 "the Getting Started guide for additional information.\n"
+                 "vkCreateInstance Failure");
+    }
+
+
+
 }
 
 VkResult Viewport::createDevice(VkDeviceQueueCreateInfo requestedQueues, bool validation)
@@ -376,6 +553,23 @@ VkResult Viewport::createDevice(VkDeviceQueueCreateInfo requestedQueues, bool va
     deviceCreateInfo.pQueueCreateInfos = &requestedQueues;
     deviceCreateInfo.pEnabledFeatures = NULL;
 
+    /*
+    QVector<const char*> layers;
+ 
+    QVector<const char*> extensions;
+    foreach(VkExtensionProperties ext, physDevice.extensions())
+        extensions.push_back(ext.extensionName);
+    */
+
+    deviceCreateInfo.enabledLayerCount = m_instance_layers.size();
+    deviceCreateInfo.ppEnabledLayerNames = m_instance_layers.constData();
+    deviceCreateInfo.enabledExtensionCount = m_instance_extensions.size();
+    deviceCreateInfo.ppEnabledExtensionNames = m_instance_extensions.constData();
+
+
+
+    // REMOVE FOR QT4
+    /* 
     if (enabledExtensions.size() > 0)
     {
         deviceCreateInfo.enabledExtensionCount = (uint32_t)enabledExtensions.size();
@@ -386,6 +580,7 @@ VkResult Viewport::createDevice(VkDeviceQueueCreateInfo requestedQueues, bool va
         deviceCreateInfo.enabledLayerCount = feather::vulkan::debug::validationLayerCount; // todo : validation layer names
         deviceCreateInfo.ppEnabledLayerNames = feather::vulkan::debug::validationLayerNames;
     }
+    */
 
     return vkCreateDevice(m_physicalDevice, &deviceCreateInfo, nullptr, &m_device);
 }

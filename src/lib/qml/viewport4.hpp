@@ -46,6 +46,8 @@ namespace feather
     namespace vulkan
     {
 
+        VkBool32 checkLayers(QVector<const char*>& check_names, QVector<VkLayerProperties> layers);
+ 
         //class Window : public QWindow
         class Viewport: public QQuickWindow
         {
@@ -54,7 +56,7 @@ namespace feather
             public:
                 enum Mode { POINT=0x0001, WIREFRAME=0x0002, SHADED=0x0004, POINT_NORMALS=0x0008, FACE_NORMALS=0x0010 };
  
-                Viewport(unsigned int _width=1280, unsigned int _height=720, float _zoom=-2.0, bool _validation=false, QWindow* parent=0);
+                Viewport(unsigned int _width=1280, unsigned int _height=720, float _zoom=-2.0, bool _validation=true, QWindow* parent=0);
                 ~Viewport();
                 std::vector<unsigned int> cameras();
                 unsigned int current_camera();
@@ -125,6 +127,10 @@ namespace feather
                 void render();
                 void draw();
 
+                // new for Qt
+                void initLayers();
+                void initExtensions();
+
                 // VULKAN MEMBERS
                 VkPhysicalDevice m_physicalDevice;
                 VkPhysicalDeviceMemoryProperties m_deviceMemoryProperties;
@@ -162,7 +168,10 @@ namespace feather
                 // List of shader modules created (stored for cleanup)
                 //std::vector<VkShaderModule> m_shaderModules;
                 VkClearColorValue m_defaultClearColor;
-
+                QVector<VkLayerProperties> m_layers;
+                QVector<VkExtensionProperties> m_extensions;
+                QVector<const char*> m_instance_layers;
+                QVector<const char*> m_instance_extensions;
 
                 // Synchronization semaphores
                 struct {

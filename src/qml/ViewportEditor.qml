@@ -248,10 +248,10 @@ Item {
     // vulkan viewport
     Viewport { 
         id: viewport
-        //anchors.top: toolBar.bottom
-        //anchors.left: parent.left
-        //anchors.right: parent.right
-        //anchors.bottom: parent.bottom
+        anchors.top: toolBar.bottom
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
     } 
 
     Component.onCompleted: { 
