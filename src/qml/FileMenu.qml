@@ -40,6 +40,7 @@ Menu {
 
 
     Tools { id: tools }
+
     FileDialog {
         id: importDialog
         title: "Import Obj"
@@ -48,6 +49,17 @@ Menu {
             importObj.exec()       
             SceneGraph.triggerUpdate()
             //SceneGraph.nodesAdded()
+        }
+        onRejected: {} 
+    }
+
+    FileDialog {
+        id: exportDialog
+        title: "Export Ply"
+        onAccepted: {
+            exportPlyFilename.stringValue = tools.urlToString(exportDialog.fileUrl)
+            exportPly.exec()       
+            SceneGraph.triggerUpdate()
         }
         onRejected: {} 
     }
@@ -65,6 +77,24 @@ Menu {
         parameters: [
             Parameter { 
                 id: importObjFilename
+                name: "filename"
+                type: Parameter.String
+                stringValue: ""
+            },
+            Parameter { 
+                name: "selection"
+                type: Parameter.Bool
+                boolValue: true
+            }
+        ]
+    }
+
+    Command {
+        id: exportPly 
+        name: "export_ply"
+        parameters: [
+            Parameter { 
+                id: exportPlyFilename
                 name: "filename"
                 type: Parameter.String
                 stringValue: ""
@@ -102,6 +132,15 @@ Menu {
         tooltip: "Import models in the Obj format"
         onTriggered: { importDialog.visible = true }
     }
+
+    // Export Ply
+    Action {
+        id: exportPlyAction
+        text: "Ply"
+        tooltip: "Export models to the ply format"
+        onTriggered: { exportDialog.visible = true }
+    }
+
 
     // Properties
     Action {
@@ -146,6 +185,19 @@ Menu {
             action: importObjAction
         }
     }
+
+    // Export Menu
+    Menu {
+        id: exportMenu
+        title: "Export"
+
+        
+        // Obj
+        MenuItem {
+            action: exportPlyAction
+        }
+    }
+
 
     MenuSeparator {}
 
