@@ -83,6 +83,7 @@ SET(feather_qml_LIBS
 )
 
 TARGET_LINK_LIBRARIES(feather_qml "-lvulkan" ${feather_qml_LIBS})
+#TARGET_LINK_LIBRARIES(feather_qml ${feather_qml_LIBS} ${CMAKE_DL_LIBS})
 
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -I/usr/include/boost")
 

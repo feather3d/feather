@@ -28,7 +28,7 @@ ADD_LIBRARY(feather_core SHARED ${feather_core_SRCS})
 
 QT5_USE_MODULES(feather_core OpenGL)
 
-TARGET_LINK_LIBRARIES(feather_core ${feather_core_LIBS})
+TARGET_LINK_LIBRARIES(feather_core ${feather_core_LIBS}  ${CMAKE_DL_LIBS})
 
 #SET(CMAKE_CXX_FLAGS "-I/usr/include/boost")
 

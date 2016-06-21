@@ -78,6 +78,7 @@ SET_TARGET_PROPERTIES(feather
 )
 
 TARGET_LINK_LIBRARIES(feather "-lvulkan" ${feather_LIBS})
+#TARGET_LINK_LIBRARIES(feather ${feather_LIBS} ${CMAKE_DL_LIBS})
 
 QT5_USE_MODULES(feather Widgets Core Gui Qml Quick)
 
