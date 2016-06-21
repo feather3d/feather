@@ -1,10 +1,10 @@
 /***********************************************************************
  *
- * Filename: light.glsl
+ * Filename: axis.hpp
  *
- * Description: Vertex shader for a light.
+ * Description: vulkan axis node.
  *
- * Copyright (C) 2015 Richard Layman, rlayman2000@yahoo.com 
+ * Copyright (C) 2016 Richard Layman, rlayman2000@yahoo.com 
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,16 +21,32 @@
  *
  ***********************************************************************/
 
-attribute highp vec4 vertex;
-attribute highp vec4 position;
-uniform mediump mat4 matrix;
+#ifndef AXIS_HPP
+#define AXIS_HPP
 
-varying vec4 c;
-varying vec4 pos;
+#include "deps.hpp"
+#include "vulkan_deps.hpp"
+#include "node.hpp"
 
-void main(void)
+namespace feather
 {
-    c = vec4(1.0,1.0,0.0,1.0);
-    //pos = vec4(5.0, 5.0, 5.0, 0.0);
-    gl_Position = matrix * (position + vertex);
-}
+
+    namespace vulkan
+    {
+
+        class Axis : public Node
+        {
+            public:
+                Axis(uint32_t _id);
+                ~Axis();
+                void prepareVertices(VkDevice device, VkPhysicalDeviceMemoryProperties deviceMemoryProperties);
+                void updateVertices(VkDevice device, VkPhysicalDeviceMemoryProperties deviceMemoryProperties, float step=1.0);
+                void build();
+                void loadShaders();
+        };
+
+    } // namespace vulkan
+
+} // namespace feather
+
+#endif
