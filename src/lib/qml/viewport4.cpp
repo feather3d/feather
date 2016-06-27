@@ -23,7 +23,7 @@
 
 #include "viewport4.hpp"
 #include "debug.hpp"
-#include <QtGui/5.6.0/QtGui/qpa/qplatformnativeinterface.h>
+#include <QtGui/5.7.0/QtGui/qpa/qplatformnativeinterface.h>
 
 // KEYCODES
 #define KEY_c 0x36
