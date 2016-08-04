@@ -43,6 +43,7 @@ namespace feather
             Time,
             Light,
             Texture,
+            Animation,
             Modifier,
             Deformer,
             Manipulator,
