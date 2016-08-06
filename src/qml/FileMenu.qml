@@ -42,8 +42,36 @@ Menu {
     Tools { id: tools }
 
     FileDialog {
+        id: openDialog
+        title: "Open Scene"
+        nameFilters: [ "Feather files ( *.feather )" ]
+        onAccepted: {
+            openFeatherFilename.stringValue = tools.urlToString(openDialog.fileUrl)
+            openFeather.exec()       
+            SceneGraph.triggerUpdate()
+            //SceneGraph.nodesAdded()
+        }
+        onRejected: {} 
+    }
+
+    FileDialog {
+        id: saveDialog
+        title: "Save Scene"
+        selectExisting: false
+        nameFilters: [ "Feather files ( *.feather )" ]
+        onAccepted: {
+            saveFeatherFilename.stringValue = tools.urlToString(saveDialog.fileUrl)
+            saveFeather.exec()       
+            SceneGraph.triggerUpdate()
+            //SceneGraph.nodesAdded()
+        }
+        onRejected: {} 
+    }
+
+    FileDialog {
         id: importDialog
         title: "Import Obj"
+        nameFilters: [ "Obj files ( *.obj)" ]
         onAccepted: {
             importObjFilename.stringValue = tools.urlToString(importDialog.fileUrl)
             importObj.exec()       
@@ -71,6 +99,32 @@ Menu {
     }
 
     // COMMANDS
+    Command {
+        id: openFeather
+        name: "open_feather"
+        parameters: [
+            Parameter { 
+                id: openFeatherFilename
+                name: "filename"
+                type: Parameter.String
+                stringValue: ""
+            }
+        ]
+    }
+
+    Command {
+        id: saveFeather 
+        name: "save_feather"
+        parameters: [
+            Parameter { 
+                id: saveFeatherFilename
+                name: "filename"
+                type: Parameter.String
+                stringValue: ""
+            }
+        ]
+    }
+
     Command {
         id: importObj
         name: "import_obj"
@@ -121,8 +175,16 @@ Menu {
     Action {
         id: openAction
         text: "Open"
-        tooltip: "Open feather model"
-        onTriggered: {}
+        tooltip: "Open scene"
+        onTriggered: { openDialog.visible = true }
+    }
+
+    // Save 
+    Action {
+        id: saveAction
+        text: "Save"
+        tooltip: "Save scene"
+        onTriggered: { saveDialog.visible = true }
     }
 
     // Import Obj
@@ -171,6 +233,12 @@ Menu {
     MenuItem {
         action: openAction
     }
+
+    // Save 
+    MenuItem {
+        action: saveAction
+    }
+
 
     MenuSeparator {}
 
