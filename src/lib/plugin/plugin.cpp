@@ -123,5 +123,34 @@ field::FieldBase* plugin::get_node_field_base(unsigned int uid, unsigned int fid
     return api::get_node_field_base(uid,fid);
 }
 
+unsigned int plugin::get_field_count(unsigned int uid)
+{
+    return api::get_field_count(uid);
+}
+
+unsigned int plugin::get_in_field_count(unsigned int uid)
+{
+    return api::get_in_field_count(uid);
+}
+
+unsigned int plugin::get_out_field_count(unsigned int uid)
+{
+    return api::get_out_field_count(uid);
+}
+
+status plugin::get_in_fields(unsigned int uid, std::vector<unsigned int> fids)
+{
+    return api::get_in_fields(uid,fids);
+}
+
+status plugin::get_out_fields(unsigned int uid, std::vector<unsigned int> fids)
+{
+    return api::get_out_fields(uid,fids);
+}
+
+field::connection::Type plugin::get_field_connection_type(unsigned int uid, unsigned int fid)
+{
+    return api::get_field_connection_type(uid,fid);
+}
 
 

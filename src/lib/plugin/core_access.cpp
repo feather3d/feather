@@ -117,4 +117,34 @@ field::FieldBase* api::get_node_field_base(unsigned int uid, unsigned int fid)
     return scenegraph::get_node_fieldBase(uid,fid);
 }
 
+unsigned int api::get_field_count(unsigned int uid)
+{
+    return scenegraph::get_field_count(uid);
+}
+
+unsigned int api::get_in_field_count(unsigned int uid)
+{
+    return scenegraph::get_in_field_count(uid);
+}
+
+unsigned int api::get_out_field_count(unsigned int uid)
+{
+    return scenegraph::get_out_field_count(uid);
+}
+
+status api::get_in_fields(unsigned int uid, std::vector<unsigned int> fids)
+{
+    return scenegraph::get_in_fields(uid,fids);
+}
+
+status api::get_out_fields(unsigned int uid, std::vector<unsigned int> fids)
+{
+    return scenegraph::get_out_fields(uid,fids);
+}
+
+field::connection::Type api::get_field_connection_type(unsigned int uid, unsigned int fid)
+{
+    return scenegraph::get_field_connection_type(uid,fid);
+}
+
 
