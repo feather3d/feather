@@ -147,4 +147,3 @@ field::connection::Type api::get_field_connection_type(unsigned int uid, unsigne
     return scenegraph::get_field_connection_type(uid,fid);
 }
 
-

@@ -153,4 +153,3 @@ field::connection::Type plugin::get_field_connection_type(unsigned int uid, unsi
     return api::get_field_connection_type(uid,fid);
 }
 
-

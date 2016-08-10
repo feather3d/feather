@@ -104,7 +104,6 @@ namespace feather
         // get the type of a node field
         field::connection::Type get_field_connection_type(unsigned int uid, unsigned int fid);
 
-
     } // namespace api
 
 } // namespace feather
