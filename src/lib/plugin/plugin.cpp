@@ -22,13 +22,106 @@
  ***********************************************************************/
 
 #include "plugin.hpp"
-#include "types.hpp"
 #include "core_access.hpp"
 
 using namespace feather;
 
-unsigned int plugin::get_node_by_name(std::string name)
+void plugin::clear()
 {
-    return api::get_node_by_name(name);
+    api::clear();
 }
+
+unsigned int plugin::get_min_uid()
+{
+    return api::get_min_uid();
+}
+
+unsigned int plugin::get_max_uid()
+{
+    return api::get_max_uid();
+}
+
+bool plugin::node_exist(unsigned int uid)
+{
+    return api::node_exist(uid);
+}
+
+unsigned int plugin::add_node(unsigned int nid, std::string name, status& error)
+{
+    return api::add_node(nid,name,error);
+}
+
+void plugin::remove_node(unsigned int uid, status& error)
+{
+    api::remove_node(uid,error);
+}
+
+void plugin::get_node_out_connections(unsigned int uid, std::vector<unsigned int>& uids)
+{
+    api::get_node_out_connections(uid,uids);
+}
+
+void plugin::get_nodes(std::vector<unsigned int>& uids)
+{
+    api::get_nodes(uids);
+}
+
+void plugin::get_node_by_name(std::string name, unsigned int& uid)
+{
+    api::get_node_by_name(name,uid);
+}
+
+void plugin::get_node_by_type(node::Type type, std::vector<unsigned int>& uids)
+{
+    api::get_node_by_type(type,uids);
+}
+
+void plugin::get_node_name(unsigned int uid, std::string& name, status& error)
+{
+    api::get_node_name(uid,name,error);
+}
+
+void plugin::get_node_icon(unsigned int nid, std::string& file, status& error)
+{
+    api::get_node_icon(nid,file,error);
+}
+
+unsigned int plugin::get_node_id(unsigned int uid, status& error)
+{
+    return api::get_node_id(uid,error);
+}
+
+status plugin::get_node_connected_uids(unsigned int uid, std::vector<int>& uids)
+{
+    return api::get_node_connected_uids(uid,uids);
+}
+
+status plugin::get_node_connected_uids(unsigned int uid, unsigned int fid, std::vector<int>& uids)
+{
+    return api::get_node_connected_uids(uid,fid,uids);
+}
+
+// FIELD DATA
+
+field::FieldBase* plugin::get_field_base(unsigned int uid, unsigned int nid, unsigned int fid)
+{
+    return api::get_field_base(uid,nid,fid);
+}
+
+field::FieldBase* plugin::get_field_base(unsigned int uid, unsigned int fid)
+{
+    return api::get_field_base(uid,fid);
+}
+
+field::FieldBase* plugin::get_node_field_base(unsigned int uid, unsigned int nid, unsigned int fid)
+{
+    return api::get_node_field_base(uid,nid,fid);
+}
+
+field::FieldBase* plugin::get_node_field_base(unsigned int uid, unsigned int fid)
+{
+    return api::get_node_field_base(uid,fid);
+}
+
+
 
