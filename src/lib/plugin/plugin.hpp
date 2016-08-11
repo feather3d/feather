@@ -114,7 +114,4 @@ namespace feather
 
 }
 
-#define GET_FIELD_VALUE(__type,__uid,__fid,__value)\
-    __type __value = static_cast<feather::field::Field<__type>*>(plugin::get_field_base(__uid,__fid))->value;
-
 #endif
