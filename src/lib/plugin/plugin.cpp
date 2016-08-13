@@ -138,12 +138,12 @@ unsigned int plugin::get_out_field_count(unsigned int uid)
     return api::get_out_field_count(uid);
 }
 
-status plugin::get_in_fields(unsigned int uid, std::vector<unsigned int> fids)
+status plugin::get_in_fields(unsigned int uid, std::vector<unsigned int>& fids)
 {
     return api::get_in_fields(uid,fids);
 }
 
-status plugin::get_out_fields(unsigned int uid, std::vector<unsigned int> fids)
+status plugin::get_out_fields(unsigned int uid, std::vector<unsigned int>& fids)
 {
     return api::get_out_fields(uid,fids);
 }

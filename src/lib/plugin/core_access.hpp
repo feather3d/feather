@@ -96,10 +96,10 @@ namespace feather
         unsigned int get_out_field_count(unsigned int uid);
 
         // get a list of the node input fid's
-        status get_in_fields(unsigned int uid, std::vector<unsigned int> fids);
+        status get_in_fields(unsigned int uid, std::vector<unsigned int>& fids);
 
         // get a list of the node output fid's
-        status get_out_fields(unsigned int uid, std::vector<unsigned int> fids);
+        status get_out_fields(unsigned int uid, std::vector<unsigned int>& fids);
 
         // get the type of a node field
         field::connection::Type get_field_connection_type(unsigned int uid, unsigned int fid);
