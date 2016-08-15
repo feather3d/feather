@@ -153,3 +153,7 @@ field::connection::Type plugin::get_field_connection_type(unsigned int uid, unsi
     return api::get_field_connection_type(uid,fid);
 }
 
+status plugin::connect(unsigned int suid, unsigned int sfid, unsigned int tuid, unsigned int tfid)
+{
+    return api::connect(suid,sfid,tuid,tfid);
+}

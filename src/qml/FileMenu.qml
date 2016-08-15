@@ -63,7 +63,7 @@ Menu {
             saveFeatherFilename.stringValue = tools.urlToString(saveDialog.fileUrl)
             saveFeather.exec()       
             SceneGraph.triggerUpdate()
-            //SceneGraph.nodesAdded()
+            SceneGraph.nodesAdded()
         }
         onRejected: {} 
     }
