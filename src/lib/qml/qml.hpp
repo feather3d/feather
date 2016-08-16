@@ -283,6 +283,7 @@ class Node: public QObject
             Time = node::Time,
             Light = node::Light,
             Texture = node::Texture,
+            Animation = node::Animation,
             Modifier = node::Modifier,
             Deformer = node::Deformer,
             Manipulator = node::Manipulator,

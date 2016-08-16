@@ -124,6 +124,20 @@ FieldModel {
         // Out 
         addFieldName("child",322,2)
         addFieldName("mesh",322,6)
+
+        // ANIMATION PLUGIN
+        // Key
+        // In
+        addFieldName("parent",420,1)
+        // Out 
+        addFieldName("child",420,2)
+ 
+        // Track 
+        // In
+        addFieldName("parent",421,1)
+        // Out 
+        addFieldName("child",421,2)
+ 
     }
 
 }

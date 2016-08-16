@@ -30,6 +30,7 @@ ListModel {
     //ListElement { text: "Camera"; type: Node.Camera }
     //ListElement { text: "Light"; type: Node.Light }
     //ListElement { text: "Texture"; type: Node.Texture }
+    ListElement { text: "Animation"; type: Node.Animation }
     //ListElement { text: "Modifier"; type: Node.Modifier }
     //ListElement { text: "Deformer"; type: Node.Deformer }
     ListElement { text: "Manipulator"; type: Node.Manipulator }
