@@ -50,7 +50,9 @@ ListModel {
     ListElement { text: "PolygonCube"; nid: 322; type: Node.Polygon }
 
     // ANIMATION PLUGIN
-    ListElement { text: "AnimationKey"; nid: 420; type: Node.Animation }
-    ListElement { text: "AnimationTrack"; nid: 421; type: Node.Animation }
+    ListElement { text: "AnimationIntKey"; nid: 420; type: Node.Animation }
+    ListElement { text: "AnimationRealKey"; nid: 421; type: Node.Animation }
+    ListElement { text: "AnimationIntTrack"; nid: 425; type: Node.Animation }
+    ListElement { text: "AnimationRealTrack"; nid: 426; type: Node.Animation }
 
 }

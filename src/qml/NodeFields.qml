@@ -126,18 +126,44 @@ FieldModel {
         addFieldName("mesh",322,6)
 
         // ANIMATION PLUGIN
-        // Key
+        // Int Key
         // In
         addFieldName("parent",420,1)
+        addFieldName("time",420,3)
+        addFieldName("value",420,4)
+        addFieldName("in curve type",420,5)
+        addFieldName("out curve type",420,6)
         // Out 
         addFieldName("child",420,2)
  
-        // Track 
+        // Real Key
         // In
         addFieldName("parent",421,1)
+        addFieldName("time",421,3)
+        addFieldName("value",421,4)
+        addFieldName("in curve type",421,5)
+        addFieldName("out curve type",421,6)
         // Out 
         addFieldName("child",421,2)
  
+        // Int Key Track 
+        // In
+        addFieldName("parent",425,1)
+        addFieldName("time",425,3)
+        addFieldName("keys",425,4)
+        // Out 
+        addFieldName("child",425,2)
+        addFieldName("value",425,5)
+  
+        // Real Key Track 
+        // In
+        addFieldName("parent",426,1)
+        addFieldName("time",426,3)
+        addFieldName("keys",426,4)
+        // Out 
+        addFieldName("child",426,2)
+        addFieldName("value",426,5)
+
     }
 
 }

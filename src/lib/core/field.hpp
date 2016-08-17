@@ -58,7 +58,8 @@ namespace feather
             RGBAArray=17,
             Time=18,
             Node=19,
-            START=20
+            NodeArray=20,
+            START=21
         };
 
         // TODO

@@ -201,7 +201,9 @@ class Field: public QObject
             VectorArray=field::VectorArray,
             RGBArray=field::RGBArray,
             RGBAArray=field::RGBAArray,
-            Time=field::Time
+            Time=field::Time,
+            Node=field::Node,
+            NodeArray=field::NodeArray
         };
 
     signals:
