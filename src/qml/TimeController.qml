@@ -22,6 +22,8 @@
  ***********************************************************************/
 import QtQuick 2.5
 import QtQuick.Controls 1.4
+import feather.command 1.0
+import feather.scenegraph 1.0
 
 
 Rectangle {
@@ -59,6 +61,17 @@ Rectangle {
 
         Row {
             spacing: 4
+
+            ImageButton {
+                id: addKeyButton 
+                width: 20
+                height: 20
+                imageNormal: "icons/add_key.svg"
+                imageActive: "icons/add_key.svg"
+                imageHover: "icons/add_key.svg"
+                imageDisabled: "icons/add_key.svg"
+                //exclusiveGroup: group
+            }
 
             ImageButton {
                 id: rewindButton 
@@ -140,6 +153,30 @@ Rectangle {
     onCposChanged: {
         positionChanged(cpos) 
     } 
+
+
+    // COMMANDS
+
+    Command {
+        id: addKey 
+        name: "add_key"
+        parameters: [
+            Parameter { 
+                id: openFeatherFilename
+                name: "time"
+                type: Parameter.Real
+                realValue: cpos 
+            }
+        ]
+    }
+
+
+    // FUNCTIONS
+
+    function on_add_key(){
+       addKey.exec() 
+       SceneGraph.triggerUpdate()
+    }
 
     function on_play_forward(){
         if(!playForwardButton.checked) {
@@ -224,6 +261,8 @@ Rectangle {
         fastForwardButton.buttonPressed.connect(on_fastforward)
         backFrameButton.buttonPressed.connect(on_back_frame)
         forwardFrameButton.buttonPressed.connect(on_forward_frame)
+
+        addKeyButton.buttonPressed.connect(on_add_key)
 
         timer.triggered.connect(update_play)
         //pauseButton.buttonPressed.connect(on_pause)

@@ -25,6 +25,11 @@ void api::clear()
     scenegraph::clear();
 }
 
+void api::update()
+{
+    scenegraph::update();
+}
+
 unsigned int api::get_min_uid()
 {
     return scenegraph::get_min_uid();

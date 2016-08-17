@@ -28,6 +28,9 @@ namespace feather
         // clear scenegraph
         void clear();
 
+        // update scenegraph
+        void update();
+
         // get the low uid value
         unsigned int get_min_uid();
 

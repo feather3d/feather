@@ -31,6 +31,11 @@ void plugin::clear()
     api::clear();
 }
 
+void plugin::update()
+{
+    api::update();
+}
+
 unsigned int plugin::get_min_uid()
 {
     return api::get_min_uid();
