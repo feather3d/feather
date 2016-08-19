@@ -358,14 +358,14 @@ status qml::command::set_field_val(int uid, int node, int field, FReal& val)
 status qml::command::get_field_connection_status(int uid, int field, bool& val)
 {
     field::FieldBase* f = scenegraph::get_node_fieldBase(uid,field);
-    val = f->connected;
+    val = f->connected();
     return status();
 }
 
 status qml::command::get_field_connection_status(int uid, int node, int field, bool& val)
 {
     field::FieldBase* f = scenegraph::get_node_fieldBase(uid,node,field);
-    val = f->connected;
+    val = f->connected();
     return status();
 }
 
@@ -373,25 +373,30 @@ status qml::command::get_field_connection_status(int suid, int sfid, int tuid, i
 {
     field::FieldBase* f = scenegraph::get_node_fieldBase(tuid,tfid);
 
-    if(f->connected && f->puid == suid && f->pf == sfid)
-        val = true;
-    else
-        val = false;
+    val = false;
+
+    if(f->connected())
+        for(auto conn : f->connections){
+            if( conn.puid == suid && conn.pfid == sfid)
+                val = true;
+        }
 
     return status();
 }
 
+// TODO the suid and sfid needs to be changed to a vector for array type support
 status qml::command::get_connected_fid(int uid, int fid, int& suid, int& sfid)
 {
     // if nothing is connected, set the source to 0
     field::FieldBase* f = scenegraph::get_fieldBase(uid,fid);
-    if(!f->connected){
+    if(!f->connected()){
         suid=0;
         sfid=0;
         return status(FAILED,"nothing connected to node's fid");
     }
-    suid = f->puid;
-    sfid = f->pf;
+    // for the time being just return the first connection
+    suid = f->connections.at(0).puid;
+    sfid = f->connections.at(0).pfid;
     return status();
 }
 

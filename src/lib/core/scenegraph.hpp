@@ -300,19 +300,22 @@ namespace feather
      * NOTE! if the field is connected it will return the field of the parent that's connected to it.
      * If you want to get the base of the node's fid, even if it's connected, use get_node_fieldBase().
      */
+    // TODO - this needs to return a vector since arrays can have more then one connection or make it so that the connection number can be set 
     field::FieldBase* get_fieldBase(int uid, int nid, int fid) {
         field::FieldBase* f = plugins.get_fieldBase(uid,nid,fid,sg[uid].fields); 
-        std::cout << "CALLING get_fieldBase - uid:" << uid << " nid:" << nid << " fid:" << fid << " connected:" << f->connected << std::endl;
-        if(!f || f->connected) {
+        std::cout << "CALLING get_fieldBase - uid:" << uid << " nid:" << nid << " fid:" << fid << " connected:" << f->connected() << std::endl;
+        if(!f || f->connected()) {
             //f = sg[uid].fields.at(fid); // TODO fix this once the rest works!
             //if(!f)
             //    return nullptr;
             //else
             //    return f;
             //}
-            if(f->connected){
-                std::cout << "field is connected to uid:" << f->puid << ", node:" << f->pn << ", field " << f->pf << std::endl;
-                f = get_fieldBase(f->puid,f->pn,f->pf);
+            if(f->connected()){
+                // TODO - for the time being I make it so that only the first connection will be looked at but this needs to be fixed.
+                field::Connection conn = f->connections.at(0);
+                std::cout << "field is connected to uid:" << conn.puid << ", node type:" << conn.pnid << ", field " << conn.pfid << std::endl;
+                f = get_fieldBase(conn.puid,conn.pnid,conn.pfid);
             //} else {
                 //std::cout << "field is not connected, returning the default field\n";
             //    return f;
@@ -878,10 +881,18 @@ namespace scenegraph
             sg[connection.first].f2 = f2;
             sg[connection.first].sfield = sfield;
             sg[connection.first].tfield = tfield;
+            field::Connection conn;
+            conn.puid = n1;
+            conn.pnid = src_node;
+            conn.pfid = f1;
+            tfield->connections.push_back(conn);
+            /*
             tfield->connected = true;
             tfield->puid = n1;
             tfield->pn = src_node;
             tfield->pf = f1;
+            */
+            std::cout << "connection add between " << n1  << ":" << f1 << " to " << n2 << ":" << f2 << " number of edges:" << boost::num_edges(sg) << std::endl;
         } else {
             std::cout << "could not connect nid " << n1 << " and nid " << n2 << std::endl;
             return status(FAILED,"field types can not be connected");
