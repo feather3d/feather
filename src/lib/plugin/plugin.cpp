@@ -108,10 +108,16 @@ status plugin::get_node_connected_uids(unsigned int uid, unsigned int fid, std::
 
 // FIELD DATA
 
-field::FieldBase* plugin::get_field_base(unsigned int uid, unsigned int nid, unsigned int fid)
+field::FieldBase* plugin::get_field_base(unsigned int uid, unsigned int nid, unsigned int fid, unsigned int conn)
 {
-    return api::get_field_base(uid,nid,fid);
+    return api::get_field_base(uid,nid,fid,conn);
 }
+
+std::vector<field::FieldBase*> plugin::get_field_base_array(unsigned int uid, unsigned int nid, unsigned int fid)
+{
+    return api::get_field_base_array(uid,nid,fid);
+}
+
 
 field::FieldBase* plugin::get_field_base(unsigned int uid, unsigned int fid)
 {

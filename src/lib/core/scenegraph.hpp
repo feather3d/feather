@@ -300,28 +300,33 @@ namespace feather
      * NOTE! if the field is connected it will return the field of the parent that's connected to it.
      * If you want to get the base of the node's fid, even if it's connected, use get_node_fieldBase().
      */
-    // TODO - this needs to return a vector since arrays can have more then one connection or make it so that the connection number can be set 
-    field::FieldBase* get_fieldBase(int uid, int nid, int fid) {
+    field::FieldBase* get_fieldBase(unsigned int uid, unsigned int nid, unsigned int fid, unsigned int conn=0 ) {
         field::FieldBase* f = plugins.get_fieldBase(uid,nid,fid,sg[uid].fields); 
         std::cout << "CALLING get_fieldBase - uid:" << uid << " nid:" << nid << " fid:" << fid << " connected:" << f->connected() << std::endl;
         if(!f || f->connected()) {
-            //f = sg[uid].fields.at(fid); // TODO fix this once the rest works!
-            //if(!f)
-            //    return nullptr;
-            //else
-            //    return f;
-            //}
             if(f->connected()){
-                // TODO - for the time being I make it so that only the first connection will be looked at but this needs to be fixed.
-                field::Connection conn = f->connections.at(0);
-                std::cout << "field is connected to uid:" << conn.puid << ", node type:" << conn.pnid << ", field " << conn.pfid << std::endl;
-                f = get_fieldBase(conn.puid,conn.pnid,conn.pfid);
-            //} else {
-                //std::cout << "field is not connected, returning the default field\n";
-            //    return f;
+                field::Connection connection = f->connections.at(conn);
+                std::cout << "field is connected to uid:" << connection.puid << ", node type:" << connection.pnid << ", field " << connection.pfid << std::endl;
+                f = get_fieldBase(connection.puid,connection.pnid,connection.pfid);
             } 
         }
         return f;
+    };
+
+    // like the above function except it returns all the field bases attached to it
+    std::vector<field::FieldBase*> get_fieldBase_array(unsigned int uid, unsigned int nid, unsigned int fid, unsigned int conn=0 ) {
+        field::FieldBase* f = plugins.get_fieldBase(uid,nid,fid,sg[uid].fields); 
+        std::cout << "CALLING get_fieldBase - uid:" << uid << " nid:" << nid << " fid:" << fid << " connected:" << f->connected() << std::endl;
+        std::vector<field::FieldBase*> fields;
+        if(!f || f->connected()) {
+            if(f->connected()){
+                for ( auto connection : f->connections ) {
+                    std::cout << "field is connected to uid:" << connection.puid << ", node type:" << connection.pnid << ", field " << connection.pfid << std::endl;
+                    fields.push_back(get_fieldBase(connection.puid,connection.pnid,connection.pfid));
+                }
+            } 
+        }
+        return fields;
     };
 
 
@@ -330,17 +335,17 @@ namespace feather
      * NOTE! if the field is connected it will return the field of the parent that's connected to it.
      * If you want to get the base of the node's fid, even if it's connected, use get_node_fieldBase().
      */
-    field::FieldBase* get_fieldBase(int uid, int fid) {
+    field::FieldBase* get_fieldBase(unsigned int uid, unsigned int fid, unsigned int conn=0 ) {
         status e;
         unsigned int nid = get_node_id(uid,e);
-        return get_fieldBase(uid,nid,fid);
+        return get_fieldBase(uid,nid,fid,conn);
     };
 
 
     /*!
      * Same as get_fieldBase() except it will return the base of the node field even if it's connected 
      */
-    field::FieldBase* get_node_fieldBase(int uid, int nid, int fid) {
+    field::FieldBase* get_node_fieldBase(unsigned int uid, unsigned int nid, unsigned int fid) {
         field::FieldBase* f = plugins.get_fieldBase(uid,nid,fid,sg[uid].fields); 
         if(!f) {
             for(auto field : sg[uid].fields){

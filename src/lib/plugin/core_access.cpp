@@ -102,9 +102,14 @@ status api::get_node_connected_uids(unsigned int uid, unsigned int fid, std::vec
 
 // FIELD DATA
 
-field::FieldBase* api::get_field_base(unsigned int uid, unsigned int nid, unsigned int fid)
+field::FieldBase* api::get_field_base(unsigned int uid, unsigned int nid, unsigned int fid, unsigned int conn)
 {
-    return scenegraph::get_fieldBase(uid,nid,fid);
+    return scenegraph::get_fieldBase(uid,nid,fid,conn);
+}
+
+std::vector<field::FieldBase*> api::get_field_base_array(unsigned int uid, unsigned int nid, unsigned int fid)
+{
+    return scenegraph::get_fieldBase_array(uid,nid,fid);
 }
 
 field::FieldBase* api::get_field_base(unsigned int uid, unsigned int fid)

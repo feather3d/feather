@@ -239,17 +239,28 @@ void qml::command::add_node_to_layer(int uid, int lid)
 // GET FIELD BASE
 // This returns the nodes field base class if it's not connected.
 // If the node is connected, the parent field base is returned.
-status qml::command::get_field_base(int uid, int fid, feather::field::FieldBase* &f)
+status qml::command::get_field_base(unsigned int uid, unsigned int fid, feather::field::FieldBase* &f, unsigned int conn)
 {
-    f = scenegraph::get_fieldBase(uid,sg[uid].node,fid);
+    f = scenegraph::get_fieldBase(uid,sg[uid].node,fid,conn);
     if(!f) {
         return status(FAILED,"null field base\n");
     }
     return status();
 } 
 
+// same as above but is used to get all the fields connected to an array input
+status qml::command::get_field_base_array(unsigned int uid, unsigned int fid, std::vector<feather::field::FieldBase*> &f)
+{
+    f = scenegraph::get_fieldBase_array(uid,sg[uid].node,fid);
+    if(!f.size()) {
+        return status(FAILED,"no connected fields\n");
+    }
+    return status();
+} 
+
+
 // This is the same as get_field_base except it always returns the node's field, even if it's connected
-status qml::command::get_node_field_base(int uid, int fid, feather::field::FieldBase* &f)
+status qml::command::get_node_field_base(unsigned int uid, unsigned int fid, feather::field::FieldBase* &f)
 {
     //typedef field::Field<int>* fielddata;
     //fielddata f = static_cast<fielddata>(scenegraph::get_fieldBase(uid,node,field));
@@ -261,9 +272,9 @@ status qml::command::get_node_field_base(int uid, int fid, feather::field::Field
 } 
 
 
-status qml::command::get_field_type(int uid, int node, int field, int& val)
+status qml::command::get_field_type(unsigned int uid, unsigned int node, unsigned int field, int& val)
 {
-    val = scenegraph::get_fieldBase(uid,node,field)->type;
+    val = scenegraph::get_node_fieldBase(uid,node,field)->type;
     return status();
 }
 
@@ -271,7 +282,7 @@ status qml::command::get_field_type(int uid, int node, int field, int& val)
 // GET FIELD VALUE
 
 // bool
-status qml::command::get_field_val(int uid, int node, int field, bool& val)
+status qml::command::get_field_val(unsigned int uid, unsigned int nid, unsigned int fid, bool& val, unsigned int conn)
 {
     val=false;
     
@@ -279,36 +290,36 @@ status qml::command::get_field_val(int uid, int node, int field, bool& val)
 }
 
 // int
-status qml::command::get_field_val(int uid, int node, int field, int& val)
+status qml::command::get_field_val(unsigned int uid, unsigned int nid, unsigned int fid, int& val, unsigned int conn)
 {
     typedef field::Field<int>* fielddata;
-    fielddata f = static_cast<fielddata>(scenegraph::get_fieldBase(uid,node,field));
+    fielddata f = static_cast<fielddata>(scenegraph::get_fieldBase(uid,nid,fid,conn));
     if(!f)
-        std::cout << uid << "," << node << "," << field << " NULL INT FIELD\n";
+        std::cout << uid << "," << nid << "," << fid << " NULL INT FIELD\n";
     else  
         val=f->value;
     return status();
 }
 
 // real 
-status qml::command::get_field_val(int uid, int node, int field, FReal& val)
+status qml::command::get_field_val(unsigned int uid, unsigned int nid, unsigned int fid, FReal& val, unsigned int conn)
 {
     typedef field::Field<FReal>* fielddata;
-    fielddata f = static_cast<fielddata>(scenegraph::get_fieldBase(uid,node,field));
+    fielddata f = static_cast<fielddata>(scenegraph::get_fieldBase(uid,nid,fid,conn));
     if(!f)
-        std::cout << uid << "," << node << "," << field << " NULL REAL FIELD\n";
+        std::cout << uid << "," << nid << "," << fid << " NULL REAL FIELD\n";
     else  
         val=f->value;
     return status();
 }
 
 // FMesh
-status qml::command::get_field_val(int uid, int node, int field, FMesh& val)
+status qml::command::get_field_val(unsigned int uid, unsigned int nid, unsigned int fid, FMesh& val, unsigned int conn)
 {
     typedef field::Field<FMesh>* fielddata;
-    fielddata f = static_cast<fielddata>(scenegraph::get_fieldBase(uid,node,field));
+    fielddata f = static_cast<fielddata>(scenegraph::get_fieldBase(uid,nid,fid,conn));
     if(!f)
-        std::cout << uid << "," << node << "," << field << " NULL FIELD\n";
+        std::cout << uid << "," << nid << "," << fid << " NULL FIELD\n";
     else  
         val=f->value;
     return status();
@@ -318,16 +329,16 @@ status qml::command::get_field_val(int uid, int node, int field, FMesh& val)
 // SET FIELD VALUE
 
 // bool
-status qml::command::set_field_val(int uid, int node, int field, bool& val)
+status qml::command::set_field_val(unsigned int uid, unsigned int nid, unsigned int fid, bool& val)
 {
     return status();
 }
 
 // int
-status qml::command::set_field_val(int uid, int node, int field, int& val)
+status qml::command::set_field_val(unsigned int uid, unsigned int nid, unsigned int fid, int& val)
 {
     typedef field::Field<int>* fielddata;
-    fielddata f = static_cast<fielddata>(scenegraph::get_fieldBase(uid,node,field));
+    fielddata f = static_cast<fielddata>(scenegraph::get_node_fieldBase(uid,nid,fid));
     if(!f)
         std::cout << "NULL INT FIELD\n";
     else { 
@@ -339,14 +350,14 @@ status qml::command::set_field_val(int uid, int node, int field, int& val)
 }
 
 // real 
-status qml::command::set_field_val(int uid, int node, int field, FReal& val)
+status qml::command::set_field_val(unsigned int uid, unsigned int nid, unsigned int fid, FReal& val)
 {
     typedef field::Field<FReal>* fielddata;
-    fielddata f = static_cast<fielddata>(scenegraph::get_fieldBase(uid,node,field));
+    fielddata f = static_cast<fielddata>(scenegraph::get_node_fieldBase(uid,nid,fid));
     if(!f)
         std::cout << "NULL REAL FIELD\n";
     else {
-        std::cout << "setting real value for uid:" << uid << " nid:" << node << " fid:" << field << " value:" << val << std::endl; 
+        std::cout << "setting real value for uid:" << uid << " nid:" << nid << " fid:" << fid << " value:" << val << std::endl; 
         f->value=val;
         f->update=true;
         scenegraph::update();
@@ -385,18 +396,18 @@ status qml::command::get_field_connection_status(int suid, int sfid, int tuid, i
 }
 
 // TODO the suid and sfid needs to be changed to a vector for array type support
-status qml::command::get_connected_fid(int uid, int fid, int& suid, int& sfid)
+status qml::command::get_connected_fid(unsigned int uid, unsigned int fid, unsigned int& suid, unsigned int& sfid, unsigned int conn)
 {
     // if nothing is connected, set the source to 0
-    field::FieldBase* f = scenegraph::get_fieldBase(uid,fid);
+    field::FieldBase* f = scenegraph::get_node_fieldBase(uid,fid);
     if(!f->connected()){
         suid=0;
         sfid=0;
         return status(FAILED,"nothing connected to node's fid");
     }
     // for the time being just return the first connection
-    suid = f->connections.at(0).puid;
-    sfid = f->connections.at(0).pfid;
+    suid = f->connections.at(conn).puid;
+    sfid = f->connections.at(conn).pfid;
     return status();
 }
 

@@ -77,7 +77,9 @@ namespace feather
         
         // get field base
         // returns the fieldBase* for the node's fid - if the fid is connected, it will return the fieldBase* of the node that's connected to it.
-        field::FieldBase* get_field_base(unsigned int uid, unsigned int nid, unsigned int fid);
+        field::FieldBase* get_field_base(unsigned int uid, unsigned int nid, unsigned int fid, unsigned int conn=0);
+
+        std::vector<field::FieldBase*> get_field_base_array(unsigned int uid, unsigned int nid, unsigned int fid);
 
         // same as above without the nid
         field::FieldBase* get_field_base(unsigned int uid, unsigned int fid);

@@ -85,28 +85,29 @@ namespace feather
              * NOTE! if the field is connected it will return the field of the parent that's connected to it.
              * If you want to get the base of the node's fid, even if it's connected, use get_node_fieldBase().
              */
-            status get_field_base(int uid, int fid, feather::field::FieldBase* &f);
+            status get_field_base(unsigned int uid, unsigned int fid, feather::field::FieldBase* &f, unsigned int conn=0);
+            status get_field_base_array(unsigned int uid, unsigned int fid, std::vector<feather::field::FieldBase*> &f);
             /*!
              * Same as get_fieldBase() except it will return the base of the node field even if it's connected 
              */
-            status get_node_field_base(int uid, int fid, feather::field::FieldBase* &f);
+            status get_node_field_base(unsigned int uid, unsigned int fid, feather::field::FieldBase* &f);
 
-            status get_field_type(int uid, int node, int field, int& val);
+            status get_field_type(unsigned int uid, unsigned int nid, unsigned int fid, int& val);
  
             // get the field value
-            status get_field_val(int uid, int node, int field, bool& val);
-            status get_field_val(int uid, int node, int field, int& val);
-            status get_field_val(int uid, int node, int field, FReal& val);
-            status get_field_val(int uid, int node, int field, FMesh& val);
+            status get_field_val(unsigned int uid, unsigned int nid, unsigned int fid, bool& val, unsigned int conn=0);
+            status get_field_val(unsigned int uid, unsigned int nid, unsigned int fid, int& val, unsigned int conn=0);
+            status get_field_val(unsigned int uid, unsigned int nid, unsigned int fid, FReal& val, unsigned int conn=0);
+            status get_field_val(unsigned int uid, unsigned int nid, unsigned int fid, FMesh& val, unsigned int conn=0);
             // set the field value
-            status set_field_val(int uid, int node, int field, bool& val);
-            status set_field_val(int uid, int node, int field, int& val);
-            status set_field_val(int uid, int node, int field, FReal& val);
+            status set_field_val(unsigned int uid, unsigned int nid, unsigned int fid, bool& val);
+            status set_field_val(unsigned int uid, unsigned int nid, unsigned int fid, int& val);
+            status set_field_val(unsigned int uid, unsigned int nid, unsigned int fid, FReal& val);
 
             status get_field_connection_status(int uid, int field, bool& val);
             status get_field_connection_status(int uid, int node, int field, bool& val);
             status get_field_connection_status(int suid, int sfid, int tuid, int tfid, bool& val);
-            status get_connected_fid(int uid, int fid, int& suid, int& sfid); // uid and fid are from the node's input
+            status get_connected_fid(unsigned int uid, unsigned int fid, unsigned int& suid, unsigned int& sfid, unsigned int conn=0); // uid and fid are from the node's input
             status get_fid_list(int uid, int nid, field::connection::Type conn, std::vector<field::FieldBase*>& list);
             int get_field_count(int uid);
             int get_in_field_count(int uid);
