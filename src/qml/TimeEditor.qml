@@ -143,12 +143,18 @@ Rectangle {
         timecode.pos = cpos.realVal
         bar.cpos = cpos.realVal
         bar.updateBar()
+        controller.cpos = cpos.realVal
+    }
+
+    function barCposChanged() {
+        cpos.realVal = bar.cpos
     }
 
     Component.onCompleted: {
         slider.stime = stime.realValue
         slider.etime = etime.realValue
         bar.cpos = cpos.realVal
+        bar.cposChanged.connect(barCposChanged)
         controller.cpos = cpos.realVal
         controller.stime = stime.realValue
         controller.etime = etime.realValue

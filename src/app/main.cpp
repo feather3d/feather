@@ -213,6 +213,7 @@ int main(int argc, char **argv)
     qmlRegisterType<TreeModel>("feather.outliner", 1, 0, "OutlinerModel");
     qmlRegisterType<Node>("feather.node", 1, 0, "Node");
     qmlRegisterType<Field>("feather.field", 1, 0, "Field");
+    qmlRegisterType<Connection>("feather.field", 1, 0, "Connection");
     qmlRegisterType<FieldModel>("feather.field", 1, 0, "FieldModel");
     qmlRegisterType<LayerModel>("feather.layer", 1, 0, "LayerModel");
     qmlRegisterType<Parameter>("feather.command", 1, 0, "Parameter");

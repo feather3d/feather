@@ -33,6 +33,7 @@ Rectangle {
     property double stime: 0 // seconds
     property double etime: 10 // seconds 
     property double cpos: 5 // seconds
+    property int track_uid: 0
     property int display: 0 // 0=frames, 1=seconds, 2=smpte
     property double fps: 24
 
@@ -84,6 +85,13 @@ Rectangle {
             }
             context.stroke()
 
+            // keys
+            if(track_uid != 0){
+                // get all the key uids
+                keys = SceneGraph.connections(track_uid,4)
+                // TODO 
+            }
+
             // cpos 
 
             context.beginPath()
@@ -95,6 +103,7 @@ Rectangle {
 
             // display the frame number
             context.fillText(cframe,cposX+4,height/2)
+
         }
  
     }

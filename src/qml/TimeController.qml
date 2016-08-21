@@ -151,7 +151,8 @@ Rectangle {
     }
 
     onCposChanged: {
-        positionChanged(cpos) 
+        positionChanged(cpos)
+        console.log("CPOS CHANGED TO:" + cpos) 
     } 
 
 

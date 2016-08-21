@@ -23,9 +23,17 @@
 
 #include "qml.hpp"
 #include "parameter.hpp"
+#include "field.hpp"
 
 using namespace feather;
 
+Connection::Connection(QObject* parent)
+{
+}
+
+Connection::~Connection()
+{
+}
 
 // SceneGraph
 SceneGraph::SceneGraph(QObject* parent)
@@ -159,13 +167,26 @@ bool SceneGraph::connected(unsigned int uid, unsigned int fid)
     return conn; 
 }
 
-QList<unsigned int> SceneGraph::connected_fields(unsigned int uid, unsigned int fid)
+QList<Connection*> SceneGraph::connections(unsigned int uid, unsigned int fid)
 {
-    QList<unsigned int> fids;
+    QList<Connection*> fids;
+    //unsigned int fcount = qml::command::get_field_count();
+    //std::vector<feather::field::FieldBase*> fields;
+    //status p = qml::command::get_field_base_array(uid,fid,fields); 
+    //for ( auto field : fields ) {
+    feather::field::FieldBase* field;
+    qml::command::get_node_field_base(uid,fid,field); 
+    for ( auto connection : field->connections ) { 
+        Connection* conn = new Connection();
+        conn->setSuid(connection.puid);
+        conn->setSfid(connection.pfid);
+        conn->setTuid(uid);
+        conn->setTfid(fid);
+        fids.append(conn);
+    }
     //qml::command::get_field_connection_status(uid,fid,conn);
     return fids; 
 }
-
 
 // Field
 Field::Field(QObject* parent): m_uid(0),m_node(0),m_field(0),m_boolVal(false),m_intVal(0),m_realVal(0.0),m_connected(false)

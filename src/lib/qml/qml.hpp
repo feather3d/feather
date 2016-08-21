@@ -38,7 +38,7 @@
 using namespace feather;
 
 // SELECTION 
-class Selection: public QObject
+class Selection : public QObject
 {
     Q_OBJECT
         Q_ENUMS(Type)
@@ -52,6 +52,62 @@ class Selection: public QObject
             Object = selection::Object,
             Field = selection::Field,
         };
+};
+
+// SELECTION 
+class Connection : public QObject
+{
+    Q_OBJECT
+    Q_PROPERTY(unsigned int suid READ suid WRITE setSuid)
+    Q_PROPERTY(unsigned int sfid READ sfid WRITE setSfid)
+    Q_PROPERTY(unsigned int tuid READ tuid WRITE setSuid)
+    Q_PROPERTY(unsigned int tfid READ tfid WRITE setSfid)
+
+    public:
+        Connection(QObject* parent=0);
+        ~Connection();
+
+        // suid 
+        void setSuid(unsigned int& i) {
+            if(m_suid != i) {
+                m_suid=i;
+            }
+        }
+
+        unsigned int suid() { return m_suid; }
+
+        // sfid 
+        void setSfid(unsigned int& i) {
+            if(m_sfid != i) {
+                m_sfid=i;
+            }
+        }
+
+        unsigned int sfid() { return m_tfid; }
+
+        // tuid 
+        void setTuid(unsigned int& i) {
+            if(m_tuid != i) {
+                m_tuid=i;
+            }
+        }
+
+        unsigned int tuid() { return m_tuid; }
+
+        // sfid 
+        void setTfid(unsigned int& i) {
+            if(m_tfid != i) {
+                m_tfid=i;
+            }
+        }
+
+        unsigned int tfid() { return m_tfid; }
+
+    private:
+        unsigned int m_suid;
+        unsigned int m_sfid;
+        unsigned int m_tuid;
+        unsigned int m_tfid;
 };
 
 // SCENEGRAPH 
@@ -80,7 +136,7 @@ class SceneGraph : public QObject
         Q_INVOKABLE void triggerUpdate();
         Q_INVOKABLE void add_node_to_layer(int uid, int lid);
         Q_INVOKABLE bool connected(unsigned int uid, unsigned int fid);
-        Q_INVOKABLE QList<unsigned int> connected_fields(unsigned int uid, unsigned int fid);
+        Q_INVOKABLE QList<Connection*> connections(unsigned int uid, unsigned int fid);
 
     signals:
         void nodeSelected(); // this will inform the widget to update it's selection from the selection manager
