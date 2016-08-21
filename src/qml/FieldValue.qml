@@ -32,8 +32,8 @@ Rectangle {
     color: "darkgrey"
 
     property alias uid: field.uid 
-    property alias nid: field.node 
-    property alias fid: field.field 
+    property alias nid: field.nid
+    property alias fid: field.fid 
     property alias boolValue: field.boolVal
     property alias intValue: field.intVal
     //property alias floatValue: field.floatVal

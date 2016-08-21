@@ -24,6 +24,7 @@
 #include "qml.hpp"
 #include "parameter.hpp"
 #include "field.hpp"
+#include "plugin.hpp"
 
 using namespace feather;
 
@@ -167,29 +168,8 @@ bool SceneGraph::connected(unsigned int uid, unsigned int fid)
     return conn; 
 }
 
-QList<Connection*> SceneGraph::connections(unsigned int uid, unsigned int fid)
-{
-    QList<Connection*> fids;
-    //unsigned int fcount = qml::command::get_field_count();
-    //std::vector<feather::field::FieldBase*> fields;
-    //status p = qml::command::get_field_base_array(uid,fid,fields); 
-    //for ( auto field : fields ) {
-    feather::field::FieldBase* field;
-    qml::command::get_node_field_base(uid,fid,field); 
-    for ( auto connection : field->connections ) { 
-        Connection* conn = new Connection();
-        conn->setSuid(connection.puid);
-        conn->setSfid(connection.pfid);
-        conn->setTuid(uid);
-        conn->setTfid(fid);
-        fids.append(conn);
-    }
-    //qml::command::get_field_connection_status(uid,fid,conn);
-    return fids; 
-}
-
 // Field
-Field::Field(QObject* parent): m_uid(0),m_node(0),m_field(0),m_boolVal(false),m_intVal(0),m_realVal(0.0),m_connected(false)
+Field::Field(QObject* parent): m_uid(0),m_nid(0),m_fid(0),m_boolVal(false),m_intVal(0),m_realVal(0.0),m_connected(false)
 {
 }
 
@@ -200,7 +180,7 @@ Field::~Field()
 int Field::type()
 {
     int type=0;
-    qml::command::get_field_type(m_uid,m_node,m_field,type);
+    qml::command::get_field_type(m_uid,m_nid,m_fid,type);
     return type;
 }
 
@@ -208,41 +188,66 @@ int Field::type()
 
 void Field::get_bool_val()
 {
-    qml::command::get_field_val(m_uid,m_node,m_field,m_boolVal);
+    qml::command::get_field_val(m_uid,m_nid,m_fid,m_boolVal);
 }
 
 void Field::get_int_val()
 {
-    qml::command::get_field_val(m_uid,m_node,m_field,m_intVal);
+    qml::command::get_field_val(m_uid,m_nid,m_fid,m_intVal);
 }
 
 void Field::get_real_val()
 {
-    qml::command::get_field_val(m_uid,m_node,m_field,m_realVal);
+    qml::command::get_field_val(m_uid,m_nid,m_fid,m_realVal);
 }
 
 // SET FEILD VALUES
 
 void Field::set_bool_val()
 {
-    qml::command::set_field_val(m_uid,m_node,m_field,m_boolVal);
+    qml::command::set_field_val(m_uid,m_nid,m_fid,m_boolVal);
 }
 
 void Field::set_int_val()
 {
-    qml::command::set_field_val(m_uid,m_node,m_field,m_intVal);
+    qml::command::set_field_val(m_uid,m_nid,m_fid,m_intVal);
 }
 
 void Field::set_real_val()
 {
-    qml::command::set_field_val(m_uid,m_node,m_field,m_realVal);
+    qml::command::set_field_val(m_uid,m_nid,m_fid,m_realVal);
 }
 
 // GET CONNECTED
 
 void Field::get_connected()
 {
-    qml::command::get_field_connection_status(m_uid,m_node,m_field,m_connected);
+    qml::command::get_field_connection_status(m_uid,m_nid,m_fid,m_connected);
+}
+
+QQmlListProperty<Connection> Field::connections()
+{
+    m_connections.clear();
+
+    std::vector<field::Connection> connections;
+    plugin::connections(m_uid,m_fid,connections);
+ 
+    for ( auto connection : connections ) {
+        Connection* conn = new Connection();
+        conn->setSuid(connection.puid);
+        conn->setSfid(connection.pfid);
+        conn->setTuid(m_uid);
+        conn->setTfid(m_fid);
+        m_connections.append(conn);
+    }
+
+    return QQmlListProperty<Connection>(this,m_connections);
+}
+
+void Field::setFid(unsigned int& fid) {
+    if ( m_fid != fid ) {
+        m_fid = fid;
+    }
 }
 
 

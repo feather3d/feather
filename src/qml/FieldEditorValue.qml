@@ -29,9 +29,9 @@ Rectangle {
     id: intField
     height: 14
    
-    property alias uId: field.uid // NOTE - you will get a seg fault if you change to uid instead of uId 
-    property alias nodeKey: field.node // this if the node's number assigned by the plugin
-    property alias fieldKey: field.field // this is the fields number assigned by the plugin
+    property alias uidKey: field.uid 
+    property alias nidKey: field.nid // this if the node's number assigned by the plugin
+    property alias fidKey: field.fid // this is the fields number assigned by the plugin
     //property alias label: label.text 
     property int fieldType: 0 
     property int value: {
@@ -79,7 +79,7 @@ Rectangle {
         horizontalAlignment: Text.AlignRight
         verticalAlignment: Text.AlignVCenter
         font.pixelSize: 10
-        //text: name.get_field_name(nodeKey,fieldKey);
+        //text: name.get_field_name(nidKey,fidKey);
     }    
    
     // VALUE
@@ -211,8 +211,8 @@ Rectangle {
                 case Field.Bool || Field.BoolArray: field.boolVal = (!field.boolVal) ? true : false ; break;
                 case Field.Int || Field.IntArray: field.intVal = field.intVal + 1; break;
                 //case Field.Float || Field.FloatArray: field.realVal = field.floatVal + 1 ; break;
-                //case Field.Double || Field.DoubleArray: field.realVal = field.realVal + 0.1; valueText.text = field.realVal.toFixed(2); SceneGraph.nodeFieldChanged(uId,nodeKey,fieldKey); break;
-                case Field.Real || Field.DoubleArray: field.realVal = field.realVal + 0.1; valueText.text = field.realVal.toFixed(2); SceneGraph.triggerUpdate(); SceneGraph.nodeFieldChanged(uId,nodeKey,fieldKey); break;
+                //case Field.Double || Field.DoubleArray: field.realVal = field.realVal + 0.1; valueText.text = field.realVal.toFixed(2); SceneGraph.nodeFieldChanged(uidKey,nidKey,fidKey); break;
+                case Field.Real || Field.DoubleArray: field.realVal = field.realVal + 0.1; valueText.text = field.realVal.toFixed(2); SceneGraph.triggerUpdate(); SceneGraph.nodeFieldChanged(uidKey,nidKey,fidKey); break;
                 case Field.Vertex || Field.VertexArray: ; break;
                 case Field.Vector || Field.VectorArray: ; break;
                 case Field.Mesh: ; break;

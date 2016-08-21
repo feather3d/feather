@@ -108,15 +108,15 @@ Rectangle {
     Field {
         id: cpos
         uid: SceneGraph.get_node_by_name("time")
-        node: 4
-        field: 5
+        nid: 4
+        fid: 5
     }
 
     Field {
         id: fps 
         uid: SceneGraph.get_node_by_name("time")
-        node: 4
-        field: 6
+        nid: 4
+        fid: 6
     }
 
 
@@ -130,6 +130,16 @@ Rectangle {
         bar.cpos = cpos.realVal
         bar.updateBar()
         timecode.pos = cpos.realVal
+    }
+
+    function nodeSelected() {
+        var uid = SceneGraph.selected_node();
+        var nid = SceneGraph.node_id(uid);
+        // if the nid is a animation track or an fid that connects to a track, set the track_uid in the bar so the keys can be displayed
+        // TODO - add fid check
+        if ( nid == 425 || nid == 426 ) {
+            bar.track_uid = uid
+        }
     }
 
     function updatePosition(pos) {
@@ -160,6 +170,7 @@ Rectangle {
         controller.etime = etime.realValue
         controller.positionChanged.connect(updatePosition) 
         SceneGraph.nodeFieldChanged.connect(updateFields)
+        SceneGraph.nodeSelected.connect(nodeSelected)
         cpos.realValChanged.connect(updateCPos)
     }
 }

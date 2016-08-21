@@ -114,7 +114,7 @@ class Connection : public QObject
 class SceneGraph : public QObject
 {
     Q_OBJECT
-
+ 
     public:
         SceneGraph(QObject* parent=0);
         ~SceneGraph();
@@ -136,7 +136,6 @@ class SceneGraph : public QObject
         Q_INVOKABLE void triggerUpdate();
         Q_INVOKABLE void add_node_to_layer(int uid, int lid);
         Q_INVOKABLE bool connected(unsigned int uid, unsigned int fid);
-        Q_INVOKABLE QList<Connection*> connections(unsigned int uid, unsigned int fid);
 
     signals:
         void nodeSelected(); // this will inform the widget to update it's selection from the selection manager
@@ -152,6 +151,7 @@ class SceneGraph : public QObject
         void nodesRemoved();
         void cleared();
         void nodeFieldChanged(unsigned int uid, unsigned int nid, unsigned int fid);
+
 };
 
 // FIELD 
@@ -159,45 +159,42 @@ class Field: public QObject
 {
     Q_OBJECT
         Q_ENUMS(Type)
-        Q_PROPERTY(int uid READ uid WRITE setUid)
-        Q_PROPERTY(int node READ node WRITE setNode)
-        Q_PROPERTY(int field READ field WRITE setField)
+        Q_PROPERTY(unsigned int uid READ uid WRITE setUid)
+        Q_PROPERTY(unsigned int nid READ nid WRITE setNid)
+        Q_PROPERTY(unsigned int fid READ fid WRITE setFid)
         Q_PROPERTY(int type READ type NOTIFY typeChanged)
         Q_PROPERTY(bool boolVal READ boolVal WRITE setBoolVal NOTIFY boolValChanged)
         Q_PROPERTY(int intVal READ intVal WRITE setIntVal NOTIFY intValChanged)
         Q_PROPERTY(double realVal READ realVal WRITE setRealVal NOTIFY realValChanged)
         Q_PROPERTY(bool connected READ connected NOTIFY connectedChanged)
+        Q_PROPERTY(QQmlListProperty<Connection> connections READ connections )
  
     public:
         Field(QObject* parent=0);
         ~Field();
 
         // uid 
-        void setUid(int& i) {
-            if(m_uid != i) {
-                m_uid=i;
+        void setUid(unsigned int& uid) {
+            if(m_uid != uid) {
+                m_uid = uid;
             }
         }
 
-        int uid() { return m_uid; }
+        unsigned int uid() { return m_uid; }
 
         // node 
-        void setNode(int& n) {
-            if(m_node != n) {
-                m_node=n;
+        void setNid(unsigned int& nid) {
+            if(m_nid != nid) {
+                m_nid = nid;
             }
         }
 
-        int node() { return m_node; }
+        unsigned int nid() { return m_nid; }
 
         // field 
-        void setField(int& f) {
-            if(m_field != f) {
-                m_field=f;
-            }
-        }
+        void setFid(unsigned int& fid);
 
-        int field() { return m_field; }
+        unsigned int fid() { return m_fid; }
 
         // type 
         int type();
@@ -238,6 +235,8 @@ class Field: public QObject
         FReal realVal() { get_real_val(); return m_realVal; };
 
         bool connected() { get_connected(); return m_connected; };
+
+        QQmlListProperty<Connection> connections();
 
         enum Type {
             Bool=field::Bool,
@@ -281,15 +280,16 @@ class Field: public QObject
         void set_real_val();
 
         void get_connected();
-
-        int m_uid; // unique number of the node in the sg
-        int m_node; // node key
-        int m_field; // field key
+ 
+        unsigned int m_uid; // unique number of the node in the sg
+        unsigned int m_nid; // node key
+        unsigned int m_fid; // field key
         Type m_type; // type
         bool m_boolVal;
         int m_intVal;
         FReal m_realVal;
         bool m_connected;
+        QList<Connection*> m_connections;
 };
 
 

@@ -51,15 +51,17 @@ SET_SOURCE_FILES_PROPERTIES(${feather_qml_SRCS}
 
 
 INCLUDE_DIRECTORIES(${feather_core_SOURCE_DIR}
+    ${feather_plugin_SOURCE_DIR}
     ${Qt5Widgets_INCLUDE_DIRS}
     ${Qt5Qml_INCLUDE_DIRS}
     ${Qt5Quick_INCLUDE_DIRS}
 )
 
 LINK_DIRECTORIES(${feather_core_BINARY_DIR}
+    ${feather_plugin_BINARY_DIR}
 )
 
-LINK_LIBRARIES(feather_core)
+LINK_LIBRARIES(feather_core feather_plugin)
 
 ADD_DEFINITIONS(${Qt5Widgets_DEFINITIONS}
     ${Qt5Qml_DEFINITIONS}

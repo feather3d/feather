@@ -22,6 +22,8 @@
  ***********************************************************************/
 
 import QtQuick 2.5
+import feather.scenegraph 1.0
+import feather.field 1.0
 
 Rectangle {
     id: timebar 
@@ -36,6 +38,18 @@ Rectangle {
     property int track_uid: 0
     property int display: 0 // 0=frames, 1=seconds, 2=smpte
     property double fps: 24
+
+    Field {
+        id: track_int_field
+        uid: 0
+        nid: 425
+        fid: 4
+    }
+
+    Field {
+        id: key_field
+        fid: 3
+    } 
 
     Canvas {
         id: bar 
@@ -86,9 +100,23 @@ Rectangle {
             context.stroke()
 
             // keys
-            if(track_uid != 0){
+            if ( track_uid != 0 ) {
                 // get all the key uids
-                keys = SceneGraph.connections(track_uid,4)
+                track_int_field.uid = track_uid
+                track_int_field.fid = 4
+                for ( var i = 0; i < track_int_field.connections.length && i < 100; i++ ) {
+                    key_field.uid = track_int_field.connections[i].suid
+                    key_field.nid = 420
+                    var time = key_field.realVal
+                    var keypos = (time - stime) * pps
+                    context.beginPath()
+                    context.strokeStyle = "#f400ea"
+                    context.lineWidth = ppf 
+                    context.moveTo(keypos,0)
+                    context.lineTo(keypos,height)
+                    context.stroke()
+                    //console.log("key = ",i," uid:",track_int_field.connections[i].suid," fid:",track_int_field.connections[i].sfid," time = ",time," length = ",track_int_field.connections.length)
+                } 
                 // TODO 
             }
 
@@ -103,8 +131,7 @@ Rectangle {
 
             // display the frame number
             context.fillText(cframe,cposX+4,height/2)
-
-        }
+}
  
     }
 

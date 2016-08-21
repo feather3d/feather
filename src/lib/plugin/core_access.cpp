@@ -161,3 +161,15 @@ status api::connect(unsigned int suid, unsigned int sfid, unsigned int tuid, uns
 {
     return scenegraph::connect(suid,sfid,tuid,tfid);
 }
+
+status api::connections(unsigned int uid, unsigned int fid, std::vector<field::Connection> &connections)
+{
+    field::FieldBase* field = get_node_field_base(uid,fid);
+
+    if ( field != nullptr ) {
+        std::cout << "CONNECTION COUNT:" << field->connections.size() << " uid:" << uid << " fid:" << fid << std::endl;
+        connections = field->connections;
+    }
+
+    return status();
+}
