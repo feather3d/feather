@@ -58,6 +58,7 @@ ApplicationWindow {
         }
 
         // temp viewport till I can get vulkan working in qml
+        /*
         Rectangle {
             id: viewportTmp
             Layout.fillWidth: true
@@ -73,14 +74,13 @@ ApplicationWindow {
                 font.pixelSize: 42
              }
         }
+        */
 
-        /*
         ViewportEditor {
             id: viewportEditor
             Layout.fillWidth: true 
             properties: properties
         }
-        */
 
         SplitView {
             width: 200

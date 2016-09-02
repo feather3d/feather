@@ -58,7 +58,14 @@ SET(feather_LIBS
  ${BOOST_LIBRARIES}
  ${Qt5Core_LIBRARIES}
  ${Qt5Gui_LIBRARIES}
- ${QT5Qml_LIBRARIES}
+ ${Qt5Qml_LIBRARIES}
+ "-lQt53DCore"
+ "-lQt53DRender"
+ "-lQt53DExtras"
+ "-lQt53DInput"
+ "-lQt53DLogic"
+ "-lQt53DQuickExtras"
+ "-lQt53DQuickRender"
 )
 
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -I/usr/include/boost")
@@ -77,8 +84,7 @@ SET_TARGET_PROPERTIES(feather
     CMAKE_CXX_STANDARD_REQUIRED ON
 )
 
-TARGET_LINK_LIBRARIES(feather "-lvulkan" ${feather_LIBS})
-#TARGET_LINK_LIBRARIES(feather ${feather_LIBS} ${CMAKE_DL_LIBS})
+TARGET_LINK_LIBRARIES(feather ${feather_LIBS})
 
 QT5_USE_MODULES(feather Widgets Core Gui Qml Quick)
 

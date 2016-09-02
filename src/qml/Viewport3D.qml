@@ -22,142 +22,58 @@
  ***********************************************************************/
 
 import QtQuick 2.3
+import QtQuick.Scene3D 2.0
+import Qt3D.Core 2.0
+import Qt3D.Render 2.0
+import Qt3D.Extras 2.0
+import Qt3D.Input 2.0
 import feather.viewport 1.0
 import feather.scenegraph 1.0
 
 Rectangle {
-    color: "orange"
-    border.color: "black"
-    border.width: 1
-    property alias showAxis: renderer.axis
-    property alias showGrid: renderer.grid
-    property alias shadingMode: renderer.shadingMode
-    property alias selectionMode: renderer.selectionMode
-    //focus: true   
-   
-    Viewport {
-        id: renderer
-        anchors.fill: parent 
+    id: frame
+    color: "yellow"
+    property alias showGrid: vp.showGrid
+    property alias showAxis: vp.showAxis
+    property alias majorSubDividLevel: vp.majorSubDividLevel
+    property alias minorSubDividLevel: vp.minorSubDividLevel
+
+    Scene3D {
+        id: scene3d
+        anchors.fill: parent
         anchors.margins: 2
-        //focus: true
+        focus: true
+        aspects: ["input","logic"]
+        cameraAspectRatioMode: Scene3D.AutomaticAspectRatio
 
-        MouseArea {
-            id: mouseArea
-            anchors.fill: parent
-            hoverEnabled: false 
-            acceptedButtons: Qt.LeftButton | Qt.RightButton
+        Viewport3D2 { id: vp }
 
-            onPressed: {
-                if(mouse.button == Qt.RightButton)
-                    main_popup.popup();
+    } //sceneRoot
 
-                renderer.mousePressed(mouse.x,mouse.y)
+    onWidthChanged: { vp.width = width }
 
-            }
-            onPositionChanged: { renderer.rotateCamera(mouse.x,mouse.y) }
-            //onReleased: { console.log("released") }
-            onWheel: { renderer.zoomCamera(wheel.angleDelta.y) }
-            onEntered: { renderer.focus = true }
-        }
+    onHeightChanged: { vp.height = height }
 
-        Keys.onPressed: {
-            switch(event.key){
-                case Qt.Key_Up:
-                    renderer.moveCamera(0,-1,0);
-                    event.accepted = true;
-                    break
-                case Qt.Key_Down:
-                    renderer.moveCamera(0,1,0);
-                    event.accepted = true;
-                    break
-                case Qt.Key_Left:
-                    renderer.moveCamera(1,0,0);
-                    event.accepted = true;
-                    break
-                case Qt.Key_Right:
-                    renderer.moveCamera(-1,0,0);
-                    event.accepted = true;
-                    break
-            }
-            updateGL()
-            //update()
-        }
-
-        MainPopup { id: main_popup; visible: true }
+    function addNode(uid) {
+        vp.addItems(uid) 
     }
 
-    // info box for top right corner
-    Rectangle {
-        id: infoBox
-        anchors.top: parent.top
-        anchors.right: parent.right
-        color: "#33000000"
-        width:  100 
-        height: 58 
-
-        Column {
-            anchors.fill: parent
-            anchors.margins: 4
-            spacing: 4
-
-            Text {
-                id: selectedLabel
-                width: parent.width
-                height: 14
-                visible: true
-                horizontalAlignment: Text.AlignHCenter
-                verticalAlignment: Text.AlignVCenter
-                font.pixelSize: 12
-                font.bold: false
-                text: "Selected Item" 
-            }
-
-            Text {
-                id: selectedNameLabel
-                width: parent.width
-                height: 14
-                visible: true
-                horizontalAlignment: Text.AlignHCenter
-                verticalAlignment: Text.AlignVCenter
-                font.pixelSize: 12
-                font.bold: false
-                text: "Name: ---" 
-            }
-
-            Text {
-                id: selectedUidLabel
-                width: parent.width
-                height: 14
-                visible: true
-                horizontalAlignment: Text.AlignHCenter
-                verticalAlignment: Text.AlignVCenter
-                font.pixelSize: 12
-                font.bold: false
-                text: "UID: ---" 
-            }
-
-        }
+    function addDrawItems(item) {
+        vp.addItems(item)
     }
 
-    function nodeAdded(uid) { console.log("node " + uid + " added"); renderer.nodeInitialize(uid) }
+    function updateDrawItems(uid) {
+        vp.updateItems(uid)
+    }
 
-    function nodesAdded() { renderer.nodesAdded() }
-
-    function nodesRemoved() { renderer.nodesRemoved() }
-
-    function updateGL() { renderer.updateGL() }
-
-    function updateSelectionInfo(uid) {
-        selectedNameLabel.text = "Name: " + SceneGraph.node_name(uid)
-        selectedUidLabel.text = "UID: " + uid
+    function updateViewport(uid,nid,fid) {
+        vp.doUpdate()
     }
 
     Component.onCompleted: {
-        SceneGraph.nodeAdded.connect(nodeAdded)
-        SceneGraph.nodesAdded.connect(nodesAdded)
-        SceneGraph.nodesRemoved.connect(nodesRemoved)
-        SceneGraph.updateGraph.connect(updateGL)
-        SceneGraph.nodeSelected.connect(updateSelectionInfo)
-        renderer.updateGL()
+        SceneGraph.nodeAdded.connect(addNode)
+        SceneGraph.nodeAddDrawItems.connect(addDrawItems)
+        SceneGraph.nodeUpdateDrawItems.connect(updateDrawItems)
+        SceneGraph.nodeFieldChanged.connect(updateViewport)
     }
 }

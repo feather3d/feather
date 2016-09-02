@@ -3,15 +3,15 @@ project(feather_qml)
 SET(CMAKE_AUTOMOC ON)
 SET(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-SET(CMAKE_CXX_LINK_FLAGS "-lvulkan")
-SET(CMAKE_CXX_LINK_FLAGS "-lassimp")
-SET(CMAKE_CXX_LINK_FLAGS "-lxcb")
+#SET(CMAKE_CXX_LINK_FLAGS "-lvulkan")
+#SET(CMAKE_CXX_LINK_FLAGS "-lassimp")
+#SET(CMAKE_CXX_LINK_FLAGS "-lxcb")
 
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DVK_USE_PLATFORM_XCB_KHR")
+#SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DVK_USE_PLATFORM_XCB_KHR")
 
-MESSAGE(STATUS ${VULKAN_LIB})
+#MESSAGE(STATUS ${VULKAN_LIB})
 
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DNOMINMAX -DVK_PROTOTYPES -D_USE_MATH_DEFINES")
+#SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DNOMINMAX -DVK_PROTOTYPES -D_USE_MATH_DEFINES")
 
 #SET(CMAKE_AUTOMOC_RELAX_MODE ON)
 
@@ -25,15 +25,19 @@ FIND_PACKAGE(Qt5Quick REQUIRED)
 
 SET(feather_qml_SRCS
     # vulkan
-    tools.cpp
-    debug.cpp
-    node.cpp
-    axis.cpp
-    grid.cpp
-    mesh.cpp
-    pointlight.cpp
-    pipelines.cpp
-    viewport4.cpp
+    #tools.cpp
+    #debug.cpp
+    #node.cpp
+    #axis.cpp
+    #grid.cpp
+    #mesh.cpp
+    #pointlight.cpp
+    #pipelines.cpp
+    #viewport4.cpp
+    
+    # viewport
+    #viewport3.cpp
+    viewport.cpp
 
     # qml
     commands.cpp
@@ -54,6 +58,7 @@ INCLUDE_DIRECTORIES(${feather_core_SOURCE_DIR}
     ${feather_plugin_SOURCE_DIR}
     ${Qt5Widgets_INCLUDE_DIRS}
     ${Qt5Qml_INCLUDE_DIRS}
+    ${Qt5Quick_INCLUDE_DIRS}
     ${Qt5Quick_INCLUDE_DIRS}
 )
 
@@ -84,8 +89,7 @@ SET(feather_qml_LIBS
  ${QT5Quick_LIBRARIES}
 )
 
-TARGET_LINK_LIBRARIES(feather_qml "-lvulkan" ${feather_qml_LIBS})
-#TARGET_LINK_LIBRARIES(feather_qml ${feather_qml_LIBS} ${CMAKE_DL_LIBS})
+TARGET_LINK_LIBRARIES(feather_qml ${feather_qml_LIBS})
 
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -I/usr/include/boost")
 

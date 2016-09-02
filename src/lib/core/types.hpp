@@ -39,19 +39,19 @@ namespace feather
     typedef double FDouble;
     typedef double FReal;
     typedef std::string FString;
-    typedef struct{double x; double y;} FPoint2D;
-    typedef struct{double x; double y; double z;} FPoint3D;
+    typedef struct{float x; float y;} FPoint2D;
+    typedef struct{float x; float y; float z;} FPoint3D;
 
     struct FVertex3D
     {
-        FVertex3D(FFloat _x=0, FFloat _y=0, FFloat _z=0) { x=_x; y=_y; z=_z; };
-        FDouble x;
-        FDouble y;
-        FDouble z;
+        FVertex3D(FFloat _x=0, FFloat _y=0, FFloat _z=0):x(_x),y(_y),z(_z) {};
+        FFloat x;
+        FFloat y;
+        FFloat z;
     };
 
-    typedef struct{double x; double y; double z;} FNormal3D;
-    typedef struct{ double x; double y; double z; double w;} FVector3D;
+    typedef struct{float x; float y; float z;} FNormal3D;
+    typedef struct{ float x; float y; float z; float w;} FVector3D;
 
     struct FColorRGB
     {
@@ -86,9 +86,9 @@ namespace feather
 
     struct FTextureCoord
     {
-        FTextureCoord(FDouble _s=0, FDouble _t=0) { s=_s; t=_t; };
-        FDouble s;
-        FDouble t;
+        FTextureCoord(FFloat _s=0, FFloat _t=0) { s=_s; t=_t; };
+        FFloat s;
+        FFloat t;
     };
 
     struct FFacePoint

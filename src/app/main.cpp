@@ -23,16 +23,13 @@
 
 #include "deps.hpp"
 #include "curves.hpp"
-//#include "viewportthread.hpp"
-//#include "viewport2.hpp"
-//#include "viewport3.hpp"
+#include "viewport.hpp"
 #include "sg_editor.hpp"
 #include "field_model.hpp"
 #include "layer_model.hpp"
 #include "tree_model.hpp"
 #include "qml.hpp"
 #include "commands.hpp"
-//#include "viewport4.hpp"
 #include <QApplication>
 #include <QQmlApplicationEngine>
 #include <QtQuick/QQuickView>
@@ -203,11 +200,7 @@ int main(int argc, char **argv)
     QApplication app(argc, argv);
 
     qmlRegisterType<BezierCurve>("feather.ui.curves", 1, 0, "BezierCurve");
-    //qmlRegisterType<ViewportThread>("feather.viewport", 1, 0, "Viewport");
-    //qmlRegisterType<Viewport2>("feather.viewport", 1, 0, "Viewport2");
-    //qmlRegisterType<DeferredRenderer>("feather.viewport", 1, 0, "DeferredRenderer");
-    //qmlRegisterType<Viewport3>("feather.viewport", 1, 0, "Viewport3");
-    //qmlRegisterType<VulkanViewport>("feather.viewport", 1, 0, "Viewport");
+    qmlRegisterType<Viewport>("feather.viewport", 1, 0, "Viewport3D2");
     qmlRegisterType<SceneGraphEditor>("feather.editors", 1, 0, "SceneGraphEditor");
     qmlRegisterSingletonType<SceneGraph>("feather.scenegraph", 1, 0, "SceneGraph", get_scenegraph);
     qmlRegisterType<TreeModel>("feather.outliner", 1, 0, "OutlinerModel");
@@ -220,7 +213,6 @@ int main(int argc, char **argv)
     qmlRegisterType<Command>("feather.command", 1, 0, "Command");
     qmlRegisterType<Plugins>("feather.plugin", 1, 0, "Plugins");
     qmlRegisterType<Tools>("feather.tools", 1, 0, "Tools");
-
 
     // Add the Root node to the scenegraph and setup the scene
     feather::qml::command::init();

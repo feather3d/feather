@@ -57,7 +57,6 @@
 #include <QtOpenGL/QtOpenGL>
 #include <QtOpenGL/QGLFunctions>
 
-/*
 // Qt3D
 #include <Qt3DCore/QEntity>
 #include <Qt3DCore/QNode>
@@ -65,47 +64,47 @@
 #include <Qt3DCore/QTransform>
 //#include <Qt3DCore/QTranslateTransform>
 //#include <Qt3DCore/QScaleTransform>
-#include <Qt3DCore/QCameraLens>
-#include <Qt3DCore/QCamera>
+#include <Qt3DRender/QCameraLens>
+#include <Qt3DRender/QCamera>
 
-#include <Qt3DRenderer/QCuboidMesh>
-#include <Qt3DRenderer/QTorusMesh>
-#include <Qt3DRenderer/QPhongMaterial>
-#include <Qt3DRenderer/QShaderProgram>
-#include <Qt3DRenderer/QPointLight>
-#include <Qt3DRenderer/QEffect>
-#include <Qt3DRenderer/QTechnique>
-#include <Qt3DRenderer/QRenderPass>
-#include <Qt3DRenderer/QOpenGLFilter>
-#include <Qt3DRenderer/QParameter>
-#include <Qt3DRenderer/QParameterMapping>
-#include <Qt3DRenderer/qattribute.h>
-#include <Qt3DRenderer/qbuffer.h>
-#include <Qt3DRenderer/qgeometry.h>
-#include <Qt3DRenderer/QWindow>
-#include <Qt3DRenderer/QFrameGraph>
-#include <Qt3DRenderer/QPointLight>
-#include <Qt3DRenderer/QSphereMesh>
-#include <Qt3DRenderer/QLayer>
+#include <Qt3DExtras/QCuboidMesh>
+#include <Qt3DExtras/QTorusMesh>
+#include <Qt3DExtras/QPhongMaterial>
+#include <Qt3DRender/QShaderProgram>
+#include <Qt3DRender/QPointLight>
+#include <Qt3DRender/QEffect>
+#include <Qt3DRender/QTechnique>
+#include <Qt3DRender/QRenderPass>
+//#include <Qt3DRender/QOpenGLFilter> // gone
+#include <Qt3DRender/QParameter>
+//#include <Qt3DRender/QParameterMapping> // gone
+#include <Qt3DRender/qattribute.h>
+#include <Qt3DRender/qbuffer.h>
+#include <Qt3DRender/qgeometry.h>
+//#include <Qt3DRender/QWindow> // might be Q3DQuickWindow now
+//#include <Qt3DRender/QFrameGraph> // might be QFrameGraphNode now
+#include <Qt3DRender/QPointLight>
+#include <Qt3DExtras/QSphereMesh>
+#include <Qt3DRender/QLayer>
 
-#include <Qt3DRenderer/QLayerFilter>
-#include <Qt3DRenderer/QClearBuffer>
-#include <Qt3DRenderer/QRenderTargetSelector>
-#include <Qt3DRenderer/QRenderPassFilter>
-#include <Qt3DRenderer/QCameraSelector>
-#include <Qt3DRenderer/QViewport>
-#include <Qt3DRenderer/QAbstractTextureProvider>
-#include <Qt3DRenderer/QRenderTarget>
-#include <Qt3DRenderer/QRenderAttachment>
-#include <Qt3DRenderer/QTextureWrapMode>
-#include <Qt3DRenderer/QTexture2D>
+#include <Qt3DRender/QLayerFilter>
+#include <Qt3DRender/QClearBuffers>
+#include <Qt3DRender/QRenderTargetSelector>
+#include <Qt3DRender/QRenderPassFilter>
+#include <Qt3DRender/QCameraSelector>
+#include <Qt3DRender/QViewport>
+//#include <Qt3DRender/QAbstractTextureProvider> // gone
+#include <Qt3DRender/QRenderTarget>
+//#include <Qt3DRender/QRenderAttachment> // gone
+#include <Qt3DRender/QTextureWrapMode>
+#include <Qt3DRender/QTexture>
 
 #include <Qt3DInput/QInputAspect>
-#include <Qt3DInput/QMouseInput>
-#include <Qt3DInput/QMouseController>
-#include <Qt3DInput/Q3DMouseEvent>
+#include <Qt3DInput/QMouseDevice>
+//#include <Qt3DInput/QMouseController> // gone
+#include <Qt3DInput/QMouseEvent>
 
-#include <Qt3DQuick/quick3dconfiguration.h>
-*/
+//#include <Qt3DQuick/quick3dconfiguration.h>
+#include <Qt3DQuickExtras/Qt3DQuickExtras>
 
 #endif

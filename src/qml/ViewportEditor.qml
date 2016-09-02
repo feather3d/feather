@@ -29,14 +29,7 @@ import feather.scenegraph 1.0
 import feather.viewport 1.0
 
 Item {
-//Window {
     id: editor 
-    //title: "Viewport Editor"
-    //visible: true
-    //flags: Qt.SubWindow
-    //flags: Qt.Tool
-    //width: 600
-    //height: 600
     property Properties properties: Null
 
     // Show Viewport Components
@@ -220,39 +213,19 @@ Item {
                 }
             }
 
-
-
         }
 
     } 
 
-    /*
-    Viewport3D2 { 
+    Viewport3D { 
         id: viewport
         anchors.top: toolBar.bottom
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: parent.bottom
-    */
-        /*
-        MouseArea {
-            anchors.fill: parent
-            hoverEnabled: true
-            propagateComposedEvents: true
-        }
-        */
-    //}
+    }
 
     //function updateGL() { viewport.updateGL() }
-
-    // vulkan viewport
-    Viewport { 
-        id: viewport
-        anchors.top: toolBar.bottom
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.bottom: parent.bottom
-    } 
 
     Component.onCompleted: { 
         //editor.update(); updateGL()
