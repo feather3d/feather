@@ -146,8 +146,9 @@ MeshGeometry::MeshGeometry(int _uid, int _nid, int _fid, Qt3DCore::QNode *parent
     meshVBytes.resize(vsize);
     memcpy(meshVBytes.data(), m_aMeshVData.data(), vsize);
 
+    //m_pVertexBuffer->setUsage(Qt3DRender::QBuffer::DynamicDraw);
     m_pVertexBuffer->setData(meshVBytes);
-
+    
     m_pVAttribute->setName(Qt3DRender::QAttribute::defaultPositionAttributeName());
     m_pVAttribute->setDataType(Qt3DRender::QAttribute::Float);
     m_pVAttribute->setDataSize(3);
@@ -161,6 +162,7 @@ MeshGeometry::MeshGeometry(int _uid, int _nid, int _fid, Qt3DCore::QNode *parent
     meshVnBytes.resize(vnsize);
     memcpy(meshVnBytes.data(), m_aMeshVnData.data(), vsize);
 
+    //m_pNormalBuffer->setUsage(Qt3DRender::QBuffer::DynamicDraw);
     m_pNormalBuffer->setData(meshVnBytes);
 
     m_pVnAttribute->setName(Qt3DRender::QAttribute::defaultNormalAttributeName());
@@ -189,6 +191,9 @@ MeshGeometry::~MeshGeometry()
 
 void MeshGeometry::build()
 {
+    m_aMeshVData.clear();
+    m_aMeshVnData.clear();
+
     //feather::FMesh mesh;
     //feather::qml::command::get_field_val(uid,nid,fid,mesh);
     feather::FMesh mesh = static_cast<feather::field::Field<feather::FMesh>*>(feather::plugin::get_field_base(uid,nid,fid))->value;
@@ -259,8 +264,36 @@ void MeshGeometry::build()
             fcount++;
             id=0;
     });
+
 }
 
+void MeshGeometry::updateBuffers()
+{
+    build();
+
+    // Position Buffer
+    const int vsize = m_aMeshVData.size() * sizeof(feather::FVertex3D);
+    QByteArray meshVBytes;
+    meshVBytes.resize(vsize);
+    memcpy(meshVBytes.data(), m_aMeshVData.data(), vsize);
+    m_pVertexBuffer->setData(meshVBytes);
+    //emit(m_pVAttribute->buffer()->dataChanged(meshVBytes));
+    //m_pVAttribute->setBuffer(m_pVertexBuffer);
+ 
+    std::cout << "V Buffer size=" << m_pVertexBuffer->data().size() << std::endl;
+    std::cout << "V Attribute Buffer size=" << m_pVAttribute->buffer()->data().size()
+        << ", count size=" << m_pVAttribute->count()
+        << ", vertex size=" << m_pVAttribute->vertexSize()
+        << std::endl;
+
+    // Normal Buffer
+    const int vnsize = m_aMeshVnData.size() * sizeof(feather::FVertex3D);
+    QByteArray meshVnBytes;
+    meshVnBytes.resize(vnsize);
+    memcpy(meshVnBytes.data(), m_aMeshVnData.data(), vsize);
+    m_pNormalBuffer->setData(meshVnBytes);
+    //m_pVnAttribute->setBuffer(m_pNormalBuffer);
+}
 
 // MESHES
 
@@ -317,6 +350,9 @@ Mesh::~Mesh()
 
 void Mesh::updateItem()
 {
+    static_cast<MeshGeometry*>(m_pMesh->geometry())->updateBuffers();
+    //emit(m_pMesh->geometryChanged(m_pMesh->geometry()));
+    /*
     removeComponent(m_pMesh);
     delete m_pMesh;
     m_pMesh=0;
@@ -324,6 +360,7 @@ void Mesh::updateItem()
     m_pMesh->setPrimitiveType(Qt3DRender::QGeometryRenderer::Triangles);
     m_pMesh->setGeometry(new MeshGeometry(item()->uid,item()->nid,static_cast<feather::draw::Mesh*>(item())->fid,this));
     addComponent(m_pMesh);
+    */
     //setParent(Q_NULLPTR);
     //removeAllComponents();
 }
@@ -441,7 +478,9 @@ void AxisGeometry::build()
     // X axis 
     m_axis.push_back(feather::FVertex3D(0,0,0));
     m_axis.push_back(feather::FVertex3D(10,0,0));
- 
+    m_axis.push_back(feather::FVertex3D(0,10,0));
+
+    /*
     // Y axis 
     m_axis.push_back(feather::FVertex3D(0,0,0));
     m_axis.push_back(feather::FVertex3D(0,10,0));
@@ -449,6 +488,7 @@ void AxisGeometry::build()
     // Z axis 
     m_axis.push_back(feather::FVertex3D(0,0,0));
     m_axis.push_back(feather::FVertex3D(0,0,10));
+    */
 }
 
 // AXIS 
@@ -460,12 +500,12 @@ Axis::Axis(Qt3DRender::QLayer* layer, Qt3DCore::QNode *parent)
     m_pMesh(new Qt3DRender::QGeometryRenderer())
     //m_pMouseInput(new Qt3D::QMouseInput(this))
 {
-    //m_pMesh->setPrimitiveType(Qt3D::QGeometryRenderer::Lines);
+    //m_pMesh->setPrimitiveType(Qt3DRender::QGeometryRenderer::Lines);
     m_pMesh->setPrimitiveType(Qt3DRender::QGeometryRenderer::Triangles);
     m_pMesh->setGeometry(new AxisGeometry(this));
     
     //m_pMaterial->setDiffuse(QColor(Qt::red));
-    //m_pMaterial->setAmbient(Qt::red);
+    //m_pMaterial->setAmbient(Qt::green);
     //m_pMaterial->setSpecular(Qt::black);
     //m_pMaterial->setShininess(0.0f);
   
@@ -474,19 +514,52 @@ Axis::Axis(Qt3DRender::QLayer* layer, Qt3DCore::QNode *parent)
     Qt3DRender::QTechnique* technique = new Qt3DRender::QTechnique(); 
     Qt3DRender::QRenderPass* pass = new Qt3DRender::QRenderPass();
 
-    //technique->openGLFilter()->setApi(Qt3D::QOpenGLFilter::Desktop);
+    technique->graphicsApiFilter()->setApi(Qt3DRender::QGraphicsApiFilter::OpenGL);
     //technique->openGLFilter()->setApi(Qt3D::QOpenGLFilter::ES);
-    //technique->openGLFilter()->setProfile(Qt3D::QOpenGLFilter::Core);
-    //technique->openGLFilter()->setMajorVersion(3);
-    //technique->openGLFilter()->setMinorVersion(3);
+    technique->graphicsApiFilter()->setProfile(Qt3DRender::QGraphicsApiFilter::CoreProfile);
+    technique->graphicsApiFilter()->setMajorVersion(3);
+    technique->graphicsApiFilter()->setMinorVersion(3);
 
+    effect->addParameter(new Qt3DRender::QParameter("ka",QVariant(QVector3D(0.5f,0.5f,0.5f))));
+    effect->addParameter(new Qt3DRender::QParameter("kd",QVariant(QVector3D(1.0f,0.0f,0.0f))));
+    effect->addParameter(new Qt3DRender::QParameter("ks",QVariant(QVector3D(0.0f,0.0f,0.0f))));
+    effect->addParameter(new Qt3DRender::QParameter("shininess",QVariant(150)));
+    technique->addParameter(new Qt3DRender::QParameter("light.position",QVariant(QVector4D(0.0f,0.0f,0.0f,1.0f))));
+    technique->addParameter(new Qt3DRender::QParameter("light.intensity",QVariant(QVector3D(1.0f,1.0f,1.0f))));
     technique->addParameter(new Qt3DRender::QParameter("line.width",QVariant(2.0)));
+    technique->addParameter(new Qt3DRender::QParameter("line.color",QVariant(QVector4D(1.0f,0.0f,0.0f,1.0f))));
+    /*
+    m_pMaterial->addParameter(new Qt3DRender::QParameter("ka",QVariant(QVector3D(1.0f,1.0f,1.0f))));
+    m_pMaterial->addParameter(new Qt3DRender::QParameter("kd",QVariant(QVector3D(1.0f,0.0f,0.0f))));
+    m_pMaterial->addParameter(new Qt3DRender::QParameter("ks",QVariant(QVector3D(0.0f,0.0f,0.0f))));
+    m_pMaterial->addParameter(new Qt3DRender::QParameter("shininess",QVariant(150)));
+    m_pMaterial->addParameter(new Qt3DRender::QParameter("light.position",QVariant(QVector4D(0.0f,0.0f,0.0f,1.0f))));
+    m_pMaterial->addParameter(new Qt3DRender::QParameter("light.intensity",QVariant(QVector3D(1.0f,1.0f,1.0f))));
+    m_pMaterial->addParameter(new Qt3DRender::QParameter("line.width",QVariant(2.0)));
+    m_pMaterial->addParameter(new Qt3DRender::QParameter("line.color",QVariant(QVector4D(1.0f,0.0f,0.0f,1.0f))));
+    */
 
+
+    Qt3DRender::QFilterKey* filter = new Qt3DRender::QFilterKey();
+    filter->setName("renderingStyle");
+    filter->setValue(QVariant("forwardRender"));
+    technique->addFilterKey(filter);
+ 
     // GONE
     /*
     pass->addBinding(new Qt3D::QParameterMapping("ambient","ka",Qt3D::QParameterMapping::Uniform));
     pass->addBinding(new Qt3D::QParameterMapping("diffuse","kd",Qt3D::QParameterMapping::Uniform));
     pass->addBinding(new Qt3D::QParameterMapping("specular","ks",Qt3D::QParameterMapping::Uniform));
+    */
+
+    /*
+    QVariant ka = QVariant(QColor(Qt::red));
+    QVariant kd = QVariant(QColor(Qt::red));
+    QVariant ks = QVariant(QColor(Qt::red));
+
+    Qt3DRender::QParameter ka_param("ka",ka,m_pMaterial);
+    Qt3DRender::QParameter kd_param("kd",kd,m_pMaterial);
+    Qt3DRender::QParameter ks_param("ks",ks,m_pMaterial);
     */
 
     /*
@@ -520,31 +593,36 @@ Axis::Axis(Qt3DRender::QLayer* layer, Qt3DCore::QNode *parent)
                     gl_FragColor = 1.0;\\
                     }");
 
-                    pass->setShaderProgram(shader);
-                    technique->addPass(pass); 
-                    effect->addTechnique(technique);
-                    m_pMaterial->setEffect(effect);
-
+            pass->setShaderProgram(shader);
+            technique->addRenderPass(pass); 
+            effect->addTechnique(technique);
+            m_pMaterial->setEffect(effect);
     */
+    
+    QFile vert("ui/shaders/axis_vert.glsl");
+    QFile frag("ui/shaders/axis_frag.glsl");
+    QFile geom("ui/shaders/axis_geom.glsl");
 
-    QFile vert("shaders/vert/mesh2.glsl");
-    QFile frag("shaders/frag/test.glsl");
-    QFile geom("shaders/geom/geom.glsl");
-
-    if (!vert.open(QIODevice::ReadOnly | QIODevice::Text) ||
-            !frag.open(QIODevice::ReadOnly | QIODevice::Text) ||
-            !geom.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        std::cout << "Shaders failed to open!\n";
+    if (!vert.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        std::cout << "Axis vert shader failed to open.\n";
         return;
-    } else {
+    }
+    else if (!frag.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        std::cout << "Axis frag shader failed to open.\n";
+        return;
+    }
+    else if (!geom.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        std::cout << "Axis geom shader failed to open.\n";
+        return;
+    }
+    else {
+        std::cout << "Axis shaders loaded OK.\n";
         while (!vert.atEnd()) {
             shader->setVertexShaderCode(vert.readLine());
         }
-
         while (!frag.atEnd()) {
             shader->setFragmentShaderCode(frag.readLine());
         }
-
         while (!geom.atEnd()) {
             shader->setGeometryShaderCode(geom.readLine());
         }
@@ -557,8 +635,8 @@ Axis::Axis(Qt3DRender::QLayer* layer, Qt3DCore::QNode *parent)
 
     addComponent(layer);
     //addComponent(m_pTransform);
-    addComponent(m_pMesh);
     addComponent(m_pMaterial);
+    addComponent(m_pMesh);
 
     //connect(m_pMouseInput,SIGNAL(entered()),this,SLOT(mouseClicked()));
     /*

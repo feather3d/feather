@@ -92,6 +92,7 @@ class MeshGeometry : public Qt3DRender::QGeometry
     public:
         MeshGeometry(int _uid=0, int _nid=0, int _fid=0, Qt3DCore::QNode *parent=0);
         ~MeshGeometry();
+        void updateBuffers();
  
     private:
         void build();
