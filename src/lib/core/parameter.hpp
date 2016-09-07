@@ -38,7 +38,9 @@ namespace feather
             Bool,
             Int,
             Real,
-            String
+            String,
+            IntArray,
+            RealArray
         };
 
         template <typename _T> static Type get_type_id() { return Null; };
@@ -46,6 +48,8 @@ namespace feather
         template <> Type get_type_id<int>() { return Int; };
         template <> Type get_type_id<double>() { return Real; };
         template <> Type get_type_id<std::string>() { return String; };
+        template <> Type get_type_id<std::vector<int>>() { return IntArray; };
+        template <> Type get_type_id<std::vector<double>>() { return RealArray; };
 
         struct ParameterBase
         {
@@ -77,6 +81,10 @@ namespace feather
             void addStringParameter(std::string name, std::string val) { 
                 m_params.push_back(new Parameter<std::string>(name,val));
             };
+
+            void addIntArrayParameter(std::string name, std::vector<int> val) { m_params.push_back(new Parameter<std::vector<int>>(name,val)); };
+
+            void addRealArrayParameter(std::string name, std::vector<double> val) { m_params.push_back(new Parameter<std::vector<double>>(name,val)); };
 
             template <typename _T>
                 bool getParameterValue(std::string n, _T &val) {

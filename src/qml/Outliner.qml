@@ -71,7 +71,6 @@ Item {
                 iconName: "test"
                 action: testAction 
             }
-
         }
     }
 

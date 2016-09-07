@@ -66,8 +66,8 @@ Rectangle {
             var ppf = pps/fps // pixels per frame
             var fm = 100/ppf // frame multiplier
             var spf = 1.0/fps // seconds per frame
-            var frameX = (stime - Math.floor(stime/spf)) * pps
-            var secondX = (stime - Math.floor(stime)) * pps 
+            var frameX = (Math.floor(stime/spf) - stime) * pps
+            var secondX = (Math.floor(stime) - stime) * pps 
             var cposX = (cpos - stime) * pps
             var cframe = Math.floor(cpos*fps)
 

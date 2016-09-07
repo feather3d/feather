@@ -97,6 +97,19 @@ status api::get_node_connected_uids(unsigned int uid, std::vector<int>& uids)
 
 status api::get_node_connected_uids(unsigned int uid, unsigned int fid, std::vector<int>& uids)
 {
+    // the field connection type
+    field::connection::Type fidtype = api::get_field_connection_type(uid,fid);
+    if(fidtype == field::connection::In){
+        field::FieldBase* f = api::get_node_field_base(uid,fid);
+        std::cout << "UID:" << uid << " FID:" << fid << " connected nodes";
+        for(auto connection : f->connections){
+            std::cout << " | uid:" << connection.puid << ", fid:" << connection.pfid;
+            uids.push_back(connection.puid);
+        }
+        std::cout << std::endl;
+        return status();
+    }
+
     return scenegraph::get_node_connected_uids(uid,fid,uids);
 }
 

@@ -511,7 +511,7 @@ Axis::Axis(Qt3DRender::QLayer* layer, Qt3DCore::QNode *parent)
   
     Qt3DRender::QEffect* effect = new Qt3DRender::QEffect();
     Qt3DRender::QShaderProgram* shader = new Qt3DRender::QShaderProgram();
-    Qt3DRender::QTechnique* technique = new Qt3DRender::QTechnique(); 
+    Qt3DRender::QTechnique* technique = new Qt3DRender::QTechnique(effect); 
     Qt3DRender::QRenderPass* pass = new Qt3DRender::QRenderPass();
 
     technique->graphicsApiFilter()->setApi(Qt3DRender::QGraphicsApiFilter::OpenGL);
@@ -524,12 +524,13 @@ Axis::Axis(Qt3DRender::QLayer* layer, Qt3DCore::QNode *parent)
     effect->addParameter(new Qt3DRender::QParameter("kd",QVariant(QVector3D(1.0f,0.0f,0.0f))));
     effect->addParameter(new Qt3DRender::QParameter("ks",QVariant(QVector3D(0.0f,0.0f,0.0f))));
     effect->addParameter(new Qt3DRender::QParameter("shininess",QVariant(150)));
+
     technique->addParameter(new Qt3DRender::QParameter("light.position",QVariant(QVector4D(0.0f,0.0f,0.0f,1.0f))));
     technique->addParameter(new Qt3DRender::QParameter("light.intensity",QVariant(QVector3D(1.0f,1.0f,1.0f))));
     technique->addParameter(new Qt3DRender::QParameter("line.width",QVariant(2.0)));
     technique->addParameter(new Qt3DRender::QParameter("line.color",QVariant(QVector4D(1.0f,0.0f,0.0f,1.0f))));
-    /*
-    m_pMaterial->addParameter(new Qt3DRender::QParameter("ka",QVariant(QVector3D(1.0f,1.0f,1.0f))));
+
+    m_pMaterial->addParameter(new Qt3DRender::QParameter("ka",QVariant(QVector3D(0.3f,0.3f,0.3f))));
     m_pMaterial->addParameter(new Qt3DRender::QParameter("kd",QVariant(QVector3D(1.0f,0.0f,0.0f))));
     m_pMaterial->addParameter(new Qt3DRender::QParameter("ks",QVariant(QVector3D(0.0f,0.0f,0.0f))));
     m_pMaterial->addParameter(new Qt3DRender::QParameter("shininess",QVariant(150)));
@@ -537,12 +538,10 @@ Axis::Axis(Qt3DRender::QLayer* layer, Qt3DCore::QNode *parent)
     m_pMaterial->addParameter(new Qt3DRender::QParameter("light.intensity",QVariant(QVector3D(1.0f,1.0f,1.0f))));
     m_pMaterial->addParameter(new Qt3DRender::QParameter("line.width",QVariant(2.0)));
     m_pMaterial->addParameter(new Qt3DRender::QParameter("line.color",QVariant(QVector4D(1.0f,0.0f,0.0f,1.0f))));
-    */
-
 
     Qt3DRender::QFilterKey* filter = new Qt3DRender::QFilterKey();
     filter->setName("renderingStyle");
-    filter->setValue(QVariant("forwardRender"));
+    filter->setValue(QVariant("forward"));
     technique->addFilterKey(filter);
  
     // GONE
@@ -592,13 +591,230 @@ Axis::Axis(Qt3DRender::QLayer* layer, Qt3DCore::QNode *parent)
                     //fragColor = vec4(diffuse * finalColor, 1.0);\\
                     gl_FragColor = 1.0;\\
                     }");
-
-            pass->setShaderProgram(shader);
-            technique->addRenderPass(pass); 
-            effect->addTechnique(technique);
-            m_pMaterial->setEffect(effect);
     */
-    
+
+    shader->setVertexShaderCode("#version 330 core\n \
+            in vec3 vertexPosition;\n\
+            in vec3 vertexNormal;\n\
+            out EyeSpaceVertex {\n\
+            vec3 position;\n\
+            vec3 normal;\n\
+            } vs_out;\n\
+            uniform mat4 modelView;\n\
+            uniform mat3 modelViewNormal;\n\
+            uniform mat4 mvp;\n\
+            void main()\n\
+            {\n\
+                vs_out.normal = normalize( modelViewNormal * vertexNormal );\n\
+                vs_out.position = vec3( modelView * vec4( vertexPosition, 1.0 ) );\n\
+                gl_Position = mvp * vec4( vertexPosition, 1.0 );\n\
+            }");
+
+    shader->setFragmentShaderCode("#version 330 core\n \
+            uniform struct LightInfo {\n\
+                vec4 position;\n\
+                vec3 intensity;\n\
+            } light;\n\
+            uniform struct LineInfo {\n\
+                float width;\n\
+                vec4 color;\n\
+            } line;\n\
+            uniform vec3 ka;            // Ambient reflectivity\n\
+            uniform vec3 kd;            // Diffuse reflectivity\n\
+            uniform vec3 ks;            // Specular reflectivity\n\
+            uniform float shininess;    // Specular shininess factor\n\
+            in WireframeVertex {\n\
+                vec3 position;\n\
+                vec3 normal;\n\
+                noperspective vec4 edgeA;\n\
+                noperspective vec4 edgeB;\n\
+                flat int configuration;\n\
+            } fs_in;\n\
+            out vec4 fragColor;\n\
+            vec3 adsModel( const in vec3 pos, const in vec3 n )\n\
+            {\n\
+                // Calculate the vector from the light to the fragment\n\
+                vec3 s = normalize( vec3( light.position ) - pos );\n\
+                // Calculate the vector from the fragment to the eye position (the\n\
+                // origin since this is in \"eye\" or \"camera\" space\n\
+                vec3 v = normalize( -pos );\n\
+                // Refleft the light beam using the normal at this fragment\n\
+                vec3 r = reflect( -s, n );\n\
+                // Calculate the diffus component\n\
+                vec3 diffuse = vec3( max( dot( s, n ), 0.0 ) );\n\
+                // Calculate the specular component\n\
+                vec3 specular = vec3( pow( max( dot( r, v ), 0.0 ), shininess ) );\n\
+                // Combine the ambient, diffuse and specular contributions\n\
+                return light.intensity * ( ka + kd * diffuse + ks * specular );\n\
+            }\n\
+            vec4 shadeLine( const in vec4 color )\n\
+            {\n\
+                // Find the smallest distance between the fragment and a triangle edge\n\
+                float d;\n\
+                if ( fs_in.configuration == 0 )\n\
+                {\n\
+                    // Common configuration\n\
+                    d = min( fs_in.edgeA.x, fs_in.edgeA.y );\n\
+                    d = min( d, fs_in.edgeA.z );\n\
+                }\n\
+                else\n\
+                {\n\
+                    // Handle configuration where screen space projection breaks down\n\
+                    // Compute and compare the squared distances\n\
+                    vec2 AF = gl_FragCoord.xy - fs_in.edgeA.xy;\n\
+                    float sqAF = dot( AF, AF );\n\
+                    float AFcosA = dot( AF, fs_in.edgeA.zw );\n\
+                    d = abs( sqAF - AFcosA * AFcosA );\n\
+                    vec2 BF = gl_FragCoord.xy - fs_in.edgeB.xy;\n\
+                    float sqBF = dot( BF, BF );\n\
+                    float BFcosB = dot( BF, fs_in.edgeB.zw );\n\
+                    d = min( d, abs( sqBF - BFcosB * BFcosB ) );\n\
+                    // Only need to care about the 3rd edge for some configurations.\n\
+                    if ( fs_in.configuration == 1 || fs_in.configuration == 2 || fs_in.configuration == 4 )\n\
+                    {\n\
+                        float AFcosA0 = dot( AF, normalize( fs_in.edgeB.xy - fs_in.edgeA.xy ) );\n\
+                        d = min( d, abs( sqAF - AFcosA0 * AFcosA0 ) );\n\
+                    }\n\
+                    d = sqrt( d );\n\
+                }\n\
+                // Blend between line color and phong color\n\
+                float mixVal;\n\
+                if ( d < line.width - 1.0 )\n\
+                {\n\
+                    mixVal = 1.0;\n\
+                }\n\
+                else if ( d > line.width + 1.0 )\n\
+                {\n\
+                    mixVal = 0.0;\n\
+                }\n\
+                else\n\
+                {\n\
+                    float x = d - ( line.width - 1.0 );\n\
+                    mixVal = exp2( -2.0 * ( x * x ) );\n\
+                }\n\
+                return mix( color, line.color, mixVal );\n\
+            }\n\
+            void main()\n\
+            {\n\
+                // Calculate the color from the phong model\n\
+                vec4 color = vec4( adsModel( fs_in.position, normalize( fs_in.normal ) ), 1.0 );\n\
+                fragColor = shadeLine( color );\n\
+            }");
+
+    shader->setGeometryShaderCode("#version 330 core\n \
+        layout( triangles ) in;\n\
+        layout( triangle_strip, max_vertices = 3 ) out;\n\
+        in EyeSpaceVertex {\n\
+            vec3 position;\n\
+            vec3 normal;\n\
+        } gs_in[];\n\
+        out WireframeVertex {\n\
+            vec3 position;\n\
+            vec3 normal;\n\
+            noperspective vec4 edgeA;\n\
+            noperspective vec4 edgeB;\n\
+            flat int configuration;\n\
+        } gs_out;\n\
+        uniform mat4 viewportMatrix;\n\
+        const int infoA[]  = int[]( 0, 0, 0, 0, 1, 1, 2 );\n\
+        const int infoB[]  = int[]( 1, 1, 2, 0, 2, 1, 2 );\n\
+        const int infoAd[] = int[]( 2, 2, 1, 1, 0, 0, 0 );\n\
+        const int infoBd[] = int[]( 2, 2, 1, 2, 0, 2, 1 );\n\
+        vec2 transformToViewport( const in vec4 p )\n\
+        {\n\
+            return vec2( viewportMatrix * ( p / p.w ) );\n\
+        }\n\
+        void main()\n\
+        {\n\
+            gs_out.configuration = int(gl_in[0].gl_Position.z < 0) * int(4)\n\
+                + int(gl_in[1].gl_Position.z < 0) * int(2)\n\
+                + int(gl_in[2].gl_Position.z < 0);\n\
+            // If all vertices are behind us, cull the primitive\n\
+            if (gs_out.configuration == 7)\n\
+                return;\n\
+            // Transform each vertex into viewport space\n\
+            vec2 p[3];\n\
+            p[0] = transformToViewport( gl_in[0].gl_Position );\n\
+            p[1] = transformToViewport( gl_in[1].gl_Position );\n\
+            p[2] = transformToViewport( gl_in[2].gl_Position );\n\
+            if (gs_out.configuration == 0)\n\
+            {\n\
+                // Common configuration where all vertices are within the viewport\n\
+                gs_out.edgeA = vec4(0.0);\n\
+                gs_out.edgeB = vec4(0.0);\n\
+                // Calculate lengths of 3 edges of triangle\n\
+                float a = length( p[1] - p[2] );\n\
+                float b = length( p[2] - p[0] );\n\
+                float c = length( p[1] - p[0] );\n\
+                // Calculate internal angles using the cosine rule\n\
+                float alpha = acos( ( b * b + c * c - a * a ) / ( 2.0 * b * c ) );\n\
+                float beta = acos( ( a * a + c * c - b * b ) / ( 2.0 * a * c ) );\n\
+                // Calculate the perpendicular distance of each vertex from the opposing edge\n\
+                float ha = abs( c * sin( beta ) );\n\
+                float hb = abs( c * sin( alpha ) );\n\
+                float hc = abs( b * sin( alpha ) );\n\
+                // Now add this perpendicular distance as a per-vertex property in addition to\n\
+                // the position and normal calculated in the vertex shader.\n\
+                // Vertex 0 (a)\n\
+                gs_out.edgeA = vec4( ha, 0.0, 0.0, 0.0 );\n\
+                gs_out.normal = gs_in[0].normal;\n\
+                gs_out.position = gs_in[0].position;\n\
+                gl_Position = gl_in[0].gl_Position;\n\
+                EmitVertex();\n\
+                // Vertex 1 (b)\n\
+                gs_out.edgeA = vec4( 0.0, hb, 0.0, 0.0 );\n\
+                gs_out.normal = gs_in[1].normal;\n\
+                gs_out.position = gs_in[1].position;\n\
+                gl_Position = gl_in[1].gl_Position;\n\
+                EmitVertex();\n\
+                // Vertex 2 (c)\n\
+                gs_out.edgeA = vec4( 0.0, 0.0, hc, 0.0 );\n\
+                gs_out.normal = gs_in[2].normal;\n\
+                gs_out.position = gs_in[2].position;\n\
+                gl_Position = gl_in[2].gl_Position;\n\
+                EmitVertex();\n\
+                // Finish the primitive off\n\
+                EndPrimitive();\n\
+            }\n\
+            else\n\
+            {\n\
+                // Viewport projection breaks down for one or two vertices.\n\
+                // Caclulate what we can here and defer rest to fragment shader.\n\
+                // Since this is coherent for the entire primitive the conditional\n\
+                // in the fragment shader is still cheap as all concurrent\n\
+                // fragment shader invocations will take the same code path.\n\
+                // Copy across the viewport-space points for the (up to) two vertices\n\
+                // in the viewport\n\
+                gs_out.edgeA.xy = p[infoA[gs_out.configuration]];\n\
+                gs_out.edgeB.xy = p[infoB[gs_out.configuration]];\n\
+                // Copy across the viewport-space edge vectors for the (up to) two vertices\n\
+                // in the viewport\n\
+                gs_out.edgeA.zw = normalize( gs_out.edgeA.xy - p[ infoAd[gs_out.configuration] ] );\n\
+                gs_out.edgeB.zw = normalize( gs_out.edgeB.xy - p[ infoBd[gs_out.configuration] ] );\n\
+                // Pass through the other vertex attributes\n\
+                gs_out.normal = gs_in[0].normal;\n\
+                gs_out.position = gs_in[0].position;\n\
+                gl_Position = gl_in[0].gl_Position;\n\
+                EmitVertex();\n\
+                gs_out.normal = gs_in[1].normal;\n\
+                gs_out.position = gs_in[1].position;\n\
+                gl_Position = gl_in[1].gl_Position;\n\
+                EmitVertex();\n\
+                gs_out.normal = gs_in[2].normal;\n\
+                gs_out.position = gs_in[2].position;\n\
+                gl_Position = gl_in[2].gl_Position;\n\
+                EmitVertex();\n\
+                // Finish the primitive off\n\
+                EndPrimitive();\n\
+            }\n\
+        }");
+  
+    pass->setShaderProgram(shader);
+    technique->addRenderPass(pass); 
+    effect->addTechnique(technique);
+    m_pMaterial->setEffect(effect);
+
+    /* 
     QFile vert("ui/shaders/axis_vert.glsl");
     QFile frag("ui/shaders/axis_frag.glsl");
     QFile geom("ui/shaders/axis_geom.glsl");
@@ -618,12 +834,15 @@ Axis::Axis(Qt3DRender::QLayer* layer, Qt3DCore::QNode *parent)
     else {
         std::cout << "Axis shaders loaded OK.\n";
         while (!vert.atEnd()) {
+            //std::cout << "loading vert shader\n";
             shader->setVertexShaderCode(vert.readLine());
         }
         while (!frag.atEnd()) {
+            //std::cout << "loading frag shader\n";
             shader->setFragmentShaderCode(frag.readLine());
         }
         while (!geom.atEnd()) {
+            //std::cout << "loading geom shader\n";
             shader->setGeometryShaderCode(geom.readLine());
         }
 
@@ -632,9 +851,10 @@ Axis::Axis(Qt3DRender::QLayer* layer, Qt3DCore::QNode *parent)
         effect->addTechnique(technique);
         m_pMaterial->setEffect(effect);
     }
+    */
 
     addComponent(layer);
-    //addComponent(m_pTransform);
+    addComponent(m_pTransform);
     addComponent(m_pMaterial);
     addComponent(m_pMesh);
 

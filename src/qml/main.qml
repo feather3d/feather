@@ -47,7 +47,7 @@ ApplicationWindow {
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.bottom: timeEditor.top
+        anchors.bottom: keyEditor.top
         orientation: Qt.Horizontal
 
         SceneGraphEditor{
@@ -56,25 +56,6 @@ ApplicationWindow {
             properties: properties
             fieldModel: fields
         }
-
-        // temp viewport till I can get vulkan working in qml
-        /*
-        Rectangle {
-            id: viewportTmp
-            Layout.fillWidth: true
-            color: "grey"
-
-            Text {
-                anchors.fill: parent
-                text: "WIP\nWaiting on Qt Vulkan"
-                color: "darkred"
-                horizontalAlignment: Text.AlignHCenter
-                verticalAlignment: Text.AlignVCenter
-                font.bold: true 
-                font.pixelSize: 42
-             }
-        }
-        */
 
         ViewportEditor {
             id: viewportEditor
@@ -107,6 +88,19 @@ ApplicationWindow {
 
         }
 
+    }
+
+    Item {
+        id: keyEditor
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: timeEditor.top
+        height: 100 
+
+        KeyframeEditor {
+            id: keyframeEditor
+            anchors.fill: parent
+        }
     }
 
     TimeEditor {
@@ -149,6 +143,12 @@ ApplicationWindow {
 
     Component.onCompleted: {
         //window.showFullScreen()        
+        keyframeEditor.startTimeChanged.connect(timeEditor.setStartTime)
+        keyframeEditor.endTimeChanged.connect(timeEditor.setEndTime)
+        keyframeEditor.currentTimeChanged.connect(timeEditor.setCurrentTime)
+        timeEditor.startTimeChanged.connect(keyframeEditor.setStartTime)
+        timeEditor.endTimeChanged.connect(keyframeEditor.setEndTime)
+        timeEditor.currentTimeChanged.connect(keyframeEditor.setCurrentTime)
     }
 
     //Material {}

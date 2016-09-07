@@ -256,7 +256,7 @@ namespace feather
 
     /* This will return all the node uids connected to node */
     status get_node_connected_uids(int uid, std::vector<int>& uids) {
-        typedef typename boost::graph_traits<FSceneGraph>::out_edge_iterator ei;
+        typedef boost::graph_traits<FSceneGraph>::out_edge_iterator ei;
         std::pair<ei,ei> p = boost::out_edges(uid,sg);
 
         //std::cout << "TEST edge iter " << *p.first << std::endl;
@@ -270,20 +270,29 @@ namespace feather
     };
 
 
-    /* This will return all the node uids connected to node's fid */
+    /* This will return all the node uids connected to node's fid
+     * IMPORTANT NOTE !!!!
+     * This only works for OUT fid's; IN fids will return nothing.
+     * Instead use get_fieldBase_array() to get the all the uids
+     * connected to a input field.
+     */
     status get_node_connected_uids(int uid, int fid, std::vector<int>& uids) {
-        typedef typename boost::graph_traits<FSceneGraph>::out_edge_iterator ei;
+        typedef boost::graph_traits<FSceneGraph>::out_edge_iterator ei;
+
         std::pair<ei,ei> p = boost::out_edges(uid,sg);
 
+        //std::cout << "get_node_connected_uids(" << uid << "," << fid << ")\n";
         for(;p.first!=p.second;++p.first){
+            //std::cout << "source=" << source(*p.first, sg) << std::endl;
+            //std::cout << "target=" << target(*p.first, sg) << std::endl;
             if(sg[*p.first].f1 == fid)
                 uids.push_back(target(*p.first,sg));
         }
 
         return status();
-    };
+    }; 
 
-    
+
     /* return a description of how the node is to be draw, if at all */
     status get_node_draw_items(int nid, draw::DrawItems& items) {
         plugins.get_draw_items(nid,items);

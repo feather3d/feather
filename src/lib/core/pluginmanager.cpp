@@ -343,5 +343,21 @@ bool PluginManager::add_parameter_to_list(std::string cmd, int key, std::string 
         return true;
     }
 
+    // see if the value is a int array
+    std::vector<int> iaval;
+    r = parse(first,last, *(int_), iaval);
+    if(r && first==last) {
+        list.addIntArrayParameter(param_name,iaval);
+        return true;
+    }
+
+    // see if the value is a real array
+    std::vector<double> raval;
+    r = parse(first,last, *(float_), raval);
+    if(r && first==last) {
+        list.addRealArrayParameter(param_name,raval);
+        return true;
+    }
+
     return false;
 }

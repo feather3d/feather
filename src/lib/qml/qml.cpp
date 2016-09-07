@@ -168,6 +168,19 @@ bool SceneGraph::connected(unsigned int uid, unsigned int fid)
     return conn; 
 }
 
+QList<int> SceneGraph::connected_uids(unsigned int uid, unsigned int fid)
+{
+    QList<int> list;
+    std::vector<int> uids;
+    feather::plugin::get_node_connected_uids(uid,fid,uids);
+    std::cout << "connected_uids(" << uid << "," << fid << ") uids count = " << uids.size() << std::endl;
+    for(auto uid : uids) {
+        std::cout << "added uid " << uid << " to list\n";
+        list.push_back(uid);
+    }
+    return list;
+}
+
 // Field
 Field::Field(QObject* parent): m_uid(0),m_nid(0),m_fid(0),m_boolVal(false),m_intVal(0),m_realVal(0.0),m_connected(false)
 {

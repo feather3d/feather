@@ -308,7 +308,7 @@ status qml::command::get_field_val(unsigned int uid, unsigned int nid, unsigned 
     fielddata f = static_cast<fielddata>(scenegraph::get_fieldBase(uid,nid,fid,conn));
     if(!f)
         std::cout << uid << "," << nid << "," << fid << " NULL REAL FIELD\n";
-    else  
+    else 
         val=f->value;
     return status();
 }

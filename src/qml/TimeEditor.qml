@@ -35,6 +35,10 @@ Rectangle {
 
     property int uid: 0 
 
+    signal startTimeChanged(double time)
+    signal endTimeChanged(double time)
+    signal currentTimeChanged(double time)
+
     FieldValue {
         id: stime
         width: 50
@@ -119,6 +123,17 @@ Rectangle {
         fid: 6
     }
 
+    function setStartTime(time){
+        slider.spos = time
+    }
+
+    function setEndTime(time){
+        slider.epos = time
+    }
+
+    function setCurrentTime(time){
+        cpos.realVal = time
+    }
 
     function updateFields(uid,nid,fid) {
         stime.updateValue()
@@ -130,6 +145,9 @@ Rectangle {
         bar.cpos = cpos.realVal
         bar.updateBar()
         timecode.pos = cpos.realVal
+        startTimeChanged(stime.realValue)
+        endTimeChanged(etime.realValue)
+        currentTimeChanged(cpos.realValue)
     }
 
     function nodeSelected() {
@@ -154,6 +172,7 @@ Rectangle {
         bar.cpos = cpos.realVal
         bar.updateBar()
         controller.cpos = cpos.realVal
+        currentTimeChanged(cpos.realVal)
     }
 
     function barCposChanged() {

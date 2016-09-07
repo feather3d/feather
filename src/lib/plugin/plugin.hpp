@@ -74,6 +74,7 @@ namespace feather
         unsigned int get_node_id(unsigned int uid, status& error);
 
         // get all nodes connected to uid
+        // This will only return uids connected to the out fields
         status get_node_connected_uids(unsigned int uid, std::vector<int>& uids);
 
         // get all nodes connected to fid

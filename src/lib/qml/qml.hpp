@@ -136,6 +136,7 @@ class SceneGraph : public QObject
         Q_INVOKABLE void triggerUpdate();
         Q_INVOKABLE void add_node_to_layer(int uid, int lid);
         Q_INVOKABLE bool connected(unsigned int uid, unsigned int fid);
+        Q_INVOKABLE QList<int> connected_uids(unsigned int uid, unsigned int fid);
 
     signals:
         void nodeSelected(); // this will inform the widget to update it's selection from the selection manager
