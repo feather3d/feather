@@ -10,8 +10,8 @@ Feather
 Current Status
 ---------------
 Feather is still a WIP that has not yet reached v0.1. I hope to release v0.1 sometime in 2016. Below is a list of tasks to be completed for the v0.1 release.
-* Integrate Vulkan viewport into Qt (in progress)
-* Feather file format IO
+* Finish up Keyframe Editor
+* Add DopeSheet Editor
 * Undo/Redo system
 * Finish up nodes
 
@@ -31,6 +31,8 @@ v0.1 Features
 * SceneGraph Editor
 * Field Editor
 * Layer Editor
+* Keyframe Editor
+* DopeSheet Editor
 * 3D Viewport Editor
 * Objects - Curves, Plane, Cube, MeshShape
 * Modify Tools - Bevel, Extrude, Inset
