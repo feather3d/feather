@@ -37,10 +37,10 @@ Rectangle {
     property double etime: 10.0 // seconds
     property double fps: 24.0
     property double cpos: 5 
-    property var list: [] 
+    //property var list: [] 
     property double minVal: 0 // current minimum displayed value
     property double maxVal: 10 // current maximum displayed value
-    property int cid: 0 // used as curve model id when inserting key positions
+    //property int cid: 0 // used as curve model id when inserting key positions
 
     signal startTimeChanged(double time)
     signal endTimeChanged(double time)
@@ -62,6 +62,10 @@ Rectangle {
         track.requestPaint()
     }
 
+    onUidChanged: {
+        update_track()
+    }
+
     Canvas {
         id: track 
         contextType: "2d"
@@ -73,48 +77,78 @@ Rectangle {
             context.reset()
 
             // draw track time lines
-            context.beginPath()
-            context.strokeStyle = "#000000"
             draw_track(context)
 
-            curvemodel.clear()
-            cid = 0
-
             // draw keys
-            context.beginPath()
-            context.strokeStyle = "#fb7e14"
             if(uid) {
-                for(var i=0; i < list.length; i++)
-                    draw_key(context,list[i])
+                for(var i=0; i < curvemodel.count; i++)
+                    draw_key(context,curvemodel.get(i))
             }
 
             // draw curve
-            context.beginPath()
-            context.strokeStyle = "#054552"
             draw_curve(context)
-
         }
 
 
         MouseArea {
             anchors.fill: parent
             acceptedButtons: Qt.LeftButton | Qt.RightButton
+            property bool movekey: false
             property bool moveframe: false
             property int mouseX: 0
             property int mouseY: 0
+            hoverEnabled: true
+
+            onDoubleClicked: {
+                var selecttolerance = 4
+                for(var i=0; i < curvemodel.count; i++){
+                    var key = curvemodel.get(i)
+                    if( (key.x + selecttolerance) >= mouse.x &&
+                        (key.x - selecttolerance) <= mouse.x &&
+                        (key.y + selecttolerance) >= mouse.y &&
+                        (key.y - selecttolerance) <= mouse.y) {
+                        if(key.selected)
+                            key.selected = false
+                        else
+                            key.selected = true
+                    }
+                }
+                mouseX = mouse.x
+                mouseY = mouse.y
+                track.requestPaint()
+             }
 
             onPressed: {
-                moveframe = true
+                if(mouse.button == Qt.LeftButton){
+                    movekey = false
+                    moveframe = true
+                }
+                else if(mouse.button == Qt.RightButton){
+                    movekey = true
+                    moveframe = false
+                }
                 mouseX = mouse.x
                 mouseY = mouse.y
             }
 
             onPositionChanged: {
+                var selecttolerance = 4
+                for(var i=0; i < curvemodel.count; i++){
+                    var key = curvemodel.get(i)
+                    if( (key.x + selecttolerance) >= mouse.x &&
+                        (key.x - selecttolerance) <= mouse.x &&
+                        (key.y + selecttolerance) >= mouse.y &&
+                        (key.y - selecttolerance) <= mouse.y) {
+                        key.hover = true
+                    } else {
+                        key.hover = false
+                    }
+                }
                 if(moveframe){
                     var dX = mouseX - mouse.x
                     var dY = mouseY - mouse.y
-                    minVal += dY/10.0
-                    maxVal += dY/10.0
+                    minVal -= dY/10.0
+                    maxVal -= dY/10.0
                     // Note - send back a signal to the timebar to update it's start and end times 
                     var length = (etime - stime)
                     var pps = width/length // pixels per second 
@@ -123,41 +157,75 @@ Rectangle {
                     startTimeChanged(stime)
                     endTimeChanged(etime)
                     //console.log("y:",mouse.y,", min:",minVal,", max:",maxVal)
+                    mouseX = mouse.x
+                    mouseY = mouse.y
+                 }
+                else if(movekey){
+                    var dX = parseFloat(mouseX - mouse.x)
+                    var dY = parseFloat(mouseY - mouse.y)
+                    var length = (etime - stime)
+                    var pps = parseFloat(width/length)
+                    var ppv = parseFloat(height/(maxVal - minVal))
+                    for(var i=0; i < curvemodel.count; i++){
+                        var key = curvemodel.get(i)
+                        if(key.selected){
+                            keyframe.uid = key.uid
+                            var dVal = dY/ppv
+                            // This is only for int values, add type check later
+                            if(dVal >= 1 || dVal <= -1){
+                                keyframe.fid = 4 // value 
+                                keyframe.intVal += dY/ppv
+                                mouseY = mouse.y
+                            }
+                            keyframe.fid = 3 // time
+                            keyframe.realVal -= dX/pps
+                        }
+                    }
                 }
                 mouseX = mouse.x
-                mouseY = mouse.y
+                //mouseY = mouse.y
                 track.requestPaint()
             }
 
             onReleased: {
                 moveframe = false
+                movekey = false
             }
         }
     }
 
-    function draw_key(context,keyuid) {
-        keyframe.uid = keyuid
+    function draw_key(context,key) {
+        keyframe.uid = key.uid
         keyframe.fid = 4
         var val = keyframe.intVal
         keyframe.fid = 3
         var keyTime = keyframe.realVal
         var ppv = height/(maxVal - minVal)
-        //context.moveTo(100,ppv*(maxVal-val))
         var length = (etime - stime)
         var pps = width/length // pixels per second 
         var keyX = (keyTime - stime) * pps
-        //var keyX = (stime-keyTime) * pps
         var keyY = ppv*(maxVal-val)
-        //console.log("key uid:",keyuid,", type=",keyframe.type,", x=",keyX,", y=",keyY,", value=",keyTime)
+        context.beginPath()
+        context.lineWidth = 1
+
+        if(key.hover)
+            context.strokeStyle = "#00ff00"
+        else
+            context.strokeStyle = "#fb7e14"
+        if(key.selected)
+            context.strokeStyle = "#ff0000"
+
         context.rect(keyX-4,keyY-4,8,8)
         context.stroke()
-        curvemodel.insert(cid,{"x":keyX,"y":keyY})
-        cid++
-        //console.log("keyframe value:",val)
+        key.x = keyX
+        key.y = keyY
     }
 
     function draw_curve(context) {
         if(curvemodel.count){
+            context.beginPath()
+            context.lineWidth = 1 
+            context.strokeStyle = "#054552"
             context.moveTo(curvemodel.get(0).x,curvemodel.get(0).y)
             for(var i=1; i < curvemodel.count; i++){
                 context.lineTo(curvemodel.get(i).x,curvemodel.get(i).y)
@@ -177,10 +245,19 @@ Rectangle {
         var secondX = (Math.floor(stime) - stime) * pps 
         var cposX = (cpos - stime) * pps
         var cframe = Math.floor(cpos*fps)
-
         var csec = Math.floor(stime)
+
+        // cpos 
+        context.beginPath()
+        context.strokeStyle = "#ff0000"
+        context.lineWidth = ppf 
+        context.moveTo(cposX,0)
+        context.lineTo(cposX,height)
+        context.stroke()
+
         while(secondX < width) {
             // draw lines
+            context.beginPath()
             context.strokeStyle = "#000000"
             context.lineWidth = 1
             context.moveTo(secondX,0)
@@ -192,25 +269,56 @@ Rectangle {
             csec += 1
         }
 
-        // cpos 
+        // Draw the horizontal lines
+        // find 0 point
+        var ppv = height/(maxVal-minVal) // pixels per value 1
+        var zeroY = maxVal*ppv
+        // zero marker
         context.beginPath()
-        context.strokeStyle = "#ff0000"
-        context.lineWidth = ppf 
-        context.moveTo(cposX,0)
-        context.lineTo(cposX,height)
+        context.strokeStyle = "#ff00ff"
+        context.lineWidth = 1 
+        context.moveTo(0,zeroY)
+        context.lineTo(width,zeroY)
         context.stroke()
+        var ppvmult = 0 // pixel per value multiplier
+        var ppvstep = ppv // pixel step to the next horizontal line
+        while(ppvstep > 10 && ppvstep <= 100){
+            ppvmult++
+            ppvstep = ppv * ppvmult
+        }
+        var posvalmarkY = zeroY - ppvstep
+        var negvalmarkY = zeroY + ppvstep
+        context.strokeStyle = "#aaaaaa"
 
+        // draw positive lines
+        while(posvalmarkY > 0){
+            context.beginPath()
+            context.moveTo(0,posvalmarkY)
+            context.lineTo(width,posvalmarkY)
+            context.stroke()
+            posvalmarkY = posvalmarkY - ppvstep
+        }
+
+        // draw negative lines
+        while(negvalmarkY < height){
+            context.beginPath()
+            context.moveTo(0,negvalmarkY)
+            context.lineTo(width,negvalmarkY)
+            context.stroke()
+            negvalmarkY = negvalmarkY + ppvstep
+        }
+ 
     }
 
     // update the track keys
     function load_keys() {
         // get all the key uids
+        curvemodel.clear()
         var tlist = SceneGraph.connected_uids(uid,4) 
         for(var i=0; tlist.length > i; i++){
             console.log("adding ",tlist[i]," to list")
-            list[i] = tlist[i]
+            curvemodel.insert(i,{"uid":tlist[i],"x":0,"y":0,"selected":false,"hover":false})
         } 
-        console.log("there are ",list.length," keys")
     }
 
     function draw_keys() {
@@ -218,6 +326,7 @@ Rectangle {
     }
 
     function update_track() {
+        console.log("UPDATEING TRACK")
         load_keys()
         track.requestPaint()
     }
