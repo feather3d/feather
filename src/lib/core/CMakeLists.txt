@@ -8,6 +8,7 @@ FIND_PACKAGE(Qt5OpenGL REQUIRED)
 SET(QT_USE_QTOPENGL TRUE)
 
 SET(feather_core_SRCS
+    tools.cpp
     pluginmanager.cpp
 )
 
@@ -49,6 +50,7 @@ SET(feather_core_HDRS
     types.hpp
     singleton.hpp
     scenegraph.hpp
+    tools.hpp
     pluginmanager.hpp
     types.hpp
     state.hpp

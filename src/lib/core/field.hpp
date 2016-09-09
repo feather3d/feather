@@ -65,7 +65,9 @@ namespace feather
             Time=18,
             Node=19,
             NodeArray=20,
-            START=21
+            Matrix3x3=21,
+            Matrix4x4=22,
+            START=23
         };
 
         // TODO
@@ -114,7 +116,9 @@ namespace feather
         template <> bool can_connect<Node,Node>() { return true; };
         template <> bool can_connect<Node,NodeArray>() { return true; };
         template <> bool can_connect<Time,Time>() { return true; };
-       
+        template <> bool can_connect<Matrix3x3,Matrix3x3>() { return true; };
+        template <> bool can_connect<Matrix4x4,Matrix4x4>() { return true; };
+      
         template <int _Type1, int _Type2>
         struct can_types_connect {
             static bool exec(int t1, int t2) {

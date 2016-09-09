@@ -259,7 +259,9 @@ class Field: public QObject
             RGBAArray=field::RGBAArray,
             Time=field::Time,
             Node=field::Node,
-            NodeArray=field::NodeArray
+            NodeArray=field::NodeArray,
+            Matrix3x3=field::Matrix3x3,
+            Matrix4x4=field::Matrix4x4
         };
 
     signals:
