@@ -17,7 +17,7 @@ Feather is still a WIP that has not yet reached v0.1. I hope to release v0.1 som
 
 Introduction
 ---------------
-Feather is a 3D application targeted for small studios and indie animators. Feather focuses on being easy to modify with idea being that it's a tool that the artist can change to suite their needs. This could be modifying the UI, creating new nodes or commands, or using Feather from the command line. This is achieved by having a fully scripted QML interface and a very simple way of creating plugins. Everything in Feather is a node who's output fields can be plugged into any input node field of the same type. This provides the user with a great amount of flexiblity when dealing with complex problems.
+Feather3D is for artists that want a tool that can be modified to suit their needs. Feather's strength is in it's scenegraph where everything is driven by nodes. These nodes are easy to make yourself and there is no need to know, or build, the feather application in order to make your own; someone with moderate C++ experience should be able to create their own with little effort. Feather's interface is built off of Qt's QML language making it very easy to modify. And, if you would like to get rid of the interface all together, you can also do that and create your own from scratch. Feather was originally started as a clone of Wings3D but the inclusion of the node based scenegraph made it possible to easily add in animation tools as well so some Maya influences have been added.
 
 v0.1 Features
 ---------------

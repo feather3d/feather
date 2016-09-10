@@ -1234,7 +1234,7 @@ Viewport::Viewport(Qt3DCore::QNode* parent)
     //m_pMouseInput->setController(m_pMouseController);
  
     m_pGrid = new Grid(m_pFrameGraph->layer(),this);
-    m_pAxis = new Axis(m_pFrameGraph->layer(),this);
+    //m_pAxis = new Axis(m_pFrameGraph->layer(),this);
     //m_pTorus = new Qt3DExtras::QTorusMesh();
 
     m_pPickingSettings->setPickMethod(Qt3DRender::QPickingSettings::TrianglePicking);
