@@ -78,6 +78,20 @@ status PluginManager::load_plugins()
     return status();
 }
 
+status PluginManager::fields_init(int node, field::Fields&  fields)
+{
+    std::cout << "field init node " << node << std::endl;
+    std::for_each(m_plugins.begin(),m_plugins.end(), call_fields_init(node,fields) );
+    return status();
+}
+
+status PluginManager::update_properties(int node, field::Fields&  fields)
+{
+    std::cout << "update properties for node " << node << std::endl;
+    std::for_each(m_plugins.begin(),m_plugins.end(), call_update_property(node,fields) );
+    return status();
+}
+
 status PluginManager::do_it(int node, field::Fields&  fields)
 {
     std::cout << "call node " << node << std::endl;
@@ -108,6 +122,8 @@ status PluginManager::load_node(PluginData &node)
     node.name = (std::string(*)())dlsym(node.handle, "name");
     node.description = (std::string(*)())dlsym(node.handle, "description");
     node.author = (std::string(*)())dlsym(node.handle, "author");
+    node.fields_init = (status(*)(int,field::Fields&))dlsym(node.handle, "fields_init");
+    node.update_properties = (status(*)(int,field::Fields&))dlsym(node.handle, "update_properties");
     node.do_it = (status(*)(int,field::Fields&))dlsym(node.handle, "do_it");
     //node.draw_it = (status(*)(int,draw::DrawItems&))dlsym(node.handle, "draw_it");
     node.node_exist = (bool(*)(int))dlsym(node.handle, "node_exist");

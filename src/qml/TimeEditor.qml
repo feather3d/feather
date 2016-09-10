@@ -47,7 +47,7 @@ Rectangle {
         anchors.left: parent.left
         uid: SceneGraph.get_node_by_name("time")
         nid: 4
-        fid: 3
+        fid: 1
     }
     
     Rectangle {
@@ -77,7 +77,7 @@ Rectangle {
         anchors.right: controller.left
         uid: SceneGraph.get_node_by_name("time")
         nid: 4
-        fid: 4
+        fid: 2
     }
 
     TimeController {
@@ -113,14 +113,14 @@ Rectangle {
         id: cpos
         uid: SceneGraph.get_node_by_name("time")
         nid: 4
-        fid: 5
+        fid: 3
     }
 
     Field {
         id: fps 
         uid: SceneGraph.get_node_by_name("time")
         nid: 4
-        fid: 6
+        fid: 4
     }
 
     function setStartTime(time){

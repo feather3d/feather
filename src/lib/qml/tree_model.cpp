@@ -381,7 +381,7 @@ void TreeModel::loadChildren(const int uid, Leaf* parent)
 
     // recursive loop through each child node
     std::vector<int> children;
-    int fid = 2; // we only want to get the nodes for child field
+    int fid = 202; // we only want to get the nodes for child field
     feather::qml::command::get_node_connected_uids(uid,fid,children);
    
     if(!children.size())

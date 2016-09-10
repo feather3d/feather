@@ -43,12 +43,12 @@ Rectangle {
         id: track_int_field
         uid: 0
         nid: 425
-        fid: 4
+        fid: 2
     }
 
     Field {
         id: key_field
-        fid: 3
+        fid: 1
     } 
 
     Canvas {
@@ -103,7 +103,7 @@ Rectangle {
             if ( track_uid != 0 ) {
                 // get all the key uids
                 track_int_field.uid = track_uid
-                track_int_field.fid = 4
+                track_int_field.fid = 2
                 for ( var i = 0; i < track_int_field.connections.length && i < 100; i++ ) {
                     key_field.uid = track_int_field.connections[i].suid
                     key_field.nid = 420

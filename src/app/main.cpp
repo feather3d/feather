@@ -223,45 +223,8 @@ int main(int argc, char **argv)
     bool p = load_config(cnfg);
 
     QQmlApplicationEngine view(cnfg.mainpath.c_str());
-    //QQmlApplicationEngine view;
-    //QQuickView view;
-
-    //view.aspectEngine()->registerAspect(new Qt3D::QRenderAspect());
-    //view.aspectEngine()->registerAspect(new Qt3D::QInputAspect());
-
-    /*
-    QVariantMap data;
-    data.insert(QStringLiteral("surface"), QVariant::fromValue(static_cast<QQmlApplicationEngine *>(&view)));
-    data.insert(QStringLiteral("eventSource"), QVariant::fromValue(&view));
-    view.aspectEngine()->setData(data);
-    */
-
-    /*
-    Qt3D::Quick::QQmlAspectEngine engine;
-
-    engine.aspectEngine()->registerAspect(new Qt3D::QRenderAspect());
-    engine.aspectEngine()->registerAspect(new Qt3D::QInputAspect());
-
-    QVariantMap data;
-    data.insert(QStringLiteral("surface"), QVariant::fromValue(static_cast<QQmlApplicationEngine *>(&view)));
-    data.insert(QStringLiteral("eventSource"), QVariant::fromValue(&view));
-    engine.aspectEngine()->setData(data);
-
-    //engine.setSource(QUrl(QStringLiteral("main.qml")));
-    engine.setSource(QUrl(cnfg.mainpath.c_str()));
-
-    //view.show();
-    */
 
     execReturn = app.exec();
-
-    /* 
-    {
-        //QQmlApplicationEngine view("ui/main.qml");
-        QQmlApplicationEngine view(cnfg.mainpath.c_str());
-        execReturn = app.exec();
-    }
-    */
 
     return execReturn;
 };

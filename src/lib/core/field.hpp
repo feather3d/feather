@@ -147,7 +147,7 @@ namespace feather
     namespace feather {\
         template <> struct add_fields<__node,__field_key> {\
             static status exec(field::Fields& fields) {\
-                 field::Field<__type>* f = new field::Field<__type>();\
+                field::Field<__type>* f = new field::Field<__type>();\
                 f->id=__field_key;\
                 f->value=__default_value;\
                 f->type=__type_enum;\

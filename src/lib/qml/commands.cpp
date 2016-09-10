@@ -39,8 +39,8 @@ status qml::command::init() {
     int root = add_node(1,"root"); // Empty 
     int time = add_node(4,"time"); // Time 
     int camera = add_node(2,"camera"); // Camera 
-    connect_nodes(root,2,time,1);
-    connect_nodes(root,2,camera,1);
+    connect_nodes(root,202,time,201);
+    connect_nodes(root,202,camera,201);
 
     //int uid1 = add_node(320,"CubeShape"); // PolyShape
     //scenegraph::connect(0,4,uid1,1); // connect PolyCube.out to PolyShape.in

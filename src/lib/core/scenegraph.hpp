@@ -96,15 +96,6 @@ namespace feather
 
             // this is currently needed to update sg
             smg::Instance()->add_state(static_cast<selection::Type>(sg[0].type),0,sg[0].node);
- 
-            /* 
-            for_each(sg.begin(); sg.end(); [](int v){
-                    // clear the edges
-                    boost::clear_vertex(v,sg);
-                    // clear the vertexes
-                    boost::remove_vertex(v,sg);
-                    });
-            */
         };
 
         int get_min_uid() { return plugins.min_uid(); };
@@ -133,12 +124,6 @@ namespace feather
          * a new node is added to the scenegraph. It's called by add_node_to_sg
          * and is specialized by each node.
          */
-        /* 
-        template <int _Type, int _Node>
-        static status add_node(int id) { return status(FAILED,"no matching node for add_node"); };
-        */
-
-        //int add_node(int t, int n, std::string name) {
         unsigned int add_node(const unsigned int n, const std::string name, status& error) {
             //std::cout << "add node: " << n << ", type: " << t << std::endl;
             feather::node::Type ntype;
@@ -155,6 +140,7 @@ namespace feather
             sg[uid].node = n;
             sg[uid].name = name;
             sg[uid].layer = 0;
+            plugins.fields_init(n,sg[uid].fields); // this creates the base properties that all nodes have
             plugins.create_fields(n,sg[uid].fields);
             // do the selection in a seperate command
             //node_selection.push_back(n); 
@@ -509,50 +495,6 @@ namespace feather
         return plugins.get_fid_list(nid,conn,sg[uid].fields,list);
     }
 
-    /* Add Node to SceneGraph
-     * This is the recursive function that will keep going till
-     * finds a match for the node or fail.
-     * If a match is found the add_node function is called which
-     * is specialized by each node.
-     */
-    /*
-    template <int _Type, int _Node>
-        struct add_node_to_sg {
-            static status exec(int node)
-            {
-                if(node==_Node)
-                    return add_node<_Type,_Node>(node);
-                else
-                    return add_node_to_sg<_Type,_Node-1>::exec(node);
-            };
-        };
-
-    template <int _Type>
-        struct add_node_to_sg<_Type,0> { static status exec(int node) { return status(FAILED, "could not add unknown node to scenegraph"); }; };
-    */
-
-
-    /* DoIt
-     * This gets called during the scenegraph update and
-     * currently is used to display the data but this may
-     * change.
-     */
-    /* 
-    template <int _Type, int _Node>
-        struct do_it {
-            static status exec(FNodeDescriptor node)
-            {
-                return plugins.do_it(node);
-                // used this if you need to call a specific node
-                //return plugins.do_it(325);
-                // old test
-                //return do_it<_Type,_Node-1>::exec(node);
-            };
-        };
-
-    template <int _Type> struct do_it<_Type,-1> { static status exec(FNodeDescriptor node) { return status(FAILED, "no node do_it found"); }; };
-    */
-
 } // namespace scenegraph
 
 class node_visitor : public boost::default_bfs_visitor
@@ -662,54 +604,8 @@ class node_visitor : public boost::default_bfs_visitor
             void discover_vertex(Vertex u, const Graph & g) const
             {
                 std::cout << "discover vertex(uid):" << u << " nid:" << sg[u].node << std::endl;
-                //scenegraph::do_it<node::N>::exec(u);
-
-                status p = plugins.do_it(sg[u].node,sg[u].fields);
-
-                /* 
-                if(cstate.sgMode==state::DoIt)
-                {
-                    status p = plugins.do_it(sg[u].node,sg[u].fields);
-                    if(!p.state)
-                        std::cout << "NODE FAILED! : \"" << p.msg << "\"\n";
-                }
-                */
-
-                /*
-                if(cstate.sgMode==state::DrawIt)
-                {
-                    status p = plugins.draw_it(sg[u].node,sg[u].items);
-                    if(!p.state)
-                        std::cout << "NODE FAILED! : \"" << p.msg << "\"\n";
-                }
-                */
-
-                // This might still come in handy later on
-                /*
-                switch(sg[u].type)
-                {
-                    case node::Null:
-                        scenegraph::do_it<node::Null,null::N>::exec(u);
-                        break;
-                    case node::Camera:
-                        scenegraph::do_it<node::Camera,camera::N>::exec(u);
-                        break;
-                    case node::Light:
-                        scenegraph::do_it<node::Light,light::N>::exec(u);
-                        break;
-                    case node::Texture:
-                        scenegraph::do_it<node::Texture,texture::N>::exec(u);
-                        break;
-                    case node::Shader:
-                        scenegraph::do_it<node::Shader,shader::N>::exec(u);
-                        break;
-                    case node::Object:
-                        scenegraph::do_it<node::Object,object::N>::exec(u);
-                        break;
-                    default:
-                        break;
-                }
-                */
+                status p = plugins.update_properties(sg[u].node,sg[u].fields);
+                p = plugins.do_it(sg[u].node,sg[u].fields);
             }
 
         // Finish Vertex
@@ -785,31 +681,6 @@ namespace scenegraph
         node_visitor vis;
         //node_d_visitor vis;
         std::cout << "\n*****GRAPH UPDATE*****\n";
-        /*
-        std::cout << "Currently in the ";
-        switch(cstate.sgMode)
-        {
-            case state::None:
-                std::cout << "None";
-                break;
-            case state::DoIt:
-                std::cout << "DoIt";
-                break;
-            case state::DrawIt:
-                std::cout << "DrawIt";
-                break;
-            case state::DrawGL:
-                std::cout << "DrawGL";
-                break;
-            case state::DrawSelection:
-                std::cout << "DrawSelection";
-                break;
-            default:
-                std::cout << "Unknown";
-                break;
-        }
-        std::cout << " state\n";
-        */
         breadth_first_search(sg, vertex(0, sg), visitor(vis));
         //FNodeDescriptor s = vertex(0, scenegraph);
            
@@ -900,12 +771,7 @@ namespace scenegraph
             conn.pnid = src_node;
             conn.pfid = f1;
             tfield->connections.push_back(conn);
-            /*
-            tfield->connected = true;
-            tfield->puid = n1;
-            tfield->pn = src_node;
-            tfield->pf = f1;
-            */
+
             std::cout << "connection add between " << n1  << ":" << f1 << " to " << n2 << ":" << f2 << " number of edges:" << boost::num_edges(sg) << std::endl;
         } else {
             std::cout << "could not connect nid " << n1 << " and nid " << n2 << std::endl;
@@ -947,26 +813,10 @@ namespace scenegraph
  
     void set_time(FTime t) { time=t; };
  
-    //template <int _Type, int _Node>
-    //status add_node(int id) { return status(FAILED,"no matching node for add_node"); };
-
-    /* 
-       status connect(FNodeDescriptor n1, FNodeDescriptor n2)
-       {
-
-    //FFieldConnection connection = boost::add_edge(n1, n2, scenegraph);
-    //scenegraph[connection.first].name = "test1";
-        return status(true,"");
-        };
-        */
-
-        // template <> status do_it() { std::cout << "missing node" << std::endl; return status(false,"failed"); };
-
     } // namespace scenegraph
 
     #define GET_NODE_DATA(nodedata)\
     template <> nodedata* DataObject::get_data<nodedata>(FNodeDescriptor node) { return static_cast<nodedata*>(sg[node].data); };
-
  
 } // namespace feather
 

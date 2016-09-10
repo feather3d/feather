@@ -69,11 +69,53 @@ namespace feather
 
 
 #define DO_IT(__node_enum)\
+    template <> status node_update_properties<__node_enum>(field::Fields& fields)\
+    {\
+        return status();\
+    };\
+    \
     template <> status node_do_it<__node_enum>(field::Fields& fields)
 
 
 #define NODE_INIT(__node_enum,__node_type,__node_icon)\
     namespace feather {\
+        template <> status node_fields_init<__node_enum>(field::Fields& fields)\
+        {\
+            field::Field<FNode>* parent = new field::Field<FNode>();\
+            parent->id = 201;\
+            parent->value = FNode();\
+            parent->type = field::Node;\
+            parent->conn_type = field::connection::In;\
+            fields.push_back(parent);\
+            field::Field<FNode>* children = new field::Field<FNode>();\
+            children->id = 202;\
+            children->value = FNode();\
+            children->type = field::Node;\
+            children->conn_type = field::connection::Out;\
+            fields.push_back(children);\
+            return status();\
+        };\
+        \
+        template <> struct call_fields_inits<__node_enum> {\
+            static status exec(int id, field::Fields& fields) {\
+                if(id==__node_enum){\
+                    return node_fields_init<__node_enum>(fields);\
+                } else {\
+                    return call_fields_inits<__node_enum-1>::exec(id,fields);\
+                }\
+            };\
+        };\
+        \
+        template <> struct call_update_properties<__node_enum> {\
+            static status exec(int id, field::Fields& fields) {\
+                if(id==__node_enum){\
+                    return node_update_properties<__node_enum>(fields);\
+                } else {\
+                    return call_update_properties<__node_enum-1>::exec(id,fields);\
+                }\
+            };\
+        };\
+        \
         template <> struct call_do_its<__node_enum> {\
             static status exec(int id, field::Fields& fields) {\
                 if(id==__node_enum){\

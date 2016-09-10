@@ -254,7 +254,7 @@ namespace feather
 
     struct FNode
     {
-        FNode(node::Type t=node::Empty) : type(t)/*, parent(NULL),*/ {};
+        FNode(node::Type t=node::Empty) : type(t) {};
         int uid; // unique id number
         int node; // node type enum
         field::Fields fields; // this holds the field data

@@ -173,11 +173,11 @@ Rectangle {
                             var dVal = dY/ppv
                             // This is only for int values, add type check later
                             if(dVal >= 1 || dVal <= -1){
-                                keyframe.fid = 4 // value 
+                                keyframe.fid = 2 // value 
                                 keyframe.intVal += dY/ppv
                                 mouseY = mouse.y
                             }
-                            keyframe.fid = 3 // time
+                            keyframe.fid = 1 // time
                             keyframe.realVal -= dX/pps
                         }
                     }
@@ -196,9 +196,9 @@ Rectangle {
 
     function draw_key(context,key) {
         keyframe.uid = key.uid
-        keyframe.fid = 4
+        keyframe.fid = 2
         var val = keyframe.intVal
-        keyframe.fid = 3
+        keyframe.fid = 1
         var keyTime = keyframe.realVal
         var ppv = height/(maxVal - minVal)
         var length = (etime - stime)
@@ -314,7 +314,7 @@ Rectangle {
     function load_keys() {
         // get all the key uids
         curvemodel.clear()
-        var tlist = SceneGraph.connected_uids(uid,4) 
+        var tlist = SceneGraph.connected_uids(uid,2) 
         for(var i=0; tlist.length > i; i++){
             console.log("adding ",tlist[i]," to list")
             curvemodel.insert(i,{"uid":tlist[i],"x":0,"y":0,"selected":false,"hover":false})

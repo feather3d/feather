@@ -179,7 +179,7 @@ Rectangle {
         var uid = SceneGraph.add_node(nid,name)
         //console.log("added node as uid: " + uid)
         var suid = SceneGraph.selected_node()
-        var p = SceneGraph.connect_nodes(suid,2,uid,1)
+        var p = SceneGraph.connect_nodes(suid,202,uid,201)
         //console.log("connection status was: " + p)
         SceneGraph.triggerUpdate()
     }

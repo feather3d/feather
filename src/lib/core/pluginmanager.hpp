@@ -48,6 +48,8 @@ namespace feather
         std::string (*name)();
         std::string (*description)();
         std::string (*author)();
+        status (*fields_init)(int,field::Fields&);
+        status (*update_properties)(int,field::Fields&);
         status (*do_it)(int,field::Fields&);
         //status (*draw_it)(int,draw::DrawItems&);
         bool (*node_exist)(int); // is there a node with the given type and id in this plugin
@@ -92,6 +94,46 @@ namespace feather
             field::connection::Type m_conn;
             field::Fields& m_fields;
             std::vector<field::FieldBase*>& m_list; 
+    };
+
+
+    // FIELD_INIT()
+
+    template <int _Id>
+    struct call_fields_inits{
+        static status exec(int id, field::Fields& fields) { return call_fields_inits<_Id-1>::exec(id,fields); };
+    };
+
+    template <> struct call_fields_inits<0> { static status exec(int id, field::Fields& fields) { return status(FAILED,"could not find node"); }; };
+
+    template <int _Id> status node_fields_init(field::Fields& fields) { return status(FAILED,"no node found"); };
+   
+    struct call_fields_init {
+        call_fields_init(int node,field::Fields& fields): m_node(node), m_fields(fields){};
+        void operator()(PluginData n) { if(n.node_exist(m_node)) { n.fields_init(m_node,m_fields); } };
+        private:
+            int m_node;
+            field::Fields& m_fields;
+    };
+
+
+    // UPDATE_PROPERTIES()
+
+    template <int _Id>
+    struct call_update_properties {
+        static status exec(int id, field::Fields& fields) { return call_update_properties<_Id-1>::exec(id,fields); };
+    };
+
+    template <> struct call_update_properties<0> { static status exec(int id, field::Fields& fields) { return status(FAILED,"could not find node"); }; };
+
+    template <int _Id> status node_update_properties(field::Fields& fields) { return status(FAILED,"no node found"); };
+   
+    struct call_update_property {
+        call_update_property(int node,field::Fields& fields): m_node(node), m_fields(fields){};
+        void operator()(PluginData n) { if(n.node_exist(m_node)) { n.update_properties(m_node,m_fields); } };
+        private:
+            int m_node;
+            field::Fields& m_fields;
     };
 
 
@@ -363,6 +405,8 @@ namespace feather
             PluginManager();
             ~PluginManager();
             status load_plugins();
+            status fields_init(int node,field::Fields& fields); // this is called by the scenegraph
+            status update_properties(int node,field::Fields& fields); // this is called by the scenegraph
             status do_it(int node,field::Fields& fields); // this is called by the scenegraph
             //status draw_it(int node,draw::DrawItems& items); // this is called by the scenegraph
             status create_fields(int node, field::Fields& fields); // this will return a new instance of the node's fields 
@@ -391,6 +435,8 @@ namespace feather
     std::string name();\
     std::string description();\
     std::string author();\
+    feather::status fields_init(int, feather::field::Fields&);\
+    feather::status update_properties(int, feather::field::Fields&);\
     feather::status do_it(int, feather::field::Fields&);\
     /*feather::status draw_it(int, feather::draw::DrawItems&);*/\
     bool node_exist(int);\
@@ -414,6 +460,17 @@ namespace feather
     std::string description() { return __description; };\
     /* plugin name */\
     std::string author() { return __author; };\
+    \
+    /* call node update_properties() */\
+    feather::status fields_init(int id, feather::field::Fields& fields) {\
+        return call_fields_inits<MAX_NODE_ID>::exec(id,fields);\
+    };\
+    \
+    \
+    /* call node update_properties() */\
+    feather::status update_properties(int id, feather::field::Fields& fields) {\
+        return call_update_properties<MAX_NODE_ID>::exec(id,fields);\
+    };\
     \
     /* call node do_it() */\
     feather::status do_it(int id, feather::field::Fields& fields) {\
