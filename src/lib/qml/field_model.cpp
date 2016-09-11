@@ -115,7 +115,7 @@ QString FieldModel::getFieldName(int nid, int fid){
     for(auto fn : m_fieldnames){
         //std::cout << "looking for " << nid << " " << fid << std::endl;
         //std::cout << "\tin: " << fn->nid << " " << fn->fid << " " << fn->name.toStdString().c_str() << std::endl;
-        if((fn->nid==nid) && (fn->fid==fid))
+        if((fn->nid==nid) && (fn->fid==fid) || (fn->nid==0) && (fn->fid==fid))
             return fn->name;
     }
     return "ERROR";
@@ -155,6 +155,16 @@ bool FieldModel::show_fid(int type)
         case feather::field::RGBArray:
             return true; 
         case feather::field::RGBAArray:
+            return true; 
+        case feather::field::Time:
+            return true; 
+        case feather::field::Node:
+            return true; 
+        case feather::field::NodeArray:
+            return true; 
+        case feather::field::Matrix3x3:
+            return true; 
+        case feather::field::Matrix4x4:
             return true; 
         default:
             return false; 

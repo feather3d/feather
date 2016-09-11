@@ -296,7 +296,15 @@ namespace feather
      * If you want to get the base of the node's fid, even if it's connected, use get_node_fieldBase().
      */
     field::FieldBase* get_fieldBase(unsigned int uid, unsigned int nid, unsigned int fid, unsigned int conn=0 ) {
-        field::FieldBase* f = plugins.get_fieldBase(uid,nid,fid,sg[uid].fields); 
+        std::cout << "uid:" << uid << ", nid:" << nid << ", fid:" << fid << " has " << sg[uid].fields.size() << " fields\n";
+        field::FieldBase* f = nullptr;
+        for(auto field : sg[uid].fields){
+            if(field->id == fid)
+                f = field;
+        }
+        //field::FieldBase* f = plugins.get_fieldBase(uid,nid,fid,sg[uid].fields);
+        if(!f)
+            std::cout << "uid " << uid << " nid " << nid << " fid " << fid << " is null\n";
         std::cout << "CALLING get_fieldBase - uid:" << uid << " nid:" << nid << " fid:" << fid << " connected:" << f->connected() << std::endl;
         if(!f || f->connected()) {
             if(f->connected()){
@@ -310,7 +318,14 @@ namespace feather
 
     // like the above function except it returns all the field bases attached to it
     std::vector<field::FieldBase*> get_fieldBase_array(unsigned int uid, unsigned int nid, unsigned int fid, unsigned int conn=0 ) {
-        field::FieldBase* f = plugins.get_fieldBase(uid,nid,fid,sg[uid].fields); 
+        // Replaced
+        //field::FieldBase* f = plugins.get_fieldBase(uid,nid,fid,sg[uid].fields); 
+        // With this
+        field::FieldBase* f = nullptr;
+        for(auto field : sg[uid].fields){
+            if(field->id == fid)
+                f = field;
+        }
         std::cout << "CALLING get_fieldBase - uid:" << uid << " nid:" << nid << " fid:" << fid << " connected:" << f->connected() << std::endl;
         std::vector<field::FieldBase*> fields;
         if(!f || f->connected()) {
@@ -341,7 +356,16 @@ namespace feather
      * Same as get_fieldBase() except it will return the base of the node field even if it's connected 
      */
     field::FieldBase* get_node_fieldBase(unsigned int uid, unsigned int nid, unsigned int fid) {
-        field::FieldBase* f = plugins.get_fieldBase(uid,nid,fid,sg[uid].fields); 
+        // Replaced
+        //field::FieldBase* f = plugins.get_fieldBase(uid,nid,fid,sg[uid].fields); 
+        // With this
+        std::cout << "uid:" << uid << ", nid:" << nid << ", fid:" << fid << " has " << sg[uid].fields.size() << " fields\n";
+        field::FieldBase* f = nullptr;
+        for(auto field : sg[uid].fields){
+            if(field->id == fid)
+                f = field;
+        }
+ 
         if(!f) {
             for(auto field : sg[uid].fields){
                 //std::cout << "looking for " << fid << " field id=" << field->id << std::endl;

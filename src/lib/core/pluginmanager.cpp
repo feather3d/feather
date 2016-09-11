@@ -132,7 +132,7 @@ status PluginManager::load_node(PluginData &node)
     node.node_type = (status(*)(int,node::Type&))dlsym(node.handle, "node_type");
     node.node_icon = (bool(*)(int,std::string&))dlsym(node.handle, "node_icon");
     node.create_fields = (status(*)(int,field::Fields&))dlsym(node.handle,"create_fields");
-    node.get_field = (field::FieldBase*(*)(int,int,field::Fields&))dlsym(node.handle, "get_field");
+    //node.get_field = (field::FieldBase*(*)(int,int,field::Fields&))dlsym(node.handle, "get_field");
     node.get_fid_list = (status(*)(int,field::connection::Type,field::Fields&,std::vector<field::FieldBase*>&))dlsym(node.handle, "get_fid_list");
     node.command_exist = (bool(*)(std::string))dlsym(node.handle, "command_exist");
     node.command = (status(*)(std::string,parameter::ParameterList))dlsym(node.handle, "command");
@@ -168,8 +168,10 @@ void PluginManager::get_draw_items(int nid, draw::DrawItems& items)
     std::for_each(m_plugins.begin(),m_plugins.end(), call_draw_item(nid,items) );
 }
 
-field::FieldBase* PluginManager::get_fieldBase(int uid, int node, int field, field::Fields& fields)
-{
+//field::FieldBase* PluginManager::get_fieldBase(int uid, int node, int field, field::Fields& fields)
+//{
+    // REMOVED FOR THE NEW FIELD LAYOUT
+    /*
     for(uint i=0; i < m_plugins.size(); i++) {
         //std::cout << "looking in plugin "  << i << " for node " << node << std::endl;
         if(m_plugins[i].node_exist(node)) {
@@ -178,10 +180,11 @@ field::FieldBase* PluginManager::get_fieldBase(int uid, int node, int field, fie
             //std::cout << "PluginManager::get_fieldBase(" << uid << "," << node << "," << field << "," << &fields << ")\n";
             return m_plugins[i].get_field(node,field,fields);
         }
-    }
+    }*/
+
     //std::cout << "Never found node " << node << std::endl;
-    return nullptr;
-}
+//    return nullptr;
+//}
 
 status PluginManager::load_command(PluginData &command)
 {

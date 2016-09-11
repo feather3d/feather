@@ -58,7 +58,7 @@ namespace feather
         status (*node_type)(int,node::Type&);
         bool (*node_icon)(int,std::string&); // name of icon image in ui/icons path
         status(*create_fields)(int,field::Fields&); // creates a new instance of the nodes fields which will get deleted by the scenegraph when the node is removed.
-        field::FieldBase* (*get_field)(int,int,field::Fields&);
+        //field::FieldBase* (*get_field)(int,int,field::Fields&);
         status (*get_fid_list)(int,field::connection::Type,field::Fields&,std::vector<field::FieldBase*>&);
         bool (*command_exist)(std::string cmd);
         status (*command)(std::string cmd, parameter::ParameterList);
@@ -242,6 +242,7 @@ namespace feather
 
     // GET FIELD DATA
 
+    /*
     template <int _NodeId, int _FieldId>
     field::FieldBase* field_data(field::Fields& fields) { return NULL; };  
 
@@ -280,7 +281,7 @@ namespace feather
                     return NULL;
             }; 
         };
-
+    */
 
     // GET NODE'S FIDs
     // later connection direction needs to be added
@@ -411,7 +412,7 @@ namespace feather
             //status draw_it(int node,draw::DrawItems& items); // this is called by the scenegraph
             status create_fields(int node, field::Fields& fields); // this will return a new instance of the node's fields 
             void get_draw_items(const int nid, draw::DrawItems& items);
-            field::FieldBase* get_fieldBase(int uid, int node, int field, field::Fields& fields);
+            //field::FieldBase* get_fieldBase(int uid, int node, int field, field::Fields& fields);
             status run_command(std::string cmd, parameter::ParameterList);
             status run_command_string(std::string str);
             int min_uid();
@@ -445,7 +446,7 @@ namespace feather
     feather::status node_type(int,feather::node::Type&);\
     bool node_icon(int,std::string&);\
     feather::status create_fields(int, feather::field::Fields&);\
-    feather::field::FieldBase* get_field(int,int,feather::field::Fields&);\
+    /*feather::field::FieldBase* get_field(int,int,feather::field::Fields&);*/\
     feather::status get_fid_list(int,feather::field::connection::Type,feather::field::Fields&,std::vector<feather::field::FieldBase*>&);\
     bool command_exist(std::string cmd);\
     feather::status command(std::string cmd, feather::parameter::ParameterList);\
@@ -513,9 +514,11 @@ namespace feather
     };\
     \
     /* find the node's field */\
+    /*
     feather::field::FieldBase* get_field(int nid, int fid, field::Fields& fields) {\
-        return find_node_field<startnode,endnode,50>::exec(nid,fid,fields);\
+        return find_node_field<startnode,endnode,800>::exec(nid,fid,fields);\
     };\
+    */\
     /* find the node's fid's*/\
     feather::status get_fid_list(int nid, feather::field::connection::Type conn, feather::field::Fields& fields, std::vector<feather::field::FieldBase*>& list) {\
         find_node_fid_list<startnode,endnode>::exec(nid,conn,fields,list);\

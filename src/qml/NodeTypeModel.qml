@@ -33,7 +33,7 @@ ListModel {
     ListElement { text: "Animation"; type: Node.Animation }
     //ListElement { text: "Modifier"; type: Node.Modifier }
     //ListElement { text: "Deformer"; type: Node.Deformer }
-    ListElement { text: "Manipulator"; type: Node.Manipulator }
+    //ListElement { text: "Manipulator"; type: Node.Manipulator }
     ListElement { text: "Time"; type: Node.Time }
     //ListElement { text: "Shader"; type: Node.Shader }
     //ListElement { text: "Object"; type: Node.Object }

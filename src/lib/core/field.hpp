@@ -156,31 +156,27 @@ namespace feather
                 return add_fields<__node,__field_key-1>::exec(fields);\
             };\
         };\
-\
+        \
+        /*\
         template <> field::FieldBase* field_data<__node,__field_key>(field::Fields& fields)\
         {\
-            /*This is a cheap easy way to get FieldBase*\
-            But it's needs to be changed later so we\
-            don't have to scan the field every time\
-            to get the pointer.*/\
             for(uint i=0; i < fields.size(); i++) {\
                 if(fields.at(i)->id == __field_key){\
                     return fields.at(i);\
                 }\
             }\
-            /*std::cout << "never found matching key in field_data\n";*/\
             return NULL;\
         };\
- \
+        \
         template <> struct find_field<__node,__field_key> {\
             static field::FieldBase* exec(int fid, field::Fields& fields) {\
-                /*std::cout << "find field - node:" << __node << ", fid:" << fid << ", field:" << __field_key << std::endl;*/\
                 if(fid==__field_key){\
                     return field_data<__node,__field_key>(fields);\
                 }else\
                     return find_field<__node,__field_key-1>::exec(fid,fields);\
             };\
         };\
+        */\
     }
 
 } // namespace feather 

@@ -27,25 +27,38 @@ import feather.field 1.0
 FieldModel {
 
     Component.onCompleted: {
+        // Base 
+        // in
+        addFieldName("parent",0,201)
+        addFieldName("tx",0,203)
+        addFieldName("ty",0,204)
+        addFieldName("tz",0,205)
+        addFieldName("rx",0,206)
+        addFieldName("ry",0,207)
+        addFieldName("rz",0,208)
+        addFieldName("sx",0,209)
+        addFieldName("sy",0,210)
+        addFieldName("sz",0,211)
+ 
+        // out
+        addFieldName("child",0,202)
+        addFieldName("local",0,212)
+        addFieldName("world",0,213)
+
         // Empty
-        addFieldName("parent",1,201)
-        addFieldName("child",1,202)
+        // no fields
 
         // Camera 
-        addFieldName("parent",2,201)
-        addFieldName("child",2,202)
         addFieldName("type",2,1)
         addFieldName("fov",2,2)
 
-        // Shape 
-        addFieldName("parent",3,201)
-        addFieldName("child",3,202)
-        addFieldName("meshIn",3,1)
-        addFieldName("meshOut",3,2)
+        // Shape
+        // in 
+        addFieldName("mesh",3,1)
+        // out
+        addFieldName("mesh",3,2)
  
         // Time 
-        addFieldName("parent",4,201)
-        addFieldName("child",4,202)
         addFieldName("stime",4,1)
         addFieldName("etime",4,2)
         addFieldName("cpos",4,3)
@@ -56,8 +69,6 @@ FieldModel {
         addFieldName("fps",4,8)
  
         // Multiply 
-        addFieldName("parent",5,201)
-        addFieldName("child",5,202)
         addFieldName("value",5,1)
         addFieldName("mult",5,2)
         addFieldName("value",5,3)
@@ -69,86 +80,54 @@ FieldModel {
         addFieldName("div",6,2)
         addFieldName("value",6,3)
 
-        // Transform
-        addFieldName("parent",7,201)
-        addFieldName("child",7,202)
-        addFieldName("tX",7,1)
-        addFieldName("tY",7,2)
-        addFieldName("tZ",7,3)
-        addFieldName("sX",7,4)
-        addFieldName("sY",7,5)
-        addFieldName("sZ",7,6)
-        addFieldName("rX",7,7)
-        addFieldName("rY",7,8)
-        addFieldName("rZ",7,9)
-        addFieldName("local_matrix",7,10)
-        addFieldName("world_matrix",7,11)
-
         // Polygon Shape 
-        addFieldName("parent",320,201)
         addFieldName("mesh",320,1)
         addFieldName("xform",320,2)
         // Out
-        addFieldName("child",320,202)
         addFieldName("mesh",320,3)
 
         // Polygon Plane 
-        addFieldName("parent",321,201)
         addFieldName("subX",321,1)
         addFieldName("subY",321,2)
         // Out
-        addFieldName("child",321,202)
         addFieldName("mesh",321,3)
 
         // Polygon Cube
         // In
-        addFieldName("parent",322,201)
         addFieldName("subX",322,1)
         addFieldName("subY",322,2)
         addFieldName("subZ",322,3)
         // Out 
-        addFieldName("child",322,202)
         addFieldName("mesh",322,4)
 
         // ANIMATION PLUGIN
         // Int Key
         // In
-        addFieldName("parent",420,201)
         addFieldName("time",420,1)
         addFieldName("value",420,2)
         addFieldName("in curve type",420,3)
         addFieldName("out curve type",420,4)
-        // Out 
-        addFieldName("child",420,202)
  
         // Real Key
         // In
-        addFieldName("parent",421,201)
         addFieldName("time",421,1)
         addFieldName("value",421,2)
         addFieldName("in curve type",421,3)
         addFieldName("out curve type",421,4)
-        // Out 
-        addFieldName("child",421,202)
  
         // Int Key Track 
         // In
-        addFieldName("parent",425,201)
         addFieldName("time",425,1)
         addFieldName("keys",425,2)
         // Out 
-        addFieldName("child",425,202)
         addFieldName("value",425,3)
   
         // Real Key Track 
         // In
-        addFieldName("parent",426,201)
         addFieldName("time",426,1)
         addFieldName("keys",426,2)
         // Out 
-        addFieldName("child",426,202)
         addFieldName("value",426,3)
-
     }
 
 }
