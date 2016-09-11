@@ -113,6 +113,17 @@ status api::get_node_connected_uids(unsigned int uid, unsigned int fid, std::vec
     return scenegraph::get_node_connected_uids(uid,fid,uids);
 }
 
+bool api::get_node_connection_status(unsigned int suid, unsigned int tuid)
+{
+    std::vector<int> uids; 
+    status p = api::get_node_connected_uids(suid,uids);
+    for(auto uid : uids){
+        if(uid == tuid)
+            return true;
+    }
+    return false;
+}
+
 // FIELD DATA
 
 field::FieldBase* api::get_field_base(unsigned int uid, unsigned int nid, unsigned int fid, unsigned int conn)

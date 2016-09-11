@@ -26,6 +26,7 @@
 #include "selection.hpp"
 #include "field.hpp"
 #include "state.hpp"
+#include "plugin.hpp"
 
 #define BACKGROUND_COLOR "#444444"
 #define NODE_TEXT_COLOR "#000000"
@@ -57,15 +58,13 @@ std::vector<SceneGraphConnection*> SGState::selectedConnections = std::vector<Sc
 
 // SCENEGRAPH
 
-SceneGraphConnection::SceneGraphConnection(QString name, int fid, SceneGraphNode* node, SceneGraphConnection::Connection type, QQuickItem* parent) :
+SceneGraphConnection::SceneGraphConnection(SceneGraphNode* node, SceneGraphConnection::Connection type, QQuickItem* parent) :
     QQuickPaintedItem(parent),
-    m_name(name),
     m_selected(false),
     m_type(type),
-    m_node(node),
-    m_fid(fid)
+    m_node(node)
 {
-    setWidth(CONNECTION_WIDTH+(NODE_WIDTH/2));
+    setWidth(CONNECTION_WIDTH);
     setHeight(CONNECTION_HEIGHT);
     setAcceptedMouseButtons(Qt::AllButtons);
     setAcceptHoverEvents(true);
@@ -95,29 +94,8 @@ void SceneGraphConnection::paint(QPainter* painter)
    
     painter->setBrush(m_connFillBrush);
 
-    // text block 
-    if(m_type == In)
-        painter->drawRect(CONNECTION_WIDTH+2,0,width(),height());
-    else
-        painter->drawRect(0,0,width()-CONNECTION_WIDTH,height());
- 
-    QPen textPen(QColor(NODE_TEXT_COLOR),2);
-    QFont textFont("DejaVuSans",7);
-    painter->setPen(textPen);
-    painter->setFont(textFont);
-    if(m_type == In) {
-        painter->drawText(QRect(CONNECTION_WIDTH+2,0,NODE_WIDTH/2,height()),Qt::AlignLeft|Qt::AlignVCenter,m_name);
-    } else {
-        painter->drawText(QRect(0,0,(NODE_WIDTH/2)-2,height()),Qt::AlignRight|Qt::AlignVCenter,m_name);
-    }
 
-
-    if(m_type == In) {
-        painter->drawRect(0,0,CONNECTION_WIDTH,CONNECTION_HEIGHT);
-    } else {
-        painter->drawRect(NODE_WIDTH/2,0,CONNECTION_WIDTH,CONNECTION_HEIGHT);
-    }
-
+    painter->drawRect(0,0,CONNECTION_WIDTH,CONNECTION_HEIGHT);
 }
 
 void SceneGraphConnection::mousePressEvent(QMouseEvent* event)
@@ -180,8 +158,9 @@ SceneGraphNode::SceneGraphNode(int uid, int nid, QQuickItem* parent) :
     m_imgDir("ui/icons/"),
     m_nodeFillBrush(QBrush(QColor(DESELECTED_NODE_COLOR))),
     m_layerFillBrush(QBrush(QColor("#DDDDDD"))),
-    m_nodeTitleBrush(QBrush(QColor(NODE_TITLE_BLOCK_COLOR)))
-    //m_pFieldNames(model)
+    m_nodeTitleBrush(QBrush(QColor(NODE_TITLE_BLOCK_COLOR))),
+    m_pInConn(new SceneGraphConnection(this,SceneGraphConnection::In,this)),
+    m_pOutConn(new SceneGraphConnection(this,SceneGraphConnection::Out,this))
 {
     feather::status e;
 
@@ -197,65 +176,23 @@ SceneGraphNode::SceneGraphNode(int uid, int nid, QQuickItem* parent) :
     m_outConnCount = feather::qml::command::get_out_field_count(m_uid);
     m_connCount = feather::qml::command::get_field_count(m_uid);
 
-    std::vector<feather::field::FieldBase*> inFields;
-    std::vector<feather::field::FieldBase*> outFields;
-  
-    feather::qml::command::get_fid_list(m_uid,m_nid,feather::field::connection::In,inFields);
-    feather::qml::command::get_fid_list(m_uid,m_nid,feather::field::connection::Out,outFields);
-
-    int i=1; 
-    for(auto field : inFields) { 
-        // add the input fields here
-        int fid = field->id;
-        std::cout << "nid:" << m_nid << ", fid:" << fid << std::endl;
-        SceneGraphConnection* conn = new SceneGraphConnection(FieldModel::getFieldName(m_nid,fid),fid,this,SceneGraphConnection::In,this);
-        m_pInConns.push_back(conn);
-        conn->setX(0);
-        conn->setY(((CONNECTION_HEIGHT+2)*i)+12);
-        connect(conn,SIGNAL(connClicked(Qt::MouseButton,SceneGraphConnection::Connection)),this,SLOT(ConnPressed(Qt::MouseButton,SceneGraphConnection::Connection)));
-        i++;
-    }
-
-    i=1;
-    for(auto field : outFields) { 
-        // add the input fields here
-        int fid = field->id;
-        std::cout << "nid:" << m_nid << ", fid:" << fid << std::endl;
-        SceneGraphConnection* conn = new SceneGraphConnection(FieldModel::getFieldName(m_nid,fid),fid,this,SceneGraphConnection::Out,this);
-        m_pOutConns.push_back(conn);
-        conn->setX((NODE_WIDTH/2)+CONNECTION_WIDTH);
-        conn->setY(((CONNECTION_HEIGHT+2)*i)+12);
-        connect(conn,SIGNAL(connClicked(Qt::MouseButton,SceneGraphConnection::Connection)),this,SLOT(ConnPressed(Qt::MouseButton,SceneGraphConnection::Connection)));
-        i++;
-    }
+    // set the location of the in and out connections
+    m_pInConn->setX(0);
+    m_pInConn->setY((NODE_HEIGHT/2)-(CONNECTION_HEIGHT/2));
+    m_pOutConn->setX(NODE_WIDTH-CONNECTION_HEIGHT);
+    m_pOutConn->setY((NODE_HEIGHT/2)-(CONNECTION_HEIGHT/2));
 
     feather::qml::command::get_node_icon(m_nid,m_imgFile,e);
     m_imgPath << m_imgDir << m_imgFile;
 
-    // set the node's height based on side with the most connections
-    int max = 0;
-    if(inFields.size() > outFields.size())
-        max = inFields.size();
-    else
-        max = outFields.size();
-
-    setWidth(NODE_WIDTH+(CONNECTION_WIDTH*2));
-    //setHeight(NODE_HEIGHT+4);
-    setHeight(((CONNECTION_HEIGHT + 2) * max) + 24 + 24);
+    setWidth(NODE_WIDTH);
+    setHeight(NODE_HEIGHT);
 }
 
 SceneGraphNode::~SceneGraphNode()
 {
-    for(auto c : m_pInConns)
-        delete c;
-    m_pInConns.clear();
-
-    for(auto c : m_pInConns)
-        delete c;
-    m_pInConns.clear();
-
-    //delete m_pInConn;
-    //delete m_pOutConn;
+    delete m_pInConn;
+    delete m_pOutConn;
 }
 
 void SceneGraphNode::ConnPressed(Qt::MouseButton button, SceneGraphConnection::Connection conn)
@@ -270,10 +207,11 @@ void SceneGraphNode::paint(QPainter* painter)
     painter->setRenderHints(QPainter::Antialiasing, true);
  
     QPen trimPen = QPen(QColor(0,0,0),1);
-    //trimPen.setStyle(Qt::NoPen);
     QPen textPen = QPen(QColor(NODE_TEXT_COLOR),2);
-    QFont textFont("DejaVuSans",10);
-
+    QFont textFont("DejaVuSans",9);
+    painter->setPen(textPen);
+    painter->setFont(textFont);
+ 
     if(feather::smg::Instance()->selected(m_uid))
         m_nodeFillBrush.setColor(QColor(SELECTED_NODE_COLOR));
     else
@@ -284,34 +222,18 @@ void SceneGraphNode::paint(QPainter* painter)
     QBrush connInFillBrush = QBrush(QColor("#FF4500"));
     QBrush connOutFillBrush = QBrush(QColor("#DA70D6"));
 
-    // set the node's height based on side with the most connections
-    int max = 0;
-    if(m_pInConns.size() > m_pOutConns.size())
-        max = m_pInConns.size();
-    else
-        max = m_pOutConns.size();
-
-    //setWidth(NODE_WIDTH+4);
-    //int height = (CONNECTION_HEIGHT * max) + NODE_HEIGHT;
-    //setHeight(height+10);
-    //setHeight(NODE_HEIGHT+44);
-
     // node trim 
     painter->setPen(trimPen);
 
     // draw layer bar
     painter->setBrush(m_layerFillBrush);
 
-    // draw title block
-    painter->setBrush(m_nodeTitleBrush);
-    painter->drawRect(CONNECTION_WIDTH+5,2,NODE_WIDTH-10,18);
-
     // draw the node block
     painter->setBrush(m_nodeFillBrush);
-    painter->drawRect(CONNECTION_WIDTH,18,NODE_WIDTH,height()-20);
+    painter->drawRect(0,0,NODE_WIDTH,NODE_HEIGHT);
 
     // node icon
-    QRectF tgt(CONNECTION_WIDTH + (NODE_WIDTH/2)-12,height()-24,24,24);
+    QRectF tgt(NODE_WIDTH - (NODE_HEIGHT+CONNECTION_WIDTH),2,NODE_HEIGHT-4,NODE_HEIGHT-4);
     QImage img(m_imgPath.str().c_str());
     painter->drawImage(tgt,img);
 
@@ -320,7 +242,7 @@ void SceneGraphNode::paint(QPainter* painter)
     painter->setFont(textFont);
     std::string name;
     feather::qml::command::get_node_name(m_uid,name,e);
-    painter->drawText(QRect(CONNECTION_WIDTH+5,2,NODE_WIDTH-10,18),Qt::AlignHCenter|Qt::AlignVCenter,name.c_str());
+    painter->drawText(QRect(CONNECTION_WIDTH,0,NODE_WIDTH-(NODE_HEIGHT+CONNECTION_WIDTH),NODE_HEIGHT),Qt::AlignHCenter|Qt::AlignVCenter,name.c_str());
 
 }
 
@@ -365,20 +287,14 @@ void SceneGraphNode::mouseMoveEvent(QMouseEvent* event)
     parentItem()->update();
 }
 
-void SceneGraphNode::inConnectionPoint(unsigned int fid, QPointF& point)
+void SceneGraphNode::inConnectionPoint(QPointF& point)
 {
-    for(auto c : m_pInConns) {
-        if(c->fid() == fid)
-            point = mapToItem(parentItem(),QPoint(c->x(),c->y()+(CONNECTION_WIDTH/2)));
-    }
+    point = mapToItem(parentItem(),QPoint(0,(NODE_HEIGHT/2)));
 }
 
-void SceneGraphNode::outConnectionPoint(unsigned int fid, QPointF& point)
+void SceneGraphNode::outConnectionPoint(QPointF& point)
 {
-    for(auto c : m_pOutConns) {
-        if(c->fid() == fid)
-            point = mapToItem(parentItem(),QPoint(c->x()+(NODE_WIDTH/2)+CONNECTION_WIDTH,c->y()+(CONNECTION_WIDTH/2)));
-    }
+    point = mapToItem(parentItem(),QPoint(NODE_WIDTH,(NODE_HEIGHT/2)));
 }
 
 
@@ -386,45 +302,26 @@ void SceneGraphNode::getConnectionPoint(feather::field::connection::Type conn, Q
 {
     if(conn == feather::field::connection::In)
     {
-        cpoint.setX(npoint.x()+5);
-        cpoint.setY((npoint.y()+5)+((NODE_HEIGHT+5)/2));
+        cpoint.setX(npoint.x());
+        cpoint.setY((npoint.y())+((NODE_HEIGHT)/2));
  
     }
     else
     {
-        cpoint.setX((npoint.x()+5)+(NODE_WIDTH+5));
-        cpoint.setY((npoint.y()+5)+((NODE_HEIGHT+5)/2));
+        cpoint.setX((npoint.x())+(NODE_WIDTH));
+        cpoint.setY((npoint.y())+((NODE_HEIGHT)/2));
     }
 }
 
-SceneGraphConnection* SceneGraphNode::inConnection(unsigned int fid)
+SceneGraphConnection* SceneGraphNode::inConnection()
 {
-    for(auto c : m_pInConns){
-        if(c->fid()==fid)
-            return c;
-    }
-    return nullptr;
+    return m_pInConn;
 }
 
-SceneGraphConnection* SceneGraphNode::outConnection(unsigned int fid)
+SceneGraphConnection* SceneGraphNode::outConnection()
 {
-    for(auto c : m_pOutConns){
-        if(c->fid()==fid)
-            return c;
-    }
-    return nullptr;
+    return m_pOutConn;
 }
-
-std::vector<SceneGraphConnection*>& SceneGraphNode::inConnections()
-{
-    return m_pInConns;
-}
-
-std::vector<SceneGraphConnection*>& SceneGraphNode::outConnections()
-{
-    return m_pOutConns;
-}
-
 
 // Link
 
@@ -449,8 +346,8 @@ void SceneGraphLink::paint(QPainter* painter)
 
     QPointF sp;
     QPointF tp;
-    m_sconnection->node()->outConnectionPoint(m_sconnection->fid(),sp);
-    m_tconnection->node()->inConnectionPoint(m_tconnection->fid(),tp);
+    m_sconnection->node()->outConnectionPoint(sp);
+    m_tconnection->node()->inConnectionPoint(tp);
 
     QPen pathPen;
     if(SGState::mode==SGState::Normal)
@@ -479,7 +376,13 @@ void SceneGraphLink::paint(QPainter* painter)
 
 // Editor
 
-SceneGraphEditor::SceneGraphEditor(QQuickItem* parent) : QQuickPaintedItem(parent), m_scale(100), m_nodeWidth(80), m_nodeHeight(30)
+SceneGraphEditor::SceneGraphEditor(QQuickItem* parent) : 
+    QQuickPaintedItem(parent),
+    m_scale(100),
+    m_nodeWidth(80),
+    m_nodeHeight(30),
+    m_nodeGapWidth(NODE_WIDTH+80),
+    m_nodeGapHeight(20)
 {
     SGState::pSge = this;
     setAcceptedMouseButtons(Qt::AllButtons);
@@ -502,29 +405,6 @@ void SceneGraphEditor::ConnOption(Qt::MouseButton button, SceneGraphConnection::
     feather::field::FieldBase* pfield;
     int i=1;
     feather::qml::command::get_field_base(uid,i,pfield);
-
-    /*
-    m_connection->clear();
- 
-    while(pfield!=NULL)
-    {
-        if(conn == SceneGraphConnection::In) {
-            if(pfield->conn_type == feather::field::connection::In)
-                m_connection->addField(uid,nid,i,pfield->type,true); 
-        }
-
-        if(conn == SceneGraphConnection::Out) {
-            if(pfield->conn_type == feather::field::connection::Out)
-                m_connection->addField(uid,nid,i,pfield->type,true); 
-        }
-
-        i++;
-        feather::qml::command::get_field_base(uid,i,pfield);
-    }
-
-    m_connection->layoutChanged();
-    openConnMenu();
-    */
 }
 
 void SceneGraphEditor::nodePressed(Qt::MouseButton button, int uid, int nid)
@@ -587,8 +467,6 @@ bool SceneGraphEditor::connectNodes()
         if(in != nullptr) {
             for(auto c : SGState::selectedConnections) {
                 if(c->type() == SceneGraphConnection::Out) {
-                    // are they are two connections already connected?
-                    feather::qml::command::connect_nodes(c->node()->uid(),c->fid(),in->node()->uid(),in->fid()); 
                     m_links.push_back(new SceneGraphLink(in,c,this));
                  }
             }
@@ -671,8 +549,8 @@ void SceneGraphEditor::updateNode(SceneGraphNode* pnode, int uid, int xpos, int 
         int ystep=0;
         for(auto c : cuids) {
             // add the child node to draw list and get it's links
-            updateNode(node, c, xpos+200, ypos+ystep);
-            ystep+=node->height()+40;
+            updateNode(node, c, xpos+m_nodeGapWidth, ypos+ystep);
+            ystep+=node->height()+m_nodeGapHeight;
         } 
 
     }
@@ -716,21 +594,13 @@ void SceneGraphEditor::updateLinks(int uid)
     if(!shownuids.size())
         return;
 
-    // for each node create a link for each connection
+    // draw links between the nodes that connected to it
     for(auto tuid : shownuids){
-        // go through each in field of the target uid
-        for(auto tconn : getNode(tuid)->inConnections()){
-
-            // go through each out field of the parent uid
-            for(auto sconn : pnode->outConnections()){
-                // is the field connected
-                bool connected=false;
-                feather::qml::command::get_field_connection_status(uid, sconn->fid(), tuid, tconn->fid(), connected);
-                if(connected){
-                    // add the link
-                    m_links.push_back(new SceneGraphLink(sconn,tconn,this));
-                }
-            }
+        // is the field connected
+        bool connected = feather::plugin::get_node_connection_status(uid,tuid);
+        if(connected){
+            // add the link
+            m_links.push_back(new SceneGraphLink(pnode->outConnection(),getNode(tuid)->inConnection(),this));
         }
     }
 }

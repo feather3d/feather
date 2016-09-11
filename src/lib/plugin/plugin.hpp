@@ -80,6 +80,9 @@ namespace feather
         // get all nodes connected to fid
         status get_node_connected_uids(unsigned int uid, unsigned int fid, std::vector<int>& uids);
 
+        // are the two nodes connected in any way
+        bool get_node_connection_status(unsigned int suid, unsigned int tuid);
+
         // FIELD DATA
         
         // get field base

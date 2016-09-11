@@ -106,6 +106,11 @@ status plugin::get_node_connected_uids(unsigned int uid, unsigned int fid, std::
     return api::get_node_connected_uids(uid,fid,uids);
 }
 
+bool plugin::get_node_connection_status(unsigned int suid, unsigned int tuid)
+{
+    return api::get_node_connection_status(suid,tuid);
+}
+
 // FIELD DATA
 
 field::FieldBase* plugin::get_field_base(unsigned int uid, unsigned int nid, unsigned int fid, unsigned int conn)

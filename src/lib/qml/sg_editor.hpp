@@ -28,11 +28,10 @@
 #include "qml_deps.hpp"
 #include "field_model.hpp"
 
-#define NODE_WIDTH 100
-#define NODE_HEIGHT 40
+#define NODE_WIDTH 120
+#define NODE_HEIGHT 20
 #define CONNECTION_WIDTH 10
-#define CONNECTION_HEIGHT 12 
-
+#define CONNECTION_HEIGHT 10 
 
 class SceneGraphEditor;
 class SceneGraphNode;
@@ -72,12 +71,11 @@ class SceneGraphConnection : public QQuickPaintedItem
     public:
         enum Connection { In, Out };
 
-        SceneGraphConnection(QString name, int fid, SceneGraphNode* node, Connection type, QQuickItem* parent=0);
+        SceneGraphConnection(SceneGraphNode* node, Connection type, QQuickItem* parent=0);
         ~SceneGraphConnection();
         void paint(QPainter* painter);
         SceneGraphNode* node() { return m_node; };
         inline Connection type() { return m_type; };
-        inline unsigned int fid() { return m_fid; };
         inline void setSelected(bool s) { m_selected=s; };
 
     protected:
@@ -91,12 +89,10 @@ class SceneGraphConnection : public QQuickPaintedItem
         void connClicked(Qt::MouseButton button, SceneGraphConnection::Connection conn);
 
     private:
-        QString m_name;
         bool m_selected;
         Connection m_type;
         QBrush m_connFillBrush;
         SceneGraphNode* m_node;
-        unsigned int m_fid;
 };
 
 class SceneGraphNode : public QQuickPaintedItem
@@ -107,12 +103,10 @@ class SceneGraphNode : public QQuickPaintedItem
         SceneGraphNode(int uid, int nid, QQuickItem* parent=0);
         ~SceneGraphNode();
         void paint(QPainter* painter);
-        void inConnectionPoint(unsigned int fid, QPointF& point);
-        void outConnectionPoint(unsigned int fid, QPointF& point);
-        SceneGraphConnection* inConnection(unsigned int fid);
-        SceneGraphConnection* outConnection(unsigned int fid);
-        std::vector<SceneGraphConnection*>& inConnections();
-        std::vector<SceneGraphConnection*>& outConnections();
+        void inConnectionPoint(QPointF& point);
+        void outConnectionPoint(QPointF& point);
+        SceneGraphConnection* inConnection();
+        SceneGraphConnection* outConnection();
         inline int nid() { return m_nid; };
         inline int uid() { return m_uid; }; /*! Node's unique id assigned by the scenegraph. */
  
@@ -147,11 +141,8 @@ class SceneGraphNode : public QQuickPaintedItem
         int m_outConnCount;
         int m_connCount;
         int m_nodeHeight;
-        //SceneGraphConnection* m_pInConn;
-        //SceneGraphConnection* m_pOutConn;
-        std::vector<SceneGraphConnection*> m_pInConns;
-        std::vector<SceneGraphConnection*> m_pOutConns;
-        //FieldModel* m_pFieldNames;
+        SceneGraphConnection* m_pInConn;
+        SceneGraphConnection* m_pOutConn;
 };
 
 
@@ -167,8 +158,6 @@ class SceneGraphLink : public QQuickPaintedItem
         void paint(QPainter* painter);
 
     private:
-        //SceneGraphNode* m_snode; // source node
-        //SceneGraphNode* m_tnode; // target node
         SceneGraphConnection* m_sconnection; // source connection
         SceneGraphConnection* m_tconnection; // target connection
 };
@@ -237,7 +226,8 @@ class SceneGraphEditor : public QQuickPaintedItem
         int m_scale;
         int m_nodeWidth;
         int m_nodeHeight;
-
+        int m_nodeGapWidth; // horizontal distance between nodes
+        int m_nodeGapHeight; // vertical distance between nodes
         std::vector<SceneGraphNode*> m_nodes;
         std::vector<SceneGraphLink*> m_links;
         FieldModel* m_connection;
