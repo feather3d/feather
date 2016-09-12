@@ -78,9 +78,18 @@ Item {
             anchors.right: parent.right
             anchors.bottom: parent.bottom
             anchors.margins: 1
-            delegate: FieldEditorValue { properties: fieldEditor.properties; width: parent.width; uidKey: uid; nidKey: nid; fidKey: fid; fieldType: type; label: name }
+            delegate: FieldEditorValue {
+                properties: fieldEditor.properties
+                width: parent.width
+                uidKey: uid
+                nidKey: nid
+                fidKey: fid
+                fieldType: type
+                label: name
+                visible: (type==Field.Mesh || type==Field.Matrix3x3 || type==Field.Matrix4x4 || type==Field.Node) ? false : true
+                height: (type==Field.Mesh || type==Field.Matrix3x3 || type==Field.Matrix4x4 || type==Field.Node) ? 0 : 15 
+            }
         }
-
     }
  
     Rectangle {

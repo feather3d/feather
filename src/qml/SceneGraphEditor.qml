@@ -199,7 +199,7 @@ Rectangle {
     }
 
     function connectionSelection(uid,nid,fid,connection) {
-        console.log("connectionSelection uid:",uid," nid:",nid," fid:",fid," connection:",connection)
+        //console.log("connectionSelection uid:",uid," nid:",nid," fid:",fid," connection:",connection)
         if(connection == Field.In) {
             sg_editor.setConnectionTarget(uid,fid)
             SceneGraph.triggerUpdate()
