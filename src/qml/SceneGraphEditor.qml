@@ -38,6 +38,8 @@ Rectangle {
  
     // Dialogs
     AddNodeDialog{ id: addNodeDialog; properties: sgWindow.properties }
+    
+    SceneGraphConnectionDialog { id: connectionDialog; properties: sgWindow.properties }
 
     // Actions
 
@@ -158,8 +160,9 @@ Rectangle {
       }
 
     function connectionButtonPressed(button,uid,nid,fid) {
-        sg_editor.connectionMousePressed(button,uid,nid,fid);
-        SceneGraph.select_node(0,uid,nid,fid);
+        //sg_editor.connectionMousePressed(button,uid,nid,fid);
+        //SceneGraph.select_node(0,uid,nid,fid);
+        connectionDialog.visible
     }
 
     function connectionButtonReleased(button,uid,nid,fid) {
@@ -184,6 +187,28 @@ Rectangle {
         SceneGraph.triggerUpdate()
     }
 
+    function connectionClicked(button,connection,x,y,uid,nid) {
+        // close the previous connection dialog if it's still open
+        connectionDialog.visible = false
+        connectionDialog.x = x
+        connectionDialog.y = y
+        connectionDialog.uid = uid
+        connectionDialog.nid = nid
+        connectionDialog.connection = connection
+        connectionDialog.visible = true
+    }
+
+    function connectionSelection(uid,nid,fid,connection) {
+        console.log("connectionSelection uid:",uid," nid:",nid," fid:",fid," connection:",connection)
+        if(connection == Field.In) {
+            sg_editor.setConnectionTarget(uid,fid)
+            SceneGraph.triggerUpdate()
+        } else {
+            sg_editor.setConnectionSource(uid,fid)
+            SceneGraph.triggerUpdate()
+        }
+    }
+
     Component.onCompleted: {
         sg_editor.openConnMenu.connect(openConnectionMenu)
         sg_editor.nodeSelection.connect(nodeSelection)
@@ -194,7 +219,8 @@ Rectangle {
         SceneGraph.updateGraph.connect(sg_editor.update_sg)
         SceneGraph.cleared.connect(sg_editor.update_sg)
         addNodeDialog.addNode.connect(add_node)
-
+        sg_editor.connectorClicked.connect(connectionClicked)
+        connectionDialog.fieldSelected.connect(connectionSelection)
     }
 
 }

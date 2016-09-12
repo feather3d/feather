@@ -117,6 +117,8 @@ Rectangle {
             ColorProperty { properties: colorProperties.properties; name: "vertexType"; label: "Vertex" }
             ColorProperty { properties: colorProperties.properties; name: "meshType"; label: "Mesh" }
             ColorProperty { properties: colorProperties.properties; name: "rgbType"; label: "RGB" }
+            ColorProperty { properties: colorProperties.properties; name: "nodeType"; label: "Node" }
+            ColorProperty { properties: colorProperties.properties; name: "matrixType"; label: "Matrix" }
        } 
 
         // TYPES

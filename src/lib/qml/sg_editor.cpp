@@ -113,7 +113,7 @@ void SceneGraphConnection::mousePressEvent(QMouseEvent* event)
         SGState::remove(this);
     }
 
-    connClicked(event->button(),m_type);
+    connClicked(event->button(),m_type,event->screenPos().x(),event->screenPos().y());
     update();
 }
 
@@ -164,6 +164,9 @@ SceneGraphNode::SceneGraphNode(int uid, int nid, QQuickItem* parent) :
 {
     feather::status e;
 
+    connect(m_pInConn,SIGNAL(connClicked(Qt::MouseButton,SceneGraphConnection::Connection,int,int)),this,SLOT(ConnPressed(Qt::MouseButton,SceneGraphConnection::Connection,int,int)));
+    connect(m_pOutConn,SIGNAL(connClicked(Qt::MouseButton,SceneGraphConnection::Connection,int,int)),this,SLOT(ConnPressed(Qt::MouseButton,SceneGraphConnection::Connection,int,int)));
+
     if(feather::smg::Instance()->selected(m_uid))
         m_nodeFillBrush.setColor(QColor(SELECTED_NODE_COLOR));
     else
@@ -195,10 +198,10 @@ SceneGraphNode::~SceneGraphNode()
     delete m_pOutConn;
 }
 
-void SceneGraphNode::ConnPressed(Qt::MouseButton button, SceneGraphConnection::Connection conn)
+void SceneGraphNode::ConnPressed(Qt::MouseButton button, SceneGraphConnection::Connection conn, int x, int y)
 {
     std::cout << "node got connector event\n";
-    ConnClicked(button,conn,m_uid,m_nid); 
+    ConnClicked(button,conn,x,y,m_uid,m_nid); 
 }
 
 void SceneGraphNode::paint(QPainter* painter)
@@ -381,8 +384,8 @@ SceneGraphEditor::SceneGraphEditor(QQuickItem* parent) :
     m_scale(100),
     m_nodeWidth(80),
     m_nodeHeight(30),
-    m_nodeGapWidth(NODE_WIDTH+80),
-    m_nodeGapHeight(20)
+    m_nodeGapWidth(NODE_WIDTH+40),
+    m_nodeGapHeight(10)
 {
     SGState::pSge = this;
     setAcceptedMouseButtons(Qt::AllButtons);
@@ -398,13 +401,10 @@ SceneGraphEditor::~SceneGraphEditor()
     clearGraph();
 }
 
-void SceneGraphEditor::ConnOption(Qt::MouseButton button, SceneGraphConnection::Connection conn, int uid, int nid)
+void SceneGraphEditor::ConnOption(Qt::MouseButton button, SceneGraphConnection::Connection conn, int x, int y, int uid, int nid)
 {
     std::cout << "sg editor got node connector event\n";
-
-    feather::field::FieldBase* pfield;
-    int i=1;
-    feather::qml::command::get_field_base(uid,i,pfield);
+    connectorClicked(button,conn,x,y,uid,nid);
 }
 
 void SceneGraphEditor::nodePressed(Qt::MouseButton button, int uid, int nid)
@@ -491,6 +491,51 @@ bool SceneGraphEditor::disconnectNodes()
     return false;
 }
 
+// TODO - both of these functions will need to be modified later so that multiple
+// source and target fields can be selected so that the user doesn't need to keep
+// going back and redoing the process multiple times.
+void SceneGraphEditor::setConnectionSource(unsigned int uid, unsigned int fid)
+{
+    SGState::srcUid = uid;
+    SGState::srcFid = fid;
+    
+    // if there is a target already selected, connect
+    if(SGState::tgtUid){
+        feather::plugin::connect(
+                SGState::srcUid,
+                SGState::srcFid,
+                SGState::tgtUid,
+                SGState::tgtFid
+                );
+        // clear out selections
+        SGState::srcUid = 0;
+        SGState::srcFid = 0;
+        SGState::tgtUid = 0;
+        SGState::tgtFid = 0;
+    }
+};
+
+void SceneGraphEditor::setConnectionTarget(unsigned int uid, unsigned int fid)
+{
+    SGState::tgtUid = uid;
+    SGState::tgtFid = fid;
+
+    // if there is a target already selected, connect
+    if(SGState::tgtUid){
+        feather::plugin::connect(
+                SGState::srcUid,
+                SGState::srcFid,
+                SGState::tgtUid,
+                SGState::tgtFid
+                );
+        // clear out selections
+        SGState::srcUid = 0;
+        SGState::srcFid = 0;
+        SGState::tgtUid = 0;
+        SGState::tgtFid = 0;
+    }
+};
+
 void SceneGraphEditor::paint(QPainter* painter)
 {
     setFillColor(QColor(BACKGROUND_COLOR));
@@ -534,7 +579,7 @@ void SceneGraphEditor::updateNode(SceneGraphNode* pnode, int uid, int xpos, int 
         node = new SceneGraphNode(uid,nid,this);
         m_nodes.push_back(node);
         // setup the node qt connections
-        connect(node,SIGNAL(ConnClicked(Qt::MouseButton,SceneGraphConnection::Connection,int,int)),this,SLOT(ConnOption(Qt::MouseButton,SceneGraphConnection::Connection,int,int)));
+        connect(node,SIGNAL(ConnClicked(Qt::MouseButton,SceneGraphConnection::Connection,int,int,int,int)),this,SLOT(ConnOption(Qt::MouseButton,SceneGraphConnection::Connection,int,int,int,int)));
         connect(node,SIGNAL(nodePressed(Qt::MouseButton,int,int)),this,SLOT(nodePressed(Qt::MouseButton,int,int)));
 
         // place the node in the scenegraph

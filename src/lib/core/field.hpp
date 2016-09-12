@@ -74,14 +74,15 @@ namespace feather
         // The puid will change when nodes are removed, so it's need's to be updated
         struct FieldBase
         {
-            FieldBase():update(true){};
+            FieldBase(): id(0), update(true), locked(false){};
             int id;
             bool update; // this is used to optimize the scenegraph update process - the sg won't call a node's do_it unless one of it's input's fields update flags are set to true.
+            bool locked; // this will lock down the current value so that it can't be changed
             // Connections
             int conn_type;
             std::vector<Connection> connections; // this is a vector for array types
             int type;
-            inline unsigned int connection_count() { return connections.size(); };
+            inline int connection_count() { std::cout << "connection size for " << id << " is " << connections.size() << std::endl; return connections.size(); };
             inline bool connected() { return (!connection_count()) ? false : true; }; 
         };
 

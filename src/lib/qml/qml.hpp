@@ -160,6 +160,7 @@ class Field: public QObject
 {
     Q_OBJECT
         Q_ENUMS(Type)
+        Q_ENUMS(ConnectionType)
         Q_PROPERTY(unsigned int uid READ uid WRITE setUid)
         Q_PROPERTY(unsigned int nid READ nid WRITE setNid)
         Q_PROPERTY(unsigned int fid READ fid WRITE setFid)
@@ -262,6 +263,11 @@ class Field: public QObject
             NodeArray=field::NodeArray,
             Matrix3x3=field::Matrix3x3,
             Matrix4x4=field::Matrix4x4
+        };
+
+        enum ConnectionType {
+            In=field::connection::In,
+            Out=field::connection::Out,
         };
 
     signals:

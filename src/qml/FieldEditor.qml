@@ -130,7 +130,7 @@ Item {
         var uid = SceneGraph.selected_node()
         var nid = SceneGraph.node_id(uid)
         nodeLabel.text = SceneGraph.node_name(uid)
-        fieldModel.addFields(uid,nid)
+        fieldModel.addFields(uid,nid,Field.In)
     }
 
     function updateColor() {

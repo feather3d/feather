@@ -45,6 +45,8 @@ QHash<int, QByteArray> FieldModel::roleNames() const
     roles.insert(FidRole, QByteArray("fid"));
     roles.insert(TypeRole, QByteArray("type"));
     roles.insert(LockedRole, QByteArray("locked"));
+    roles.insert(ConnectedRole, QByteArray("connected"));
+    roles.insert(KeyedRole, QByteArray("keyed"));
     return roles;
 }
 
@@ -74,6 +76,10 @@ QVariant FieldModel::data(const QModelIndex& index, int role) const
             return QVariant::fromValue(dobj->type);
         case LockedRole:
             return QVariant::fromValue(dobj->locked);
+        case ConnectedRole:
+            return QVariant::fromValue(dobj->connected);
+        case KeyedRole:
+            return QVariant::fromValue(dobj->keyed);
         default:
             return QVariant();
     }
@@ -84,22 +90,24 @@ void FieldModel::clear()
     m_fields.clear();
 }
 
-void FieldModel::addField(int uid, int nid, int fid, int type, bool locked)
+void FieldModel::addField(int uid, int nid, int fid, int type, bool locked, bool connected, bool keyed)
 {
-    m_fields.append(new FieldInfo(getFieldName(uid,nid),uid,nid,fid,type,locked));
+    m_fields.append(new FieldInfo(getFieldName(uid,nid),uid,nid,fid,type,locked,connected,keyed));
 }
 
-void FieldModel::addFields(int uid, int nid)
+void FieldModel::addFields(int uid, int nid, int conn)
 {
     std::vector<feather::field::FieldBase*> fids;
     //std::cout << "addFields " << nid << std::endl;
-    feather::qml::command::get_fid_list(uid,nid,feather::field::connection::In,fids);
+    //feather::qml::command::get_fid_list(uid,nid,feather::field::connection::In,fids);
+    feather::qml::command::get_fid_list(uid,nid,static_cast<feather::field::connection::Type>(conn),fids);
     m_fields.clear();
     for(uint i=0; i < fids.size(); i++) {
         //std::cout << "adding field - uid:" << uid << " nid:" << nid << " fid:" << fids.at(i)->id << " type:" << fids.at(i)->type << std::endl;
         // we only want to add fields that can be edited from the field editor
-        if(show_fid(fids.at(i)->type))
-            m_fields.append(new FieldInfo(getFieldName(nid,fids.at(i)->id),uid,nid,fids.at(i)->id,fids.at(i)->type,0));
+        // TODO - add a function to add the keyed value, this will be determined by looking to see
+        // if the connected field is a KeyTrack
+        m_fields.append(new FieldInfo(getFieldName(nid,fids.at(i)->id),uid,nid,fids.at(i)->id,fids.at(i)->type,fids.at(i)->locked,fids.at(i)->connected(),0));
     }
     emit layoutChanged();
 }
@@ -119,54 +127,4 @@ QString FieldModel::getFieldName(int nid, int fid){
             return fn->name;
     }
     return "ERROR";
-}
-
-bool FieldModel::show_fid(int type)
-{
-    switch(type){
-        case feather::field::Bool:
-            return true; 
-        case feather::field::Int:
-            return true; 
-        case feather::field::Float:
-            return true; 
-        case feather::field::Double:
-            return true; 
-        case feather::field::Real:
-            return true; 
-        case feather::field::Vertex:
-            return true; 
-        case feather::field::Vector:
-            return true; 
-        case feather::field::RGB:
-            return true; 
-        case feather::field::RGBA:
-            return true; 
-        case feather::field::BoolArray:
-            return true; 
-        case feather::field::IntArray:
-            return true; 
-        case feather::field::FloatArray:
-            return true; 
-        case feather::field::VertexArray:
-            return true; 
-        case feather::field::VectorArray:
-            return true; 
-        case feather::field::RGBArray:
-            return true; 
-        case feather::field::RGBAArray:
-            return true; 
-        case feather::field::Time:
-            return true; 
-        case feather::field::Node:
-            return true; 
-        case feather::field::NodeArray:
-            return true; 
-        case feather::field::Matrix3x3:
-            return true; 
-        case feather::field::Matrix4x4:
-            return true; 
-        default:
-            return false; 
-    }
 }

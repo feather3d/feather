@@ -44,19 +44,25 @@ class FieldInfo {
                 const int &_nid=0,
                 const int &_fid=0,
                 const int &_type=0,
-                const bool &_locked=false):
+                const bool &_locked=false,
+                const bool &_connected=false,
+                const bool &_keyed=false):
             name(_name),
             uid(_uid),
             nid(_nid),
             fid(_fid),
             type(_type),
-            locked(_locked) {}
+            locked(_locked),
+            connected(_connected),
+            keyed(_keyed) {}
         QString name;
         int uid;
         int nid;
         int fid;
         int type;
         bool locked;
+        bool connected;
+        bool keyed;
 };
 
 class FieldModel : public QAbstractListModel
@@ -75,7 +81,9 @@ class FieldModel : public QAbstractListModel
             NidRole = Qt::UserRole + 3,
             FidRole = Qt::UserRole + 4,
             TypeRole = Qt::UserRole + 5,
-            LockedRole = Qt::UserRole + 6
+            LockedRole = Qt::UserRole + 6,
+            ConnectedRole = Qt::UserRole + 7,
+            KeyedRole = Qt::UserRole + 8
         };
 
         QHash<int, QByteArray> roleNames() const;
@@ -92,8 +100,8 @@ class FieldModel : public QAbstractListModel
 
         QList<FieldInfo*> fields() { return m_fields; }
  
-        Q_INVOKABLE void addField(int uid, int nid, int fid, int type, bool locked);
-        Q_INVOKABLE void addFields(int uid, int nid);
+        Q_INVOKABLE void addField(int uid, int nid, int fid, int type, bool locked, bool connected, bool keyed);
+        Q_INVOKABLE void addFields(int uid, int nid, int conn);
         Q_INVOKABLE void addFieldName(QString name, int nid, int fid);
         static QString getFieldName(int nid, int fid);
 
@@ -105,7 +113,6 @@ class FieldModel : public QAbstractListModel
         void fieldnamesChanged();
 
     private:
-        bool show_fid(int type);
         Q_DISABLE_COPY(FieldModel);
         QList<FieldInfo*> m_fields;
         //static std::vector<FieldName*> m_fieldnames;
