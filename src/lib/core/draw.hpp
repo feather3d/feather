@@ -57,8 +57,11 @@ namespace feather {
 
         struct PerspCamera : public Item
         {
-            PerspCamera(unsigned int _fovfid) : Item(Item::PerspCamera),fovfid(_fovfid) {};
+            PerspCamera(unsigned int _typefid, unsigned int _fovfid, unsigned int _nearfid, unsigned int _farfid) : Item(Item::PerspCamera),typefid(_typefid),fovfid(_fovfid),nearfid(_nearfid),farfid(_farfid) {};
+            unsigned int typefid;
             unsigned int fovfid;
+            unsigned int nearfid;
+            unsigned int farfid;
         };
 
         typedef std::vector<Item*> DrawItems;
@@ -76,7 +79,7 @@ namespace feather {
 #define ADD_MESH(__fid)\
     items.push_back(new draw::Mesh(__fid));
  
-#define ADD_PERSP_CAMERA(__fovfid)\
-    items.push_back(new draw::PerspCamera(__fovfid));
+#define ADD_PERSP_CAMERA(__typefid,__fovfid,__nearfid,__farfid)\
+    items.push_back(new draw::PerspCamera(__typefid,__fovfid,__nearfid,__farfid));
     
 #endif

@@ -51,6 +51,8 @@ FieldModel {
         // Camera 
         addFieldName("type",2,1)
         addFieldName("fov",2,2)
+        addFieldName("near",2,3)
+        addFieldName("far",2,4)
 
         // Shape
         // in 

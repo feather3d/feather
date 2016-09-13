@@ -61,9 +61,10 @@ class PerspCamera : public DrawItem
     Q_OBJECT
     
     public:
-        PerspCamera(Qt3DRender::QLayer* layer, feather::draw::Item* _item, Qt3DCore::QNode *parent=0);
+        PerspCamera(Qt3DRender::QCamera* camera, Qt3DRender::QLayer* layer, feather::draw::Item* _item, Qt3DCore::QNode *parent=0);
         ~PerspCamera();
         void updateItem();
+        Qt3DRender::QCamera* m_pCamera;
 };
 
 // WIREFRAME EFFECT
@@ -427,7 +428,7 @@ class Viewport : public Qt3DCore::QEntity
         Qt3DRender::QPointLight* m_pLight;
         Qt3DRender::QClearBuffers m_clearBuffer;
         Qt3DExtras::QTorusMesh* m_pTorus;
-        Qt3DRender::QCamera* m_pCamera;
+        Qt3DRender::QCamera* m_pCamera; // this is qt3d's camera
         //Qt3DRender::QRenderSettings* m_pRenderSettings;
         //Qt3DRender::QRenderSurfaceSelector* m_pRenderSurfaceSelector;
         // GONE

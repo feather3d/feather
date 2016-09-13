@@ -86,6 +86,7 @@ Item {
                 fidKey: fid
                 fieldType: type
                 label: name
+                // TODO - this is a temp fix to get rid of unwanted types showing up in the editor
                 visible: (type==Field.Mesh || type==Field.Matrix3x3 || type==Field.Matrix4x4 || type==Field.Node) ? false : true
                 height: (type==Field.Mesh || type==Field.Matrix3x3 || type==Field.Matrix4x4 || type==Field.Node) ? 0 : 15 
             }
