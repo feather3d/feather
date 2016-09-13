@@ -61,9 +61,13 @@ class PerspCamera : public DrawItem
     Q_OBJECT
     
     public:
-        PerspCamera(Qt3DRender::QCamera* camera, Qt3DRender::QLayer* layer, feather::draw::Item* _item, Qt3DCore::QNode *parent=0);
+        PerspCamera(Qt3DRender::QLayer* layer, feather::draw::Item* _item, Qt3DCore::QNode *parent=0);
         ~PerspCamera();
         void updateItem();
+        void updateCameraPosition();
+        inline Qt3DRender::QCamera* camera() { return m_pCamera; };
+
+    private:
         Qt3DRender::QCamera* m_pCamera;
 };
 
@@ -352,6 +356,7 @@ class Viewport : public Qt3DCore::QEntity
         Q_INVOKABLE void doUpdate(){ updateScene(); };
         Q_INVOKABLE void addItems(unsigned int uid);
         Q_INVOKABLE void updateItems(unsigned int uid);
+        Q_INVOKABLE void setCamera(unsigned int uid);
 
     private slots:
         void updateScene();
@@ -362,11 +367,12 @@ class Viewport : public Qt3DCore::QEntity
         void setShowAxis(const bool &show);
         void setWidth(const int &val);
         void setHeight(const int &val);
-        void onEntered();
+        void onMouseEntered();
         void onClicked(Qt3DInput::QMouseEvent* event);
         void handleTriggered(float dt);
         void doSpacePressed(Qt3DInput::QKeyEvent* event);
         void wheelEvent(Qt3DInput::QWheelEvent* event);
+        void keyEvent(Qt3DInput::QKeyEvent* event);
 
    signals:
         void majorSubDividLevelChanged();

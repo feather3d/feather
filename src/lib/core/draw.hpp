@@ -57,7 +57,18 @@ namespace feather {
 
         struct PerspCamera : public Item
         {
-            PerspCamera(unsigned int _typefid, unsigned int _fovfid, unsigned int _nearfid, unsigned int _farfid) : Item(Item::PerspCamera),typefid(_typefid),fovfid(_fovfid),nearfid(_nearfid),farfid(_farfid) {};
+            PerspCamera(
+                    unsigned int _typefid,
+                    unsigned int _fovfid,
+                    unsigned int _nearfid,
+                    unsigned int _farfid
+                    ) :
+                Item(Item::PerspCamera),
+                typefid(_typefid),
+                fovfid(_fovfid),
+                nearfid(_nearfid),
+                farfid(_farfid) {};
+
             unsigned int typefid;
             unsigned int fovfid;
             unsigned int nearfid;

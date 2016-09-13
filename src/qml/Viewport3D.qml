@@ -42,7 +42,7 @@ Rectangle {
         id: scene3d
         anchors.fill: parent
         anchors.margins: 2
-        focus: true
+        //focus: true
         aspects: ["input","logic"]
         cameraAspectRatioMode: Scene3D.AutomaticAspectRatio
 

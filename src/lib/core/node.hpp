@@ -84,6 +84,15 @@ namespace feather
         RealField szIn;\
         MatrixField localMatrixOut;\
         MatrixField worldMatrixOut;\
+        RealField txOut;\
+        RealField tyOut;\
+        RealField tzOut;\
+        RealField rxOut;\
+        RealField ryOut;\
+        RealField rzOut;\
+        RealField sxOut;\
+        RealField syOut;\
+        RealField szOut;\
         for(auto f : fields){\
             if(f->id==203)\
                 txIn= static_cast<RealField>(f);\
@@ -107,6 +116,24 @@ namespace feather
                 localMatrixOut= static_cast<MatrixField>(f);\
             if(f->id==213)\
                 worldMatrixOut= static_cast<MatrixField>(f);\
+            if(f->id==214)\
+                txOut= static_cast<RealField>(f);\
+            if(f->id==215)\
+                tyOut= static_cast<RealField>(f);\
+            if(f->id==216)\
+                tzOut= static_cast<RealField>(f);\
+            if(f->id==217)\
+                rxOut= static_cast<RealField>(f);\
+            if(f->id==218)\
+                ryOut= static_cast<RealField>(f);\
+            if(f->id==219)\
+                rzOut= static_cast<RealField>(f);\
+            if(f->id==220)\
+                sxOut= static_cast<RealField>(f);\
+            if(f->id==221)\
+                syOut= static_cast<RealField>(f);\
+            if(f->id==222)\
+                szOut= static_cast<RealField>(f);\
         }\
         FMatrix4x4 matrix;\
         tools::build_matrix(\
@@ -122,6 +149,15 @@ namespace feather
                 matrix\
                 );\
         localMatrixOut->value = matrix;\
+        txOut->value = txIn->value;\
+        tyOut->value = tyIn->value;\
+        tzOut->value = tzIn->value;\
+        rxOut->value = rxIn->value;\
+        ryOut->value = ryIn->value;\
+        rzOut->value = rzIn->value;\
+        sxOut->value = sxIn->value;\
+        syOut->value = syIn->value;\
+        szOut->value = szIn->value;\
         return status();\
     };\
     \
@@ -147,6 +183,7 @@ namespace feather
             children->conn_type = field::connection::Out;\
             fields.push_back(children);\
             /* transformation fields */\
+            /* IN FIELDS */\
             /* translation */\
             /* tx */\
             field::Field<FReal>* tx = new field::Field<FReal>();\
@@ -213,6 +250,7 @@ namespace feather
             sz->type = field::Real;\
             sz->conn_type = field::connection::In;\
             fields.push_back(sz);\
+            /* OUT FIELDS */\
             /* local matrix */\
             field::Field<FMatrix4x4>* local = new field::Field<FMatrix4x4>();\
             local->id = 212;\
@@ -227,6 +265,72 @@ namespace feather
             world->type = field::Matrix4x4;\
             world->conn_type = field::connection::Out;\
             fields.push_back(world);\
+            /* translation */\
+            /* txOut */\
+            field::Field<FReal>* txOut = new field::Field<FReal>();\
+            txOut->id = 214;\
+            txOut->value = 0.0;\
+            txOut->type = field::Real;\
+            txOut->conn_type = field::connection::Out;\
+            fields.push_back(txOut);\
+            /* tyOut */\
+            field::Field<FReal>* tyOut = new field::Field<FReal>();\
+            tyOut->id = 215;\
+            tyOut->value = 0.0;\
+            tyOut->type = field::Real;\
+            tyOut->conn_type = field::connection::Out;\
+            fields.push_back(tyOut);\
+            /* tzOut */\
+            field::Field<FReal>* tzOut = new field::Field<FReal>();\
+            tzOut->id = 216;\
+            tzOut->value = 0.0;\
+            tzOut->type = field::Real;\
+            tzOut->conn_type = field::connection::Out;\
+            fields.push_back(tzOut);\
+            /* rotation */\
+            /* rxOut */\
+            field::Field<FReal>* rxOut = new field::Field<FReal>();\
+            rxOut->id = 217;\
+            rxOut->value = 0.0;\
+            rxOut->type = field::Real;\
+            rxOut->conn_type = field::connection::Out;\
+            fields.push_back(rxOut);\
+            /* ryOut */\
+            field::Field<FReal>* ryOut = new field::Field<FReal>();\
+            ryOut->id = 218;\
+            ryOut->value = 0.0;\
+            ryOut->type = field::Real;\
+            ryOut->conn_type = field::connection::Out;\
+            fields.push_back(ryOut);\
+            /* rzOut */\
+            field::Field<FReal>* rzOut = new field::Field<FReal>();\
+            rzOut->id = 219;\
+            rzOut->value = 0.0;\
+            rzOut->type = field::Real;\
+            rzOut->conn_type = field::connection::Out;\
+            fields.push_back(rzOut);\
+            /* scale */\
+            /* sxOut */\
+            field::Field<FReal>* sxOut = new field::Field<FReal>();\
+            sxOut->id = 220;\
+            sxOut->value = 1.0;\
+            sxOut->type = field::Real;\
+            sxOut->conn_type = field::connection::Out;\
+            fields.push_back(sxOut);\
+            /* syOut */\
+            field::Field<FReal>* syOut = new field::Field<FReal>();\
+            syOut->id = 221;\
+            syOut->value = 1.0;\
+            syOut->type = field::Real;\
+            syOut->conn_type = field::connection::Out;\
+            fields.push_back(syOut);\
+            /* szOut */\
+            field::Field<FReal>* szOut = new field::Field<FReal>();\
+            szOut->id = 222;\
+            szOut->value = 1.0;\
+            szOut->type = field::Real;\
+            szOut->conn_type = field::connection::Out;\
+            fields.push_back(szOut);\
             return status();\
         };\
         \

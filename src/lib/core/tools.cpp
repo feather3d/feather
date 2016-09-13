@@ -46,3 +46,23 @@ void tools::apply_matrix_to_mesh(FMatrix4x4 *matrix, FMesh &mesh)
         mesh.v[i].z += matrix->value[2][3];
     }
 }
+
+FVertex3D tools::get_matrix_translation(FMatrix4x4 *matrix)
+{
+    return FVertex3D(matrix->value[0][3],
+            matrix->value[1][3],
+            matrix->value[2][3]);
+}
+
+FVertex3D tools::get_matrix_rotation(FMatrix4x4 *matrix)
+{
+    return FVertex3D();
+}
+
+FVertex3D tools::get_matrix_scale(FMatrix4x4 *matrix)
+{
+    return FVertex3D(matrix->value[0][0],
+            matrix->value[1][1],
+            matrix->value[2][2]);
+}
+

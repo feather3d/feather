@@ -44,7 +44,16 @@ FieldModel {
         addFieldName("child",0,202)
         addFieldName("local",0,212)
         addFieldName("world",0,213)
-
+        addFieldName("tx",0,214)
+        addFieldName("ty",0,215)
+        addFieldName("tz",0,216)
+        addFieldName("rx",0,217)
+        addFieldName("ry",0,218)
+        addFieldName("rz",0,219)
+        addFieldName("sx",0,220)
+        addFieldName("sy",0,221)
+        addFieldName("sz",0,222)
+ 
         // Empty
         // no fields
 

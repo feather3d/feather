@@ -26,6 +26,7 @@
 #include "state.hpp"
 #include "draw.hpp"
 #include "plugin.hpp"
+#include "tools.hpp"
 
 // MAIN VIEWPORT
 
@@ -43,10 +44,11 @@ DrawItem::~DrawItem()
 
 
 // PERSPECTIVE CAMERA 
-PerspCamera::PerspCamera(Qt3DRender::QCamera* camera, Qt3DRender::QLayer* layer, feather::draw::Item* _item, Qt3DCore::QNode *parent)
-    : DrawItem(_item,DrawItem::PerspCamera,parent)
+PerspCamera::PerspCamera(Qt3DRender::QLayer* layer, feather::draw::Item* _item, Qt3DCore::QNode *parent)
+    : DrawItem(_item,DrawItem::PerspCamera,parent),
+    m_pCamera(new Qt3DRender::QCamera())
 {
-    m_pCamera = camera;
+
 }
 
 PerspCamera::~PerspCamera()
@@ -72,17 +74,30 @@ void PerspCamera::updateItem()
     m_pCamera->setFieldOfView(fov);
     m_pCamera->setNearPlane(near);
     m_pCamera->setFarPlane(far);
- 
-    /*
-    m_pCamera->setProjectionType(Qt3DRender::QCameraLens::PerspectiveProjection);
-    m_pCamera->setFieldOfView(45);
-    m_pCamera->setNearPlane(0.1);
-    m_pCamera->setFarPlane(100.0);
-    m_pCamera->setAspectRatio(1.3);
-    m_pCamera->setPosition(QVector3D(0,3,20));
-    m_pCamera->setUpVector(QVector3D(0,1,0));
-    m_pCamera->setViewCenter(QVector3D(0,0,0));
-    */
+
+    updateCameraPosition();
+}
+
+void PerspCamera::updateCameraPosition()
+{
+    // translation
+    feather::FReal tx = static_cast<feather::field::Field<feather::FReal>*>(feather::plugin::get_field_base(m_item->uid,m_item->nid,214))->value;
+    feather::FReal ty = static_cast<feather::field::Field<feather::FReal>*>(feather::plugin::get_field_base(m_item->uid,m_item->nid,215))->value;
+    feather::FReal tz = static_cast<feather::field::Field<feather::FReal>*>(feather::plugin::get_field_base(m_item->uid,m_item->nid,216))->value;
+    // rotation 
+    feather::FReal rx = static_cast<feather::field::Field<feather::FReal>*>(feather::plugin::get_field_base(m_item->uid,m_item->nid,217))->value;
+    feather::FReal ry = static_cast<feather::field::Field<feather::FReal>*>(feather::plugin::get_field_base(m_item->uid,m_item->nid,218))->value;
+    feather::FReal rz = static_cast<feather::field::Field<feather::FReal>*>(feather::plugin::get_field_base(m_item->uid,m_item->nid,219))->value;
+    // scale 
+    feather::FReal sx = static_cast<feather::field::Field<feather::FReal>*>(feather::plugin::get_field_base(m_item->uid,m_item->nid,220))->value;
+    feather::FReal sy = static_cast<feather::field::Field<feather::FReal>*>(feather::plugin::get_field_base(m_item->uid,m_item->nid,221))->value;
+    feather::FReal sz = static_cast<feather::field::Field<feather::FReal>*>(feather::plugin::get_field_base(m_item->uid,m_item->nid,222))->value;
+
+    m_pCamera->setPosition(QVector3D(tx,ty,tz));
+    //m_pCamera->tilt(rx);
+    //m_pCamera->pan(ry,QVector3D(0,1,0));
+    //m_pCamera->roll(rz);
+    //m_pCamera->setViewCenter(QVector3D(0,0,0));
 }
 
 // CAN NOT GET SHADERS TO WORK IN QT3D
@@ -1246,7 +1261,7 @@ Viewport::Viewport(Qt3DCore::QNode* parent)
     m_pCamera->setAspectRatio(1.3);
     m_pCamera->setPosition(QVector3D(0,3,20));
     m_pCamera->setUpVector(QVector3D(0,1,0));
-    m_pCamera->setViewCenter(QVector3D(0,0,0));
+    //m_pCamera->setViewCenter(QVector3D(0,0,0));
 
     // GONE
     //m_pConfiguration->setControlledCamera(m_pCamera);
@@ -1308,10 +1323,12 @@ Viewport::Viewport(Qt3DCore::QNode* parent)
     //buildScene(items);
     updateScene();
 
-    //connect(m_pMouseHandler,SIGNAL(entered()),this,SLOT(onEntered()));
+    connect(m_pMouseHandler,SIGNAL(entered()),this,SLOT(onMouseEntered()));
     //connect(m_pMouseHandler,SIGNAL(clicked(Qt3DInput::QMouseEvent*)),this,SLOT(onClicked(Qt3DInput::QMouseEvent*)));
     connect(m_pMouseHandler,SIGNAL(wheel(Qt3DInput::QWheelEvent*)),this,SLOT(wheelEvent(Qt3DInput::QWheelEvent*)));
     connect(m_pKeyboardHandler,SIGNAL(spacePressed(Qt3DInput::QKeyEvent*)),this,SLOT(doSpacePressed(Qt3DInput::QKeyEvent*)));
+    connect(m_pKeyboardHandler,SIGNAL(pressed(Qt3DInput::QKeyEvent*)),this,SLOT(keyEvent(Qt3DInput::QKeyEvent*)));
+
 
 
     // Light testing
@@ -1342,6 +1359,9 @@ Viewport::~Viewport()
 
 void Viewport::handleTriggered(float dt)
 {
+    m_pKeyboardHandler->setSourceDevice(m_pKeyboardDevice);
+    m_pKeyboardHandler->setFocus(true);
+
     if(m_pCamera){
         if(m_pLeftMouseButtonAction->isActive()) {
             //std::cout << "left mouse button active\n";
@@ -1390,6 +1410,30 @@ void Viewport::wheelEvent(Qt3DInput::QWheelEvent *event)
 {
     if (m_inputEnabled)
         handleWheel(event);
+    else
+        event->setAccepted(false);
+}
+
+void Viewport::keyEvent(Qt3DInput::QKeyEvent *event)
+{
+    // view through node camera
+    if (event->key()==Qt::Key_0){
+       std::cout << "setting camera to node\n"; 
+       for(auto item : m_apDrawItems) {
+           switch(item->item()->type){
+               case feather::draw::Item::PerspCamera:
+                   m_pFrameGraph->setCamera(static_cast<PerspCamera*>(item)->camera());
+                   break;
+               default:
+                   break;
+           }
+       }
+    }
+    // view through viewports default camera
+    if (event->key()==Qt::Key_5){
+       std::cout << "setting camera to viewport's default\n"; 
+       m_pFrameGraph->setCamera(m_pCamera);
+    }
     else
         event->setAccepted(false);
 }
@@ -1634,7 +1678,7 @@ void Viewport::buildScene(feather::draw::DrawItems& items)
                 break;
             case feather::draw::Item::PerspCamera:
                 std::cout << "build PerspCamera\n";
-                m_apDrawItems.append(new PerspCamera(m_pCamera,m_pFrameGraph->layer(),item,this));
+                m_apDrawItems.append(new PerspCamera(m_pFrameGraph->layer(),item,this));
                 break;
             default:
                 std::cout << "nothing built\n";
@@ -1642,9 +1686,10 @@ void Viewport::buildScene(feather::draw::DrawItems& items)
     }
 }
 
-void Viewport::onEntered()
+void Viewport::onMouseEntered()
 {
     std::cout << "VP Entered\n";
+    //m_pKeyboardHandler->setFocus(true);
 }
 
 void Viewport::onClicked(Qt3DInput::QMouseEvent* event)
@@ -1677,7 +1722,7 @@ void Viewport::addItems(unsigned int uid)
                 break;
             case feather::draw::Item::PerspCamera:
                 std::cout << "updating Perspective Camear draw item\n";
-                m_apDrawItems.append(new PerspCamera(m_pCamera,m_pFrameGraph->layer(),item,this));
+                m_apDrawItems.append(new PerspCamera(m_pFrameGraph->layer(),item,this));
                 break;
             default:
                 std::cout << "nothing built\n";
@@ -1708,4 +1753,9 @@ void Viewport::updateItems(unsigned int uid)
             }
         }
     }
+}
+
+void Viewport::setCamera(unsigned int uid)
+{
+    // TODO
 }
