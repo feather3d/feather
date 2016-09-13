@@ -34,7 +34,7 @@ Rectangle {
     property alias fidKey: field.fid // this is the fields number assigned by the plugin
     //property alias label: label.text 
     property int fieldType: 0 
-    property int value: {
+    property double value: {
         switch(field.type) {
             case Field.Bool:
                 return field.boolVal
@@ -51,7 +51,7 @@ Rectangle {
                 break
             */
             case Field.Real:
-                return field.realVal
+                return Math.floor(field.realVal*100,-2)/100.00
                 break
             default:
                 return field.intVal
@@ -111,7 +111,7 @@ Rectangle {
             name: "normal"
             PropertyChanges {
                 target: intField 
-                color: typeNormalStateColor() //"lightgrey"
+                color: properties.getFieldTypeColor(field.type) //"lightgrey"
             }
 
             PropertyChanges {
@@ -206,39 +206,23 @@ Rectangle {
         onEntered: { intField.state="hover" }
         onExited: { intField.state="normal" }
         onWheel: {
-            console.log("fieldType:" + field.type)
+            //console.log("fieldType:" + field.type)
+            var offset = wheel.angleDelta.y/120.0
+            //console.log("wheel delta:",wheel.pixelDelta," angle:",wheel.angleDelta," offset:",offset)
             switch(field.type) {
                 case Field.Bool || Field.BoolArray: field.boolVal = (!field.boolVal) ? true : false ; break;
-                case Field.Int || Field.IntArray: field.intVal = field.intVal + 1; break;
+                case Field.Int || Field.IntArray: field.intVal = field.intVal + offset; break;
                 //case Field.Float || Field.FloatArray: field.realVal = field.floatVal + 1 ; break;
                 //case Field.Double || Field.DoubleArray: field.realVal = field.realVal + 0.1; valueText.text = field.realVal.toFixed(2); SceneGraph.nodeFieldChanged(uidKey,nidKey,fidKey); break;
-                case Field.Real || Field.DoubleArray: field.realVal = field.realVal + 0.1; valueText.text = field.realVal.toFixed(2); SceneGraph.triggerUpdate(); SceneGraph.nodeFieldChanged(uidKey,nidKey,fidKey); break;
+                case Field.Real || Field.DoubleArray: field.realVal = field.realVal + (offset*0.1); valueText.text = field.realVal.toFixed(2); SceneGraph.triggerUpdate(); SceneGraph.nodeFieldChanged(uidKey,nidKey,fidKey); break;
                 case Field.Vertex || Field.VertexArray: ; break;
                 case Field.Vector || Field.VectorArray: ; break;
                 case Field.Mesh: ; break;
                 case Field.RGB || Field.RGBA: ; break;
                 default: ;
             }
- 
-            //field.intVal = field.intVal+1
         }
     }
 
     Component.onCompleted: { intField.state="normal" }
-
-    function typeNormalStateColor(t) {
-        //switch(intField.fieldType) {
-        switch(field.type) {
-            case Field.Bool || Field.BoolArray: return properties.getColor("boolType"); break;
-            case Field.Int || Field.IntArray: return properties.getColor("intType"); break;
-            //case Field.Float || Field.FloatArray: return properties.getColor("floatType"); break;
-            //case Field.Double || Field.DoubleArray: return properties.getColor("doubleType"); break;
-            case Field.Real || Field.DoubleArray: return properties.getColor("doubleType"); break;
-            case Field.Vertex || Field.VertexArray: return properties.getColor("vertexType"); break;
-            case Field.Vector || Field.VectorArray: return properties.getColor("vertexType"); break;
-            case Field.Mesh: return properties.getColor("meshType"); break;
-            case Field.RGB || Field.RGBA: return properties.getColor("rgbType"); break;
-            default: return "white";
-        }
-    }
 }
