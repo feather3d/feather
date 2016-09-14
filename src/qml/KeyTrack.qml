@@ -247,6 +247,23 @@ Rectangle {
         var cframe = Math.floor(cpos*fps)
         var csec = Math.floor(stime)
 
+        // frame markers
+        var sframe = Math.round(stime+100/spf)/100 // start frame
+        var cpf = (sframe * ppf)-(stime * pps) // this is the start pixel for the drawn frame
+        //console.log("cpf:",cpf," sframe:",sframe," spf:",spf," stime:",stime)
+        var drawframe = false
+        if((cpf/2)*2 == cpf)
+            drawframe = true
+        while(cpf < width) {
+            //context.beginPath()
+            context.fillStyle = "#aaaaaa"
+            if(drawframe)
+                context.fillRect(cpf,0,ppf,height)
+            cpf += ppf
+            drawframe = (drawframe) ? false : true
+        }
+        //context.stroke()
+
         // cpos 
         context.beginPath()
         context.strokeStyle = "#ff0000"
@@ -288,7 +305,7 @@ Rectangle {
         }
         var posvalmarkY = zeroY - ppvstep
         var negvalmarkY = zeroY + ppvstep
-        context.strokeStyle = "#aaaaaa"
+        context.strokeStyle = "#333333"
 
         // draw positive lines
         while(posvalmarkY > 0){
