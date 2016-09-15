@@ -33,6 +33,7 @@
 #include "node.hpp"
 #include "object.hpp"
 #include "field.hpp"
+#include "qml_status.hpp"
 #include <QtQuick/QQuickPaintedItem>
 
 using namespace feather;

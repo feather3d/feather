@@ -45,14 +45,12 @@ ListModel {
     // Curve
     //ListElement { text: "Curve"; type: Node.Curve }
     // Polygon
-    ListElement { text: "PolygonShape"; nid: 320; type: Node.Polygon }
-    ListElement { text: "PolygonPlane"; nid: 321; type: Node.Polygon }
-    ListElement { text: "PolygonCube"; nid: 322; type: Node.Polygon }
+    ListElement { text: "Shape"; nid: 320; type: Node.Polygon }
+    ListElement { text: "Plane"; nid: 321; type: Node.Polygon }
+    ListElement { text: "Cube"; nid: 322; type: Node.Polygon }
 
     // ANIMATION PLUGIN
-    ListElement { text: "AnimationIntKey"; nid: 420; type: Node.Animation }
-    ListElement { text: "AnimationRealKey"; nid: 421; type: Node.Animation }
-    ListElement { text: "AnimationIntTrack"; nid: 425; type: Node.Animation }
-    ListElement { text: "AnimationRealTrack"; nid: 426; type: Node.Animation }
+    ListElement { text: "Key"; nid: 420; type: Node.Animation }
+    ListElement { text: "Track"; nid: 425; type: Node.Animation }
 
 }

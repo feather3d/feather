@@ -29,6 +29,7 @@
 #include "layer_model.hpp"
 #include "tree_model.hpp"
 #include "qml.hpp"
+#include "qml_status.hpp"
 #include "commands.hpp"
 #include <QApplication>
 #include <QQmlApplicationEngine>
@@ -198,7 +199,7 @@ static QObject *get_scenegraph(QQmlEngine *engine, QJSEngine *scriptEngine)
 int main(int argc, char **argv)
 {
     QApplication app(argc, argv);
-
+    qmlRegisterType<Status>("feather.scenegraph", 1, 0, "Status");
     qmlRegisterType<BezierCurve>("feather.ui.curves", 1, 0, "BezierCurve");
     qmlRegisterType<Viewport>("feather.viewport", 1, 0, "Viewport3D2");
     qmlRegisterType<SceneGraphEditor>("feather.editors", 1, 0, "SceneGraphEditor");

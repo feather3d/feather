@@ -22,7 +22,7 @@
  ***********************************************************************/
 
 import QtQuick 2.5
-import QtQuick.Controls 1.2
+import QtQuick.Controls 1.4
 import QtQuick.Layouts 1.1
 import QtQuick.Window 2.2
 import feather.scenegraph 1.0
@@ -149,6 +149,7 @@ ApplicationWindow {
         timeEditor.startTimeChanged.connect(keyframeEditor.setStartTime)
         timeEditor.endTimeChanged.connect(keyframeEditor.setEndTime)
         timeEditor.currentTimeChanged.connect(keyframeEditor.setCurrentTime)
+        sgEditor.statusChanged.connect(cmdLineId.command_message_changed)
     }
 
     //Material {}

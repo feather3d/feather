@@ -173,13 +173,20 @@ Rectangle {
                             var dVal = dY/ppv
                             // This is only for int values, add type check later
                             if(dVal >= 1 || dVal <= -1){
-                                keyframe.fid = 2 // value 
-                                keyframe.intVal += dY/ppv
+                                // get type
+                                keyframe.fid = 4
+                                if(keyframe.intVal == Field.Int){
+                                    keyframe.fid = 2
+                                    keyframe.intVal += dY/ppv
+                                } else {
+                                    keyframe.fid = 3
+                                    keyframe.realVal += dY/ppv
+                                }
                                 mouseY = mouse.y
                             }
                             keyframe.fid = 1 // time
                             keyframe.realVal -= dX/pps
-                        }
+                         }
                     }
                 }
                 mouseX = mouse.x
@@ -196,8 +203,11 @@ Rectangle {
 
     function draw_key(context,key) {
         keyframe.uid = key.uid
-        keyframe.fid = 2
-        var val = keyframe.intVal
+        keyframe.fid = 4
+        var keytype = keyframe.intVal
+        var keyfid = (keytype == Field.Int) ? 2 : 3 
+        keyframe.fid = keyfid
+        var val = (keytype == Field.Int) ? keyframe.intVal : keyframe.realVal
         keyframe.fid = 1
         var keyTime = keyframe.realVal
         var ppv = height/(maxVal - minVal)

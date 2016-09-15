@@ -37,6 +37,7 @@ SET(feather_qml_SRCS
     
     # viewport
     #viewport3.cpp
+    qml_status.cpp
     viewport.cpp
 
     # qml

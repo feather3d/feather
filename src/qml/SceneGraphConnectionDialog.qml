@@ -77,8 +77,8 @@ Window {
 
                     onPressed: {
                         //console.log("field ",fid," of uid ",uid," clicked")
-                        if(!connected || connection == Field.Out)
-                            fieldSelected(uid,nid,fid,connection)
+                        //if(!connected || connection == Field.Out)
+                        fieldSelected(uid,nid,fid,connection)
                         editor.visible = false
                     }
               

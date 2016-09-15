@@ -27,6 +27,7 @@
 #include "field.hpp"
 #include "state.hpp"
 #include "plugin.hpp"
+#include "qml_status.hpp"
 
 #define BACKGROUND_COLOR "#444444"
 #define NODE_TEXT_COLOR "#000000"
@@ -105,6 +106,7 @@ void SceneGraphConnection::mousePressEvent(QMouseEvent* event)
     MouseInfo::clickY = event->windowPos().y();
 
     // add to selected connections
+    /*
     if(!m_selected) {
         m_selected=true;
         SGState::selectedConnections.push_back(this);
@@ -112,6 +114,7 @@ void SceneGraphConnection::mousePressEvent(QMouseEvent* event)
         m_selected=false;
         SGState::remove(this);
     }
+    */
 
     connClicked(event->button(),m_type,event->screenPos().x(),event->screenPos().y());
     update();
@@ -498,10 +501,18 @@ void SceneGraphEditor::setConnectionSource(unsigned int uid, unsigned int fid)
 {
     SGState::srcUid = uid;
     SGState::srcFid = fid;
-    
+    status p;
+
     // if there is a target already selected, connect
     if(SGState::tgtUid){
-        feather::plugin::connect(
+        std::cout << "CONNECTING Source->Target"
+            << " suid:" << SGState::srcUid
+            << " sfid:" << SGState::srcFid
+            << " tuid:" << SGState::tgtUid
+            << " tfid:" << SGState::tgtFid
+            << std::endl;
+
+        p = feather::plugin::connect(
                 SGState::srcUid,
                 SGState::srcFid,
                 SGState::tgtUid,
@@ -512,7 +523,9 @@ void SceneGraphEditor::setConnectionSource(unsigned int uid, unsigned int fid)
         SGState::srcFid = 0;
         SGState::tgtUid = 0;
         SGState::tgtFid = 0;
+        Status out;
     }
+    statusChanged(p.state,QString(p.msg.c_str()));
 };
 
 void SceneGraphEditor::setConnectionTarget(unsigned int uid, unsigned int fid)
@@ -520,9 +533,18 @@ void SceneGraphEditor::setConnectionTarget(unsigned int uid, unsigned int fid)
     SGState::tgtUid = uid;
     SGState::tgtFid = fid;
 
+    status p;
+
     // if there is a target already selected, connect
-    if(SGState::tgtUid){
-        feather::plugin::connect(
+    if(SGState::srcUid){
+        std::cout << "CONNECTING Target->Source"
+            << " suid:" << SGState::srcUid
+            << " sfid:" << SGState::srcFid
+            << " tuid:" << SGState::tgtUid
+            << " tfid:" << SGState::tgtFid
+            << std::endl;
+
+        p = feather::plugin::connect(
                 SGState::srcUid,
                 SGState::srcFid,
                 SGState::tgtUid,
@@ -534,6 +556,9 @@ void SceneGraphEditor::setConnectionTarget(unsigned int uid, unsigned int fid)
         SGState::tgtUid = 0;
         SGState::tgtFid = 0;
     }
+    std::cout << "STATUS MESSAGE:" << p.msg << std::endl;
+
+    statusChanged(p.state,QString(p.msg.c_str()));
 };
 
 void SceneGraphEditor::paint(QPainter* painter)

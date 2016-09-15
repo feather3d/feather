@@ -222,6 +222,7 @@ class SceneGraphEditor : public QQuickPaintedItem
         void nodeSelection(int type, int uid, int nid);
         void updateSelection();
         void connectorClicked(int button, int conn, int x, int y, int uid, int nid);
+        void statusChanged(int state, QString msg);
 
     private:
         void updateGraph();

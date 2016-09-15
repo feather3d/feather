@@ -35,6 +35,8 @@ Rectangle {
     
     property Properties properties: Null
     property alias fieldModel: sg_editor.connection
+
+    signal statusChanged(int state, string msg)
  
     // Dialogs
     AddNodeDialog{ id: addNodeDialog; properties: sgWindow.properties }
@@ -209,6 +211,10 @@ Rectangle {
         }
     }
 
+    function statusTriggered(state,msg){
+        console.log("STATUS TRIGGERED: state:",state," msg:",msg)
+    }
+
     Component.onCompleted: {
         sg_editor.openConnMenu.connect(openConnectionMenu)
         sg_editor.nodeSelection.connect(nodeSelection)
@@ -221,6 +227,8 @@ Rectangle {
         addNodeDialog.addNode.connect(add_node)
         sg_editor.connectorClicked.connect(connectionClicked)
         connectionDialog.fieldSelected.connect(connectionSelection)
+        // status changed
+        sg_editor.statusChanged.connect(statusTriggered)
     }
 
 }
