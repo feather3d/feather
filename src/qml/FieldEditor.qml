@@ -78,6 +78,7 @@ Item {
             anchors.right: parent.right
             anchors.bottom: parent.bottom
             anchors.margins: 1
+
             delegate: FieldEditorValue {
                 properties: fieldEditor.properties
                 width: parent.width

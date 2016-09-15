@@ -26,7 +26,7 @@ import feather.field 1.0
 import feather.scenegraph 1.0
 
 Rectangle {
-    id: intField
+    id: fieldvalue
     height: 14
    
     property alias uidKey: field.uid 
@@ -110,7 +110,7 @@ Rectangle {
         State {
             name: "normal"
             PropertyChanges {
-                target: intField 
+                target: fieldvalue 
                 color: properties.getFieldTypeColor(field.type) //"lightgrey"
             }
 
@@ -136,7 +136,7 @@ Rectangle {
         State {
             name: "hover"
             PropertyChanges {
-                target: intField 
+                target: fieldvalue 
                 color: "lightblue"
             }
 
@@ -162,7 +162,7 @@ Rectangle {
         State {
             name: "pressed"
             PropertyChanges {
-                target: intField 
+                target: fieldvalue 
                 color: "green"
             }
 
@@ -197,14 +197,14 @@ Rectangle {
             if(mouse.button == Qt.RightButton)
                 popup.popup()
 
-            intField.state="pressed"
-            intField.update()
+            fieldvalue.state="pressed"
+            fieldvalue.update()
         }
 
         //onPositionChanged: { }
-        onReleased: { intField.state="normal" }
-        onEntered: { intField.state="hover" }
-        onExited: { intField.state="normal" }
+        onReleased: { fieldvalue.state="normal" }
+        onEntered: { fieldvalue.state="hover" }
+        onExited: { fieldvalue.state="normal" }
         onWheel: {
             //console.log("fieldType:" + field.type)
             var offset = wheel.angleDelta.y/120.0
@@ -224,5 +224,33 @@ Rectangle {
         }
     }
 
-    Component.onCompleted: { intField.state="normal" }
+    // This is used to manually load the field's value from the node.
+    // Usually this is done when another editor has changed and the feild editor needs to be updated
+    function updateValue(uid,nid,fid) {
+        switch(field.type) {
+            case Field.Bool || Field.BoolArray: valueText.text = field.boolVal; break;
+            case Field.Int || Field.IntArray: valueText.text = field.intVal; break;
+            //case Field.Float || Field.FloatArray: valueText.text = field.realVal; break;
+            //case Field.Double || Field.DoubleArray: valueText.text = field.realVal.toFixed(2); break;
+            case Field.Real || Field.DoubleArray: valueText.text = field.realVal.toFixed(2); break;
+            case Field.Vertex || Field.VertexArray: ; break;
+            case Field.Vector || Field.VectorArray: ; break;
+            case Field.Mesh: ; break;
+            case Field.RGB || Field.RGBA: ; break;
+            default: ;
+        }
+    }
+
+    /*
+    function updataValue() {
+        console.log("Field ",field.fid," update")
+        fieldvalue.update()
+    }
+    */
+
+    Component.onCompleted: { 
+        fieldvalue.state="normal"
+        SceneGraph.nodeFieldChanged.connect(updateValue)
+        //SceneGraph.updateGraph.connect(updateValue)
+    }
 }

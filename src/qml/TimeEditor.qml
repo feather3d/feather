@@ -177,6 +177,8 @@ Rectangle {
 
     function barCposChanged() {
         cpos.realVal = bar.cpos
+        SceneGraph.nodeFieldChanged(cpos.uid,cpos.nid,cpos.fid)
+        //SceneGraph.triggerUpdate()
     }
 
     Component.onCompleted: {
