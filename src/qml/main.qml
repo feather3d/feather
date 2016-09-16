@@ -146,6 +146,9 @@ ApplicationWindow {
         keyframeEditor.startTimeChanged.connect(timeEditor.setStartTime)
         keyframeEditor.endTimeChanged.connect(timeEditor.setEndTime)
         keyframeEditor.currentTimeChanged.connect(timeEditor.setCurrentTime)
+        keyframeEditor.stime = timeEditor.spos
+        keyframeEditor.etime = timeEditor.epos
+        keyframeEditor.cpos = timeEditor.cpos
         timeEditor.startTimeChanged.connect(keyframeEditor.setStartTime)
         timeEditor.endTimeChanged.connect(keyframeEditor.setEndTime)
         timeEditor.currentTimeChanged.connect(keyframeEditor.setCurrentTime)

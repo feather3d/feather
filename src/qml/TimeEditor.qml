@@ -34,13 +34,20 @@ Rectangle {
     color: "darkgrey"
 
     property int uid: 0 
+    property alias stime: stimefield.realValue
+    property alias etime: etimefield.realValue
+    property alias cpos: cposfield.realVal
+    property alias spos: slider.spos // slider start time
+    property alias epos: slider.epos // slider end time
 
     signal startTimeChanged(double time)
     signal endTimeChanged(double time)
     signal currentTimeChanged(double time)
-
+    signal sliderStartPositionChanged(double time)
+    signal sliderEndPositionChanged(double time)
+ 
     FieldValue {
-        id: stime
+        id: stimefield
         width: 50
         height: controller.height 
         anchors.top: parent.top
@@ -53,9 +60,9 @@ Rectangle {
     Rectangle {
         id: bar_box
         height: controller.height 
-        anchors.left: stime.right
+        anchors.left: stimefield.right
         anchors.top: parent.top
-        anchors.right: etime.left
+        anchors.right: etimefield.left
         border.width: 1
         radius: 2
         color: "orange"
@@ -70,7 +77,7 @@ Rectangle {
     }
 
     FieldValue {
-        id: etime
+        id: etimefield
         width: 50
         height: controller.height 
         anchors.top: parent.top
@@ -84,10 +91,10 @@ Rectangle {
         id: controller
         anchors.top: parent.top
         anchors.right: parent.right
-        cpos: cpos.realVal
+        cpos: cposfield.realVal
         fps: fps.realVal
-        //stime: stime.realValue
-        //etime: etime.realValue
+        //stime: stimefield.realValue
+        //etime: etimefield.realValue
     }
 
     TimeSlider {
@@ -110,7 +117,7 @@ Rectangle {
 
 
     Field {
-        id: cpos
+        id: cposfield
         uid: SceneGraph.get_node_by_name("time")
         nid: 4
         fid: 3
@@ -124,30 +131,34 @@ Rectangle {
     }
 
     function setStartTime(time){
-        slider.spos = time
+        // don't allow the slide to go under the set start time
+        if(stimefield.realValue <= time && slider.epos <= etimefield.realValue)
+            slider.spos = time
     }
 
     function setEndTime(time){
-        slider.epos = time
+        // don't allow the slide to go under the set start time
+        if(etimefield.realValue >= time && slider.spos >= stimefield.realValue)
+            slider.epos = time
     }
 
     function setCurrentTime(time){
-        cpos.realVal = time
+        cposfield.realVal = time
     }
 
     function updateFields(uid,nid,fid) {
-        stime.updateValue()
-        etime.updateValue()
-        slider.stime = stime.realValue
-        slider.etime = etime.realValue
-        controller.stime = stime.realValue
-        controller.etime = etime.realValue
-        bar.cpos = cpos.realVal
+        stimefield.updateValue()
+        etimefield.updateValue()
+        slider.stime = stimefield.realValue
+        slider.etime = etimefield.realValue
+        controller.stime = stimefield.realValue
+        controller.etime = etimefield.realValue
+        bar.cpos = cposfield.realVal
         bar.updateBar()
-        timecode.pos = cpos.realVal
-        startTimeChanged(stime.realValue)
-        endTimeChanged(etime.realValue)
-        currentTimeChanged(cpos.realValue)
+        timecode.pos = cposfield.realVal
+        startTimeChanged(stimefield.realValue)
+        endTimeChanged(etimefield.realValue)
+        currentTimeChanged(cposfield.realValue)
     }
 
     function nodeSelected() {
@@ -155,43 +166,48 @@ Rectangle {
         var nid = SceneGraph.node_id(uid);
         // if the nid is a animation track or an fid that connects to a track, set the track_uid in the bar so the keys can be displayed
         // TODO - add fid check
-        if ( nid == 425 || nid == 426 ) {
+        if (nid == 425)
             bar.track_uid = uid
-        }
     }
 
     function updatePosition(pos) {
-        console.log("new pos: " + cpos.realVal)
-        cpos.realVal = pos
-        //timecode.pos = cpos.realVal
+        console.log("new pos: " + cposfield.realVal)
+        cposfield.realVal = pos
+        //timecode.pos = cposfield.realVal
     }
 
     function updateCPos() {
         console.log("updating cpos")
-        timecode.pos = cpos.realVal
-        bar.cpos = cpos.realVal
+        timecode.pos = cposfield.realVal
+        bar.cpos = cposfield.realVal
         bar.updateBar()
-        controller.cpos = cpos.realVal
-        currentTimeChanged(cpos.realVal)
+        controller.cpos = cposfield.realVal
+        currentTimeChanged(cposfield.realVal)
     }
 
     function barCposChanged() {
-        cpos.realVal = bar.cpos
-        SceneGraph.nodeFieldChanged(cpos.uid,cpos.nid,cpos.fid)
+        cposfield.realVal = bar.cpos
+        SceneGraph.nodeFieldChanged(cposfield.uid,cposfield.nid,cposfield.fid)
         //SceneGraph.triggerUpdate()
     }
 
+    function sliderChanged() {
+        sliderStartPositionChanged(slider.spos)
+        sliderEndPositionChanged(slider.epos)
+    }
+
     Component.onCompleted: {
-        slider.stime = stime.realValue
-        slider.etime = etime.realValue
-        bar.cpos = cpos.realVal
+        slider.barChanged.connect(sliderChanged)
+        slider.stime = stimefield.realValue
+        slider.etime = etimefield.realValue
+        bar.cpos = cposfield.realVal
         bar.cposChanged.connect(barCposChanged)
-        controller.cpos = cpos.realVal
-        controller.stime = stime.realValue
-        controller.etime = etime.realValue
+        controller.cpos = cposfield.realVal
+        controller.stime = stimefield.realValue
+        controller.etime = etimefield.realValue
         controller.positionChanged.connect(updatePosition) 
         SceneGraph.nodeFieldChanged.connect(updateFields)
         SceneGraph.nodeSelected.connect(nodeSelected)
-        cpos.realValChanged.connect(updateCPos)
+        cposfield.realValChanged.connect(updateCPos)
     }
 }

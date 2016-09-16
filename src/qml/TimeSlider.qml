@@ -180,6 +180,7 @@ Rectangle {
                         epos += dsec
                     }
                     viewable.x = pps * spos
+                    barChanged()
                 }
             }
 

@@ -284,14 +284,14 @@ void MeshGeometry::build()
             gli.push_back(_face.at(id+1).v);
 
             if(id+2 < _face.size()) {
-                std::cout << "v.y id:" << id+2 << "=" << mesh.v.at(_face.at(id+2).v).y << ",";
+                //std::cout << "v.y id:" << id+2 << "=" << mesh.v.at(_face.at(id+2).v).y << ",";
                 //std::cout << "v" << id+2 << ":" << _face.at(id+2).v << "," << std::endl;
                 m_aMeshVData.push_back(mesh.v.at(_face.at(id+2).v));
                 m_aMeshVnData.push_back(mesh.vn.at(_face.at(id+2).vn));
                 //glvn.push_back(vn.at(_face.at(id+2).vn));
                 gli.push_back(_face.at(id+2).v);
             } else {
-                std::cout << "v.y id:" << 0 << "=" << mesh.v.at(_face.at(0).v).y << ",";
+                //std::cout << "v.y id:" << 0 << "=" << mesh.v.at(_face.at(0).v).y << ",";
                 //std::cout << "v" << 0 << ":" << _face.at(0).v << "," << std::endl;
                 m_aMeshVData.push_back(mesh.v.at(_face.at(0).v));
                 m_aMeshVnData.push_back(mesh.vn.at(_face.at(0).vn));
@@ -301,7 +301,7 @@ void MeshGeometry::build()
 
             id=id+2;
             }
-            std::cout << "\n";
+            //std::cout << "\n";
             fcount++;
             id=0;
     });
@@ -311,7 +311,7 @@ void MeshGeometry::build()
 void MeshGeometry::updateBuffers()
 {
     build();
-
+    
     // Position Buffer
     const int vsize = m_aMeshVData.size() * sizeof(feather::FVertex3D);
     QByteArray meshVBytes;
@@ -320,12 +320,14 @@ void MeshGeometry::updateBuffers()
     m_pVertexBuffer->setData(meshVBytes);
     //emit(m_pVAttribute->buffer()->dataChanged(meshVBytes));
     //m_pVAttribute->setBuffer(m_pVertexBuffer);
- 
+
+    /* 
     std::cout << "V Buffer size=" << m_pVertexBuffer->data().size() << std::endl;
     std::cout << "V Attribute Buffer size=" << m_pVAttribute->buffer()->data().size()
         << ", count size=" << m_pVAttribute->count()
         << ", vertex size=" << m_pVAttribute->vertexSize()
         << std::endl;
+    */
 
     // Normal Buffer
     const int vnsize = m_aMeshVnData.size() * sizeof(feather::FVertex3D);

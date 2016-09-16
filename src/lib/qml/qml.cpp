@@ -139,7 +139,7 @@ int SceneGraph::run_command_string(QString str)
 void SceneGraph::triggerUpdate()
 {
     qml::command::scenegraph_update();
-    // some widgets need to if nodes where added and what was added
+    // some widgets need to know if nodes where added and what was added
 
     std::vector<unsigned int> uids;
     bool n = feather::qml::command::nodes_added(uids);
