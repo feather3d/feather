@@ -66,10 +66,10 @@ Rectangle {
             var ppf = pps/fps // pixels per frame
             var fm = 100/ppf // frame multiplier
             var spf = 1.0/fps // seconds per frame
-            var frameX = (Math.floor(stime/spf) - stime) * pps
+            var frameX = (stime - Math.floor(stime/spf)) * pps
             var secondX = (Math.floor(stime) - stime) * pps 
             var cposX = (cpos - stime) * pps
-            var cframe = Math.floor(cpos*fps)
+            var cframe = Math.round(cpos*fps)
 
             // frames 
 
@@ -125,8 +125,8 @@ Rectangle {
             context.beginPath()
             context.strokeStyle = "#ff0000"
             context.lineWidth = ppf 
-            context.moveTo(cposX,0)
-            context.lineTo(cposX,height)
+            context.moveTo(cposX+(ppf/2),0)
+            context.lineTo(cposX+(ppf/2),height)
             context.stroke()
 
             // display the frame number
