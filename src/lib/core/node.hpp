@@ -135,6 +135,25 @@ namespace feather
             if(f->id==222)\
                 szOut= static_cast<RealField>(f);\
         }\
+        /* if any of the inputs are connected, use their value instead */\
+        if(txIn->connections.size())\
+            txIn->value = static_cast<RealField>(plugin::get_node_field_base(txIn->connections.at(0).puid,txIn->connections.at(0).pfid))->value;\
+        if(tyIn->connections.size())\
+            tyIn->value = static_cast<RealField>(plugin::get_node_field_base(tyIn->connections.at(0).puid,tyIn->connections.at(0).pfid))->value;\
+        if(tzIn->connections.size())\
+            tzIn->value = static_cast<RealField>(plugin::get_node_field_base(tzIn->connections.at(0).puid,tzIn->connections.at(0).pfid))->value;\
+        if(sxIn->connections.size())\
+            sxIn->value = static_cast<RealField>(plugin::get_node_field_base(sxIn->connections.at(0).puid,sxIn->connections.at(0).pfid))->value;\
+        if(syIn->connections.size())\
+            syIn->value = static_cast<RealField>(plugin::get_node_field_base(syIn->connections.at(0).puid,syIn->connections.at(0).pfid))->value;\
+        if(szIn->connections.size())\
+            szIn->value = static_cast<RealField>(plugin::get_node_field_base(szIn->connections.at(0).puid,szIn->connections.at(0).pfid))->value;\
+        if(rxIn->connections.size())\
+            rxIn->value = static_cast<RealField>(plugin::get_node_field_base(rxIn->connections.at(0).puid,rxIn->connections.at(0).pfid))->value;\
+        if(ryIn->connections.size())\
+            ryIn->value = static_cast<RealField>(plugin::get_node_field_base(ryIn->connections.at(0).puid,ryIn->connections.at(0).pfid))->value;\
+        if(rzIn->connections.size())\
+            rzIn->value = static_cast<RealField>(plugin::get_node_field_base(rzIn->connections.at(0).puid,rzIn->connections.at(0).pfid))->value;\
         FMatrix4x4 matrix;\
         tools::build_matrix(\
                 txIn->value,\
@@ -158,6 +177,16 @@ namespace feather
         sxOut->value = sxIn->value;\
         syOut->value = syIn->value;\
         szOut->value = szIn->value;\
+        localMatrixOut->update = true;\
+        txOut->update = true;\
+        tyOut->update = true;\
+        tzOut->update = true;\
+        rxOut->update = true;\
+        ryOut->update = true;\
+        rzOut->update = true;\
+        sxOut->update = true;\
+        syOut->update = true;\
+        szOut->update = true;\
         return status();\
     };\
     \

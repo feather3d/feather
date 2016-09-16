@@ -227,17 +227,19 @@ Rectangle {
     // This is used to manually load the field's value from the node.
     // Usually this is done when another editor has changed and the feild editor needs to be updated
     function updateValue(uid,nid,fid) {
-        switch(field.type) {
-            case Field.Bool || Field.BoolArray: valueText.text = field.boolVal; break;
-            case Field.Int || Field.IntArray: valueText.text = field.intVal; break;
-            //case Field.Float || Field.FloatArray: valueText.text = field.realVal; break;
-            //case Field.Double || Field.DoubleArray: valueText.text = field.realVal.toFixed(2); break;
-            case Field.Real || Field.DoubleArray: valueText.text = field.realVal.toFixed(2); break;
-            case Field.Vertex || Field.VertexArray: ; break;
-            case Field.Vector || Field.VectorArray: ; break;
-            case Field.Mesh: ; break;
-            case Field.RGB || Field.RGBA: ; break;
-            default: ;
+        if(field != null){
+            switch(field.type) {
+                case Field.Bool || Field.BoolArray: valueText.text = field.boolVal; break;
+                case Field.Int || Field.IntArray: valueText.text = field.intVal; break;
+                //case Field.Float || Field.FloatArray: valueText.text = field.realVal; break;
+                //case Field.Double || Field.DoubleArray: valueText.text = field.realVal.toFixed(2); break;
+                case Field.Real || Field.DoubleArray: valueText.text = field.realVal.toFixed(2); break;
+                case Field.Vertex || Field.VertexArray: ; break;
+                case Field.Vector || Field.VectorArray: ; break;
+                case Field.Mesh: ; break;
+                case Field.RGB || Field.RGBA: ; break;
+                default: ;
+            }
         }
     }
 
