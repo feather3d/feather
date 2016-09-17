@@ -258,22 +258,31 @@ Rectangle {
         var csec = Math.floor(stime)
 
         // frame markers
-        var sframe = Math.round(stime+100/spf)/100 // start frame
-        var cpf = (sframe * ppf)-(stime * pps) // this is the start pixel for the drawn frame
-        //console.log("cpf:",cpf," sframe:",sframe," spf:",spf," stime:",stime)
         var drawframe = false
-        if((cpf/2)*2 == cpf)
+
+        var sframe = Math.floor(fps * stime)
+        var cpf =  ((sframe * spf) - stime) * pps
+ 
+        //console.log("cpf:",cpf," sframe:",sframe," stime:",stime)
+ 
+        if((Math.floor(sframe/2)*2) == sframe) 
             drawframe = true
+
+        context.beginPath()
+        context.lineWidth = ppf
         while(cpf < width) {
-            //context.beginPath()
-            context.fillStyle = "#aaaaaa"
-            if(drawframe)
-                context.fillRect(cpf,0,ppf,height)
+            context.strokeStyle = "#aaaaaa"
+            //context.fillStyle = "#aaaaaa"
+            if(drawframe){
+                context.moveTo(cpf+(ppf/2),0)
+                context.lineTo(cpf+(ppf/2),height)
+            }                
+            //context.fillRect(cpf,0,ppf,height)
             cpf += ppf
             drawframe = (drawframe) ? false : true
         }
-        //context.stroke()
-
+        context.stroke()
+ 
         // cpos 
         context.beginPath()
         context.strokeStyle = "#ff0000"
@@ -282,19 +291,21 @@ Rectangle {
         context.lineTo(cposX,height)
         context.stroke()
 
+            
+        context.beginPath()
         while(secondX < width) {
             // draw lines
-            context.beginPath()
             context.strokeStyle = "#000000"
             context.lineWidth = 1
             context.moveTo(secondX,0)
             context.lineTo(secondX,height)
-            context.stroke()
             // display the frame number
+            context.fillStyle = "#000000"
             context.fillText(csec,secondX,height-10)
             secondX = secondX + pps
             csec += 1
         }
+        context.stroke()
 
         // Draw the horizontal lines
         // find 0 point
