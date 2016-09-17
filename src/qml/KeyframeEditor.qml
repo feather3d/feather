@@ -21,8 +21,9 @@
  *
  ***********************************************************************/
 
-import QtQuick 2.5
-import QtQuick.Controls 1.2
+import QtQuick 2.7
+import QtQuick.Controls 1.5 
+import QtQuick.Controls 2.0 
 import QtQuick.Layouts 1.1
 import QtQuick.Window 2.2
 import feather.scenegraph 1.0
@@ -36,7 +37,9 @@ Rectangle {
     property alias etime: track.etime // seconds
     property alias fps: track.fps 
     property alias cpos: track.cpos //seconds
-
+    property alias fieldModel: view.model //seconds
+    property Properties properties: Null
+ 
     signal startTimeChanged(double time)
     signal endTimeChanged(double time)
     signal currentTimeChanged(double time)
@@ -49,27 +52,80 @@ Rectangle {
             name: "test_track"
             uid: 0
         }
+
+        ListElement {
+            name: "test_a"
+            uid: 1
+        }
+
     }
 
     SplitView {
-        id: view
+        id: splitview
         anchors.fill: parent
         orientation: Qt.Horizontal
 
-        Rectangle {
+        Flickable {
             id: names
-            width: 200
-            color: "darkgrey"
-            border.color: "black"
-            border.width: 1
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.bottom: parent.bottom
+            width: 100
+ 
+            ScrollBar.vertical: ScrollBar { 
+                id: scrollbar
+                active: true
+                orientation: Qt.Vertical
+            }
 
-            ListView {
+            Rectangle {
                 anchors.fill: parent
-                anchors.margins: 2 
-                model: trackmodel
-                delegate: Text { text: name }
-            } 
-        }
+                width: parent.width 
+                color: "black"
+                border.color: "black"
+                border.width: 1
+
+                ListView {
+                    id: view
+                    anchors.fill: parent
+                    anchors.margins: 2
+                    spacing: 2 
+                    //model: trackmodel
+
+                    Component {
+                        id: nodefield
+                        Row {
+                            width: parent.width
+                            height: 12
+
+                            Rectangle {
+                                color: properties.getFieldTypeColor(type) 
+                                width: parent.width - 12
+                                height: 12
+                                Text {
+                                    anchors.fill: parent
+                                    anchors.margins: 10
+                                    horizontalAlignment: Text.AlignRight
+                                    verticalAlignment: Text.AlignVCenter
+                                    font.pixelSize: 10
+                                    text: name
+                                }
+                            }
+ 
+                            Rectangle {
+                                color: properties.getKeyColor(fid) 
+                                width: 12 
+                                height: 12
+                                radius: 6
+                            }
+
+                        }
+                    }
+
+                    delegate: nodefield
+                } 
+            }
+        } 
 
         KeyTrack {
             id: track

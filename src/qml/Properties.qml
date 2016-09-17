@@ -127,4 +127,21 @@ Item {
             default: return "white";
         }
     }
+
+    function getKeyColor(fid) {
+        // generate a color based of the fid number
+        // for now we'll do this with a simple switch
+        switch(fid){
+            case 203: return "#FF0000"
+            case 204: return "#00FF00"
+            case 205: return "#0000FF"
+            case 206: return "#FF0000"
+            case 207: return "#00FF00"
+            case 208: return "#0000FF"
+            case 209: return "#FF0000"
+            case 210: return "#00FF00"
+            case 211: return "#0000FF"
+            default: return "#FFFF00"
+        }
+    }
 }

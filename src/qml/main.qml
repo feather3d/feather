@@ -100,6 +100,8 @@ ApplicationWindow {
         KeyframeEditor {
             id: keyframeEditor
             anchors.fill: parent
+            fieldModel: fields
+            properties: properties
         }
     }
 
