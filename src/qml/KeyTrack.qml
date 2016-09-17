@@ -308,44 +308,33 @@ Rectangle {
         context.stroke()
 
         // Draw the horizontal lines
-        // find 0 point
         var ppv = height/(maxVal-minVal) // pixels per value 1
-        var zeroY = maxVal*ppv
-        // zero marker
-        context.beginPath()
-        context.strokeStyle = "#ff00ff"
-        context.lineWidth = 1 
-        context.moveTo(0,zeroY)
-        context.lineTo(width,zeroY)
-        context.stroke()
-        var ppvmult = 0 // pixel per value multiplier
-        var ppvstep = ppv // pixel step to the next horizontal line
-        while(ppvstep > 10 && ppvstep <= 100){
-            ppvmult++
-            ppvstep = ppv * ppvmult
-        }
-        var posvalmarkY = zeroY - ppvstep
-        var negvalmarkY = zeroY + ppvstep
-        context.strokeStyle = "#333333"
+        var cpv = (maxVal - Math.floor(maxVal)) * ppv
+        var cv = Math.floor(maxVal)
 
-        // draw positive lines
-        while(posvalmarkY > 0){
-            context.beginPath()
-            context.moveTo(0,posvalmarkY)
-            context.lineTo(width,posvalmarkY)
-            context.stroke()
-            posvalmarkY = posvalmarkY - ppvstep
+        while(cpv <= height){
+            if(cv != 0){
+                context.beginPath()
+                context.strokeStyle = "#333333"
+                context.lineWidth = 1 
+                context.moveTo(0,cpv)
+                context.lineTo(width,cpv)
+                context.fillStyle = "#000000"
+                context.fillText(cv,2,cpv+(ppv/2))
+                context.stroke()
+             } else {
+                console.log("draw 0")
+                context.beginPath()
+                context.strokeStyle = "#ff00ff"
+                context.lineWidth = 1 
+                context.moveTo(0,cpv)
+                context.lineTo(width,cpv)
+                context.stroke()
+            }
+            cv -= 1
+            cpv += ppv 
         }
 
-        // draw negative lines
-        while(negvalmarkY < height){
-            context.beginPath()
-            context.moveTo(0,negvalmarkY)
-            context.lineTo(width,negvalmarkY)
-            context.stroke()
-            negvalmarkY = negvalmarkY + ppvstep
-        }
- 
     }
 
     // update the track keys
