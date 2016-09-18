@@ -84,6 +84,8 @@ Menu {
     FileDialog {
         id: exportDialog
         title: "Export Ply"
+        selectExisting: false
+        nameFilters: [ "Ply format ( *.ply)" ]
         onAccepted: {
             exportPlyFilename.stringValue = tools.urlToString(exportDialog.fileUrl)
             exportPly.exec()       

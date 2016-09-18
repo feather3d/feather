@@ -67,6 +67,9 @@ namespace feather
         // get node id
         unsigned int get_node_id(unsigned int uid, status& error);
 
+        // get a list off all selected node uid's
+        std::vector<unsigned int> get_selected_nodes();
+ 
         // get all nodes connected to uid
         status get_node_connected_uids(unsigned int uid, std::vector<int>& uids);
 

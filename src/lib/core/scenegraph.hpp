@@ -509,7 +509,7 @@ namespace feather
         smg::Instance()->clear();
     };
 
-    status get_selected_nodes(std::vector<int>& uids) {
+    status get_selected_nodes(std::vector<unsigned int>& uids) {
         for(uint i=0; i < smg::Instance()->count(); i++)
             uids.push_back(smg::Instance()->get_uid(i));
         return status();

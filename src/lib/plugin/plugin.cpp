@@ -96,6 +96,11 @@ unsigned int plugin::get_node_id(unsigned int uid, status& error)
     return api::get_node_id(uid,error);
 }
 
+std::vector<unsigned int> plugin::get_selected_nodes()
+{
+    return api::get_selected_nodes();
+}
+
 status plugin::get_node_connected_uids(unsigned int uid, std::vector<int>& uids)
 {
     return api::get_node_connected_uids(uid,uids);

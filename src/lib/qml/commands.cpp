@@ -509,7 +509,7 @@ status qml::command::select_node(int type, int uid, int nid, int fid)
     return scenegraph::add_selection(type,uid,nid,fid);
 }
 
-status qml::command::get_selected_nodes(std::vector<int>& uids)
+status qml::command::get_selected_nodes(std::vector<unsigned int>& uids)
 {
     return scenegraph::get_selected_nodes(uids);
 }
