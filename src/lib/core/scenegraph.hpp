@@ -216,6 +216,10 @@ namespace feather
         }
     }
 
+    unsigned int get_node_type(unsigned int uid) {
+        return sg[uid].type;
+    };
+
     void get_node_by_type(node::Type type, std::vector<unsigned int>& uids) {
         int count = num_vertices(sg);
         for(int i=0; i < count; i++){

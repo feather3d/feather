@@ -101,6 +101,11 @@ std::vector<unsigned int> plugin::get_selected_nodes()
     return api::get_selected_nodes();
 }
 
+unsigned int plugin::get_node_type(unsigned int uid)
+{
+    return api::get_node_type(uid);
+}
+
 status plugin::get_node_connected_uids(unsigned int uid, std::vector<int>& uids)
 {
     return api::get_node_connected_uids(uid,uids);

@@ -84,8 +84,10 @@ Menu {
     FileDialog {
         id: exportDialog
         title: "Export Ply"
-        selectExisting: false
-        nameFilters: [ "Ply format ( *.ply)" ]
+        selectExisting: true
+        selectFolder: true 
+        selectMultiple: false
+        //nameFilters: [ "Ply format ( *.ply)" ]
         onAccepted: {
             exportPlyFilename.stringValue = tools.urlToString(exportDialog.fileUrl)
             exportPly.exec()       
@@ -151,7 +153,7 @@ Menu {
         parameters: [
             Parameter { 
                 id: exportPlyFilename
-                name: "filename"
+                name: "path"
                 type: Parameter.String
                 stringValue: ""
             },

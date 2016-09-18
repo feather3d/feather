@@ -97,6 +97,11 @@ std::vector<unsigned int> api::get_selected_nodes()
     return uids;
 }
 
+unsigned int api::get_node_type(unsigned int uid)
+{
+    return scenegraph::get_node_type(uid);
+}
+
 status api::get_node_connected_uids(unsigned int uid, std::vector<int>& uids)
 {
     return scenegraph::get_node_connected_uids(uid,uids);
