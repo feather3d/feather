@@ -89,7 +89,7 @@ Menu {
         selectMultiple: false
         //nameFilters: [ "Ply format ( *.ply)" ]
         onAccepted: {
-            exportPlyFilename.stringValue = tools.urlToString(exportDialog.fileUrl)
+            exportPlyFilename.stringValue = tools.urlToString(exportDialog.fileUrl) 
             exportPly.exec()       
             SceneGraph.triggerUpdate()
         }
@@ -263,7 +263,6 @@ Menu {
         id: exportMenu
         title: "Export"
 
-        
         // Obj
         MenuItem {
             action: exportPlyAction

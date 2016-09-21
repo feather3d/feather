@@ -89,6 +89,9 @@ namespace feather
         // are the two nodes connected in any way
         bool get_node_connection_status(unsigned int suid, unsigned int tuid);
 
+        // get all the nodes that have been updated on the last scenegraph update
+        std::vector<unsigned int>* get_updated_nodes();
+
         // FIELD DATA
         
         // get field base

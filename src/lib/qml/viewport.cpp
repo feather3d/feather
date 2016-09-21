@@ -46,9 +46,27 @@ DrawItem::~DrawItem()
 // PERSPECTIVE CAMERA 
 PerspCamera::PerspCamera(Qt3DRender::QLayer* layer, feather::draw::Item* _item, Qt3DCore::QNode *parent)
     : DrawItem(_item,DrawItem::PerspCamera,parent),
+    m_pMesh(new Qt3DRender::QMesh()),
+    m_pTransform(new Qt3DCore::QTransform()),
+    m_pMaterial(new Qt3DExtras::QPhongMaterial()),
     m_pCamera(new Qt3DRender::QCamera())
 {
+    m_pMesh->setPrimitiveType(Qt3DRender::QGeometryRenderer::Triangles);
+    m_pMesh->setSource(QUrl("file:/usr/local/feather/ui/models/digital_movie_camera.obj"));
 
+    m_pMaterial->setDiffuse(QColor(Qt::red));
+    m_pMaterial->setAmbient(Qt::black);
+    m_pMaterial->setSpecular(Qt::white);
+    m_pMaterial->setShininess(100.0f);
+
+    //m_pTransform->setTranslation(QVector3D(0.0f,0.0f,0.0f));
+    //m_pTransform->setScale(1.0f);
+    updateCameraPosition();
+
+    addComponent(layer);
+    addComponent(m_pTransform);
+    addComponent(m_pMaterial);
+    addComponent(m_pMesh);
 }
 
 PerspCamera::~PerspCamera()
@@ -58,6 +76,9 @@ PerspCamera::~PerspCamera()
 
 void PerspCamera::updateItem()
 {
+    updateCameraPosition();
+
+    /*
     unsigned int typefid = static_cast<feather::draw::PerspCamera*>(m_item)->typefid;
     unsigned int fovfid = static_cast<feather::draw::PerspCamera*>(m_item)->fovfid;
     unsigned int nearfid = static_cast<feather::draw::PerspCamera*>(m_item)->nearfid;
@@ -76,6 +97,7 @@ void PerspCamera::updateItem()
     m_pCamera->setFarPlane(far);
 
     updateCameraPosition();
+    */
 }
 
 void PerspCamera::updateCameraPosition()
@@ -93,7 +115,14 @@ void PerspCamera::updateCameraPosition()
     feather::FReal sy = static_cast<feather::field::Field<feather::FReal>*>(feather::plugin::get_field_base(m_item->uid,m_item->nid,221))->value;
     feather::FReal sz = static_cast<feather::field::Field<feather::FReal>*>(feather::plugin::get_field_base(m_item->uid,m_item->nid,222))->value;
 
-    m_pCamera->setPosition(QVector3D(tx,ty,tz));
+    //m_pCamera->setPosition(QVector3D(tx,ty,tz));
+
+    m_pTransform->setTranslation(QVector3D(tx,ty,tz));
+    m_pTransform->setRotationX(rx);
+    m_pTransform->setRotationY(ry);
+    m_pTransform->setRotationZ(rz);
+    m_pTransform->setScale3D(QVector3D(sx,sy,sz));
+
     //m_pCamera->tilt(rx);
     //m_pCamera->pan(ry,QVector3D(0,1,0));
     //m_pCamera->roll(rz);
@@ -393,19 +422,26 @@ Mesh::~Mesh()
 
 void Mesh::updateItem()
 {
-    static_cast<MeshGeometry*>(m_pMesh->geometry())->updateBuffers();
+    //static_cast<MeshGeometry*>(m_pMesh->geometry())->updateBuffers();
     //emit(m_pMesh->geometryChanged(m_pMesh->geometry()));
-    /*
-    removeComponent(m_pMesh);
-    delete m_pMesh;
-    m_pMesh=0;
-    m_pMesh = new Qt3DRender::QGeometryRenderer(); 
-    m_pMesh->setPrimitiveType(Qt3DRender::QGeometryRenderer::Triangles);
-    m_pMesh->setGeometry(new MeshGeometry(item()->uid,item()->nid,static_cast<feather::draw::Mesh*>(item())->fid,this));
-    addComponent(m_pMesh);
-    */
-    //setParent(Q_NULLPTR);
+    //removeComponent(m_pMesh);
+    //Qt3DRender::QGeometryRenderer* pMesh = new Qt3DRender::QGeometryRenderer();
+ 
+    //delete m_pMesh;
+    //m_pMesh=0;
+    //m_pMesh = new Qt3DRender::QGeometryRenderer(); 
+    Qt3DRender::QGeometryRenderer* pMesh = new Qt3DRender::QGeometryRenderer(); 
+    pMesh->setPrimitiveType(Qt3DRender::QGeometryRenderer::Triangles);
+    pMesh->setGeometry(new MeshGeometry(item()->uid,item()->nid,static_cast<feather::draw::Mesh*>(item())->fid,this));
     //removeAllComponents();
+    //addComponent(m_pLayer);
+    //addComponent(m_pTransform);
+    //addComponent(m_pMaterial);
+    addComponent(pMesh);
+    //setParent(Q_NULLPTR);
+    //delete m_pMesh;
+    //m_pMesh=0;
+    //m_pMesh = pMesh; 
 }
 
 void Mesh::test()
@@ -1547,7 +1583,9 @@ void Viewport::updateScene()
     feather::qml::command::get_node_draw_items(1,items);
     */
     std::cout << "There are " << m_apDrawItems.size() << " draw items\n";
-
+    for(auto item : m_apDrawItems) {
+        std::cout << "updating - uid:" << item->item()->uid << " nid:" << item->item()->nid << " type:" << item->item()->type << std::endl;
+    }
     /* 
     if(m_apDrawItems.isEmpty()) {
         buildScene(items);
@@ -1701,13 +1739,23 @@ void Viewport::onClicked(Qt3DInput::QMouseEvent* event)
 
 void Viewport::addItems(unsigned int uid)
 {
+    std::cout << "Viewport::addItems(" << uid << ")\n";
+
+    // Don't add the draw item if it's uid is already in the draw items array.
+    // TODO - This might need to be changed later when nodes are removed
+
+    for(auto item : m_apDrawItems) {
+        if(uid == item->uid())
+            return;
+    }
+
     feather::status pass;
     unsigned int nid = feather::qml::command::get_node_id(uid,pass);
     feather::draw::DrawItems items;
     feather::qml::command::get_node_draw_items(nid,items);
     std::cout << "add draw item " << uid << std::endl;
 
-    m_apDrawItems.clear();
+    //m_apDrawItems.clear();
 
     for(auto item : items) {
         item->uid=uid;
@@ -1723,7 +1771,7 @@ void Viewport::addItems(unsigned int uid)
                 m_apDrawItems.append(new Line(m_pFrameGraph->layer(),item,this));
                 break;
             case feather::draw::Item::PerspCamera:
-                std::cout << "updating Perspective Camear draw item\n";
+                std::cout << "add Perspective Camera\n";
                 m_apDrawItems.append(new PerspCamera(m_pFrameGraph->layer(),item,this));
                 break;
             default:
@@ -1731,6 +1779,7 @@ void Viewport::addItems(unsigned int uid)
         }
         m_apDrawItems.at(m_apDrawItems.size()-1)->updateItem();
     }
+    std::cout << "m_aDrawItems size=" << m_apDrawItems.size() << std::endl;
 }
 
 void Viewport::updateItems(unsigned int uid)
@@ -1755,6 +1804,19 @@ void Viewport::updateItems(unsigned int uid)
             }
         }
     }
+}
+
+// TODO - this is working but not currently being used
+// I put this as a way of just updating the nodes that have been changed
+// instead of updating all the nodes including the ones that have
+// not been changed.
+// I may use this later to optimize the draw times
+void Viewport::updateChangedNodes()
+{
+    std::vector<unsigned int>* uids = feather::plugin::get_updated_nodes();
+
+    for(auto uid : *uids)
+        updateItems(uid);
 }
 
 void Viewport::setCamera(unsigned int uid)

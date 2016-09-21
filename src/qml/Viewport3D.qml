@@ -55,10 +55,12 @@ Rectangle {
     onHeightChanged: { vp.height = height }
 
     function addNode(uid) {
+        console.log("vp.addNode(",uid,")")
         vp.addItems(uid) 
     }
 
     function addDrawItems(item) {
+        console.log("vp.addDrawItems(",item,")")
         vp.addItems(item)
     }
 
@@ -67,6 +69,7 @@ Rectangle {
     }
 
     function updateViewport(uid,nid,fid) {
+        console.log("UPDATE THE VIEWPORT!!!!")
         vp.doUpdate()
     }
 

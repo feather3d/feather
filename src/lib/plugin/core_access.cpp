@@ -136,6 +136,12 @@ bool api::get_node_connection_status(unsigned int suid, unsigned int tuid)
     return false;
 }
 
+std::vector<unsigned int>* api::get_updated_nodes()
+{
+    return scenegraph::get_updated_nodes();
+}
+
+
 // FIELD DATA
 
 field::FieldBase* api::get_field_base(unsigned int uid, unsigned int nid, unsigned int fid, unsigned int conn)

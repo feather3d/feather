@@ -44,9 +44,9 @@ namespace feather
             FState() : sgMode(None) { };
             SGMode sgMode;
             FSgState sgState;
-            std::vector<int> uid_update;
+            std::vector<unsigned int> uid_update;
             void clear_uid_update() { uid_update.clear(); };
-            void add_uid_to_update(int uid) { uid_update.push_back(uid); };
+            void add_uid_to_update(unsigned int uid) { uid_update.push_back(uid); };
         };
 
     } // namespace state

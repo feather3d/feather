@@ -633,6 +633,7 @@ class node_visitor : public boost::default_bfs_visitor
             {
                 std::cout << "discover vertex(uid):" << u << " nid:" << sg[u].node << std::endl;
                 status p = plugins.update_properties(sg[u].node,sg[u].fields);
+                cstate.add_uid_to_update(u);
                 p = plugins.do_it(sg[u].node,sg[u].fields);
             }
 
@@ -705,7 +706,8 @@ namespace scenegraph
         // Temporary turn off do_it updating for testing
         // set the state node update 
         //cstate.sgMode = state::DoIt;
-
+        cstate.clear_uid_update();
+ 
         node_visitor vis;
         //node_d_visitor vis;
         std::cout << "\n*****GRAPH UPDATE*****\n";
@@ -835,6 +837,11 @@ namespace scenegraph
 
 
         return status();   
+    }
+
+    std::vector<unsigned int>* get_updated_nodes()
+    {
+        return &cstate.uid_update;
     }
 
     FTime get_time() { return time; };

@@ -1,0 +1,7 @@
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+# INSTALL
+
+FILE(GLOB MODEL_FILES "*.obj")
+
+INSTALL(FILES ${MODEL_FILES} DESTINATION /usr/local/feather/ui/models)

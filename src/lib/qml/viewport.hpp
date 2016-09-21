@@ -68,6 +68,9 @@ class PerspCamera : public DrawItem
         inline Qt3DRender::QCamera* camera() { return m_pCamera; };
 
     private:
+        Qt3DRender::QMesh *m_pMesh;
+        Qt3DCore::QTransform *m_pTransform;
+        Qt3DExtras::QPhongMaterial *m_pMaterial;
         Qt3DRender::QCamera* m_pCamera;
 };
 
@@ -356,6 +359,7 @@ class Viewport : public Qt3DCore::QEntity
         Q_INVOKABLE void doUpdate(){ updateScene(); };
         Q_INVOKABLE void addItems(unsigned int uid);
         Q_INVOKABLE void updateItems(unsigned int uid);
+        Q_INVOKABLE void updateChangedNodes();
         Q_INVOKABLE void setCamera(unsigned int uid);
 
     private slots:
