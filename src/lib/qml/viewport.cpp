@@ -422,22 +422,30 @@ Mesh::~Mesh()
 
 void Mesh::updateItem()
 {
-    //static_cast<MeshGeometry*>(m_pMesh->geometry())->updateBuffers();
+    // TODO - I don't like the fact I have to delete the whole mesh and build it from scratch
+    // for every update. I should be able to find a way of changing the vertex in the buffer.
+
+    removeComponent(m_pMesh);
+    static_cast<MeshGeometry*>(m_pMesh->geometry())->updateBuffers();
+
     //emit(m_pMesh->geometryChanged(m_pMesh->geometry()));
-    //removeComponent(m_pMesh);
     //Qt3DRender::QGeometryRenderer* pMesh = new Qt3DRender::QGeometryRenderer();
  
-    //delete m_pMesh;
+    delete m_pMesh;
     //m_pMesh=0;
-    //m_pMesh = new Qt3DRender::QGeometryRenderer(); 
-    Qt3DRender::QGeometryRenderer* pMesh = new Qt3DRender::QGeometryRenderer(); 
-    pMesh->setPrimitiveType(Qt3DRender::QGeometryRenderer::Triangles);
-    pMesh->setGeometry(new MeshGeometry(item()->uid,item()->nid,static_cast<feather::draw::Mesh*>(item())->fid,this));
+    m_pMesh = new Qt3DRender::QGeometryRenderer(); 
+    //Qt3DRender::QGeometryRenderer* pMesh = new Qt3DRender::QGeometryRenderer(); 
+    //m_pMesh->setPrimitiveType(Qt3DRender::QGeometryRenderer::Triangles);
+    m_pMesh->setGeometry(new MeshGeometry(item()->uid,item()->nid,static_cast<feather::draw::Mesh*>(item())->fid,this));
+
     //removeAllComponents();
     //addComponent(m_pLayer);
     //addComponent(m_pTransform);
     //addComponent(m_pMaterial);
-    addComponent(pMesh);
+
+    //emit(m_pMesh->geometryChanged(m_pMesh->geometry()));
+ 
+    addComponent(m_pMesh);
     //setParent(Q_NULLPTR);
     //delete m_pMesh;
     //m_pMesh=0;
@@ -1224,7 +1232,7 @@ FrameGraph::FrameGraph(Qt3DCore::QNode* parent)
     //setActiveFrameGraph(m_pRenderSurfaceSelector);
     m_pLayerFilter->setEnabled(true);
     m_pLayerFilter->addLayer(new Qt3DRender::QLayer());
-    m_pClearBuffer->setBuffers(Qt3DRender::QClearBuffers::AllBuffers);
+    m_pClearBuffer->setBuffers(Qt3DRender::QClearBuffers::ColorDepthBuffer);
     //m_pCameraSelector->setParent(m_pClearBuffer);
     m_pCameraSelector->setParent(m_pLayerFilter);
  

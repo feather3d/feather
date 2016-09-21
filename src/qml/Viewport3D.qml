@@ -73,10 +73,16 @@ Rectangle {
         vp.doUpdate()
     }
 
+    function graphUpdated() {
+        console.log("UPDATE THE VIEWPORT!!!!")
+        vp.doUpdate()
+    }
+
     Component.onCompleted: {
         SceneGraph.nodeAdded.connect(addNode)
         SceneGraph.nodeAddDrawItems.connect(addDrawItems)
         SceneGraph.nodeUpdateDrawItems.connect(updateDrawItems)
         SceneGraph.nodeFieldChanged.connect(updateViewport)
+        SceneGraph.updateGraph.connect(graphUpdated)
     }
 }
