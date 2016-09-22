@@ -96,6 +96,23 @@ Menu {
         onRejected: {} 
     }
 
+    FileDialog {
+        id: exportCameraDataDialog
+        title: "Export Camera Data"
+        selectExisting: false 
+        //selectFolder: true 
+        //selectMultiple: false
+        nameFilters: [ "Camera format ( *.cam)" ]
+        onAccepted: {
+            exportCameraDataFilename.stringValue = tools.urlToString(exportCameraDataDialog.fileUrl) 
+            // TODO - need to make it so that any camera can be exported instead of just uid 2
+            exportCameraDataUid.intValue = 2 
+            exportCameraData.exec()       
+            SceneGraph.triggerUpdate()
+        }
+        onRejected: {} 
+    }
+
     PropertiesDialog {
         id: propDialog
         visible: false
@@ -165,6 +182,25 @@ Menu {
         ]
     }
 
+    Command {
+        id: exportCameraData
+        name: "export_camera_data"
+        parameters: [
+            Parameter { 
+                id: exportCameraDataFilename
+                name: "path"
+                type: Parameter.String
+                stringValue: ""
+            },
+            Parameter {
+                id: exportCameraDataUid
+                name: "uid"
+                type: Parameter.Int
+                intValue: 2 
+            }
+        ]
+    }
+
     // ACTIONS
 
     // New 
@@ -207,6 +243,13 @@ Menu {
         onTriggered: { exportDialog.visible = true }
     }
 
+    // Export Ply
+    Action {
+        id: exportCameraDataAction
+        text: "Camera Data"
+        tooltip: "Export selected camera's data"
+        onTriggered: { exportCameraDataDialog.visible = true }
+    }
 
     // Properties
     Action {
@@ -266,6 +309,11 @@ Menu {
         // Obj
         MenuItem {
             action: exportPlyAction
+        }
+ 
+        // Camera Data 
+        MenuItem {
+            action: exportCameraDataAction
         }
     }
 
