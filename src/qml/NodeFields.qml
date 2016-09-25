@@ -127,5 +127,13 @@ FieldModel {
         addFieldName("keys",425,2)
         // Out 
         addFieldName("value",425,3)
+
+        // DEFORMER PLUGIN
+        // Cluster
+        // In
+        addFieldName("mesh",440,1)
+        addFieldName("ids",440,2)
+        // Out
+        addFieldName("mesh",440,3)
     }
 }

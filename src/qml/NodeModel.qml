@@ -53,4 +53,7 @@ ListModel {
     ListElement { text: "Key"; nid: 420; type: Node.Animation }
     ListElement { text: "Track"; nid: 425; type: Node.Animation }
 
+    // DEFORMER PLUGIN
+    ListElement { text: "Cluster"; nid: 440; type: Node.Deformer}
+
 }
