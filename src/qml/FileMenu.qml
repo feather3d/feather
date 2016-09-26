@@ -83,13 +83,14 @@ Menu {
 
     FileDialog {
         id: exportDialog
-        title: "Export Ply"
+        title: "Choose Ply Target Folder"
         selectExisting: true
         selectFolder: true 
         selectMultiple: false
         //nameFilters: [ "Ply format ( *.ply)" ]
         onAccepted: {
-            exportPlyFilename.stringValue = tools.urlToString(exportDialog.fileUrl) 
+            console.log("EXPORT PLY FILE DIALOG")
+            exportPlyFilename.stringValue = tools.urlToString(exportDialog.folder) + "/" 
             exportPly.exec()       
             SceneGraph.triggerUpdate()
         }
