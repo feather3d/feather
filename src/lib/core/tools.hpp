@@ -37,6 +37,7 @@ namespace feather
         void build_matrix(float tx, float ty, float tz, float rx, float ry, float rz, float sx, float sy, float sz, FMatrix4x4 &matrix);
 
         void apply_matrix_to_mesh(FMatrix4x4 *matrix, FMesh &mesh);
+        void modify_vertex(FReal weight, FMatrix4x4 *matrix, FVertex3D &v);
         FVertex3D get_matrix_translation(FMatrix4x4 *matrix);
         FVertex3D get_matrix_rotation(FMatrix4x4 *matrix);
         FVertex3D get_matrix_scale(FMatrix4x4 *matrix);

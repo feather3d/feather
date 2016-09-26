@@ -133,7 +133,8 @@ FieldModel {
         // In
         addFieldName("mesh",440,1)
         addFieldName("ids",440,2)
+        addFieldName("weights",440,3)
         // Out
-        addFieldName("mesh",440,3)
+        addFieldName("mesh",440,4)
     }
 }

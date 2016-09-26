@@ -47,6 +47,13 @@ void tools::apply_matrix_to_mesh(FMatrix4x4 *matrix, FMesh &mesh)
     }
 }
 
+void tools::modify_vertex(FReal weight, FMatrix4x4 *matrix, FVertex3D &v)
+{
+    v.x = v.x * (matrix->value[0][3] * weight);
+    v.y = v.y * (matrix->value[1][3] * weight);
+    v.z = v.z * (matrix->value[2][3] * weight);
+}
+
 FVertex3D tools::get_matrix_translation(FMatrix4x4 *matrix)
 {
     return FVertex3D(matrix->value[0][3],

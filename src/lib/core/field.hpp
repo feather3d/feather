@@ -57,7 +57,7 @@ namespace feather
             RGBA=10,
             BoolArray=11,
             IntArray=12,
-            FloatArray=13,
+            RealArray=13,
             VertexArray=14,
             VectorArray=15,
             RGBArray=16,

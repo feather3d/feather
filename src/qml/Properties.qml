@@ -112,7 +112,7 @@ Item {
             //case Field.Double: return properties.getColor("doubleType"); break;
             //case Field.DoubleArray: return properties.getColor("doubleType"); break;
             case Field.Real: return properties.getColor("doubleType"); break;
-            case Field.DoubleArray: return properties.getColor("doubleType"); break;
+            case Field.RealArray: return properties.getColor("doubleType"); break;
             case Field.Vertex: return properties.getColor("vertexType"); break;
             case Field.VertexArray: return properties.getColor("vertexType"); break;
             case Field.Vector: return properties.getColor("vertexType"); break;

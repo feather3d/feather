@@ -212,9 +212,9 @@ Rectangle {
             switch(field.type) {
                 case Field.Bool || Field.BoolArray: field.boolVal = (!field.boolVal) ? true : false ; break;
                 case Field.Int || Field.IntArray: field.intVal = field.intVal + offset; break;
-                //case Field.Float || Field.FloatArray: field.realVal = field.floatVal + 1 ; break;
+                //case Field.Float || Field.RealArray: field.realVal = field.floatVal + 1 ; break;
                 //case Field.Double || Field.DoubleArray: field.realVal = field.realVal + 0.1; valueText.text = field.realVal.toFixed(2); SceneGraph.nodeFieldChanged(uidKey,nidKey,fidKey); break;
-                case Field.Real || Field.DoubleArray: field.realVal = field.realVal + (offset*0.1); valueText.text = field.realVal.toFixed(2); /*SceneGraph.triggerUpdate();*/ SceneGraph.nodeFieldChanged(uidKey,nidKey,fidKey); break;
+                case Field.Real || Field.RealArray: field.realVal = field.realVal + (offset*0.1); valueText.text = field.realVal.toFixed(2); /*SceneGraph.triggerUpdate();*/ SceneGraph.nodeFieldChanged(uidKey,nidKey,fidKey); break;
                 case Field.Vertex || Field.VertexArray: ; break;
                 case Field.Vector || Field.VectorArray: ; break;
                 case Field.Mesh: ; break;
@@ -231,9 +231,9 @@ Rectangle {
             switch(field.type) {
                 case Field.Bool || Field.BoolArray: valueText.text = field.boolVal; break;
                 case Field.Int || Field.IntArray: valueText.text = field.intVal; break;
-                //case Field.Float || Field.FloatArray: valueText.text = field.realVal; break;
+                //case Field.Float || Field.RealArray: valueText.text = field.realVal; break;
                 //case Field.Double || Field.DoubleArray: valueText.text = field.realVal.toFixed(2); break;
-                case Field.Real || Field.DoubleArray: valueText.text = field.realVal.toFixed(2); break;
+                case Field.Real || Field.RealArray: valueText.text = field.realVal.toFixed(2); break;
                 case Field.Vertex || Field.VertexArray: ; break;
                 case Field.Vector || Field.VectorArray: ; break;
                 case Field.Mesh: ; break;

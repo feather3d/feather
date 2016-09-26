@@ -254,7 +254,7 @@ class Field: public QObject
             RGBA=field::RGBA,
             BoolArray=field::BoolArray,
             IntArray=field::IntArray,
-            FloatArray=field::FloatArray,
+            RealArray=field::RealArray,
             VertexArray=field::VertexArray,
             VectorArray=field::VectorArray,
             RGBArray=field::RGBArray,

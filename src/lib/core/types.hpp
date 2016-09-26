@@ -111,7 +111,7 @@ namespace feather
     typedef std::vector<FBool> FBoolArray;
     typedef std::vector<FInt> FIntArray;
     typedef std::vector<FUInt> FUIntArray;
-    typedef std::vector<FDouble> FDoubleArray;
+    typedef std::vector<FReal> FRealArray;
     typedef std::vector<FString> FStringArray;
     typedef std::vector<FVertex3D> FVertex3DArray;
     typedef std::vector<FVertex3D> FVertex3DArray;
