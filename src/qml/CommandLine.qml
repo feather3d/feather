@@ -89,6 +89,7 @@ Rectangle {
 
     function run_command() {
         SceneGraph.run_command_string(cmdId.text)
+        SceneGraph.triggerUpdate()
     }
 
     function command_message_changed(pass,msg) {

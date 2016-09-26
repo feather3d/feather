@@ -231,23 +231,30 @@ status PluginManager::run_command_string(std::string str)
 
     std::cout << "the command is " << cmdstr << ", the params are " << paramstr << std::endl;
 
-    first = paramstr.begin();
-    last = paramstr.end();
-    r = phrase_parse(first, last, *( *(char_ - ',') >> ',' || eol ), space, parameters);
+    std::cout << "params character length = " << paramstr.length() << std::endl;
 
-    if(!r)
-    {
-        std::cout << "params failed\n";
-        return status(FAILED,"Failed to parse parameters");
+    if(paramstr.length()) {
+        first = paramstr.begin();
+        last = paramstr.end();
+
+
+        r = phrase_parse(first, last, *( *(char_ - ',') >> ',' || eol ), space, parameters);
+
+        if(!r)
+        {
+            std::cout << "params failed\n";
+            return status(FAILED,"Failed to parse parameters");
+        }
+
+        // they and get the parameter type
+        bool passed=true;
+        int key=1;
+        std::for_each(parameters.begin(), parameters.end(), [&cmdstr,this,&key,&passed,&params](std::string val){ bool r = add_parameter_to_list(cmdstr,key,val,params); key++; if(!r){ passed=false; } } );
+
+        if(!passed)
+            return status(FAILED,"unable to get parse parameters");
+
     }
-
-    // they and get the parameter type
-    bool passed=true;
-    int key=1;
-    std::for_each(parameters.begin(), parameters.end(), [&cmdstr,this,&key,&passed,&params](std::string val){ bool r = add_parameter_to_list(cmdstr,key,val,params); key++; if(!r){ passed=false; } } );
-    
-    if(!passed)
-        return status(FAILED,"unable to get parse parameters");
 
     // replaced call_command(cmd,params)
     status s(FAILED,"command failed to run");
