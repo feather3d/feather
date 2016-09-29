@@ -22,6 +22,7 @@
  ***********************************************************************/
 
 #include "tree_model.hpp"
+#include "plugin.hpp"
 
 // LEAF
 
@@ -391,8 +392,13 @@ void TreeModel::loadChildren(const int uid, Leaf* parent)
     if(!children.size())
         return;
 
-    for_each(children.begin(), children.end(), [this,&parent](int uid){
-        loadChildren(uid,parent->lastChild());
+    for_each(children.begin(), children.end(), [this,&parent,&uid](int cuid){
+        // only load the child if it's connected to the parents parent fid
+        feather::field::FieldBase* sfield = feather::plugin::get_node_field_base(cuid,201);
+        for(auto conn: sfield->connections){
+            if(conn.puid == uid && conn.pfid == 202)
+                loadChildren(cuid,parent->lastChild());
+        }
     });
 }
 
