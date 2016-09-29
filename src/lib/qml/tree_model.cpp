@@ -383,7 +383,11 @@ void TreeModel::loadChildren(const int uid, Leaf* parent)
     std::vector<int> children;
     int fid = 202; // we only want to get the nodes for child field
     feather::qml::command::get_node_connected_uids(uid,fid,children);
-   
+  
+    std::cout << "UPDATING OUTLINER\nuid:" << uid << " is connected to the following nodes\n";
+    for(auto cuid : children)
+        std::cout << "\t" << cuid << std::endl;
+ 
     if(!children.size())
         return;
 

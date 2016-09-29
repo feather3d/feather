@@ -271,17 +271,16 @@ namespace feather
 
         std::pair<ei,ei> p = boost::out_edges(uid,sg);
 
-        //std::cout << "get_node_connected_uids(" << uid << "," << fid << ")\n";
+        std::cout << "get_node_connected_uids(" << uid << "," << fid << ")\n";
         for(;p.first!=p.second;++p.first){
-            //std::cout << "source=" << source(*p.first, sg) << std::endl;
-            //std::cout << "target=" << target(*p.first, sg) << std::endl;
+            std::cout << "source=" << source(*p.first, sg) << std::endl;
+            std::cout << "target=" << target(*p.first, sg) << std::endl;
             if(sg[*p.first].f1 == fid)
                 uids.push_back(target(*p.first,sg));
         }
 
         return status();
     }; 
-
 
     /* return a description of how the node is to be draw, if at all */
     status get_node_draw_items(int nid, draw::DrawItems& items) {
@@ -725,6 +724,47 @@ namespace scenegraph
 
 
     /*!
+     * Disconnect node n1 for n2
+     */
+    status disconnect(int suid, int sfid, int tuid, int tfid)
+    {
+        // verify that the disconnect rules are meet
+        if(suid == tuid)
+            return status(FAILED,"Node 1 can't be the same as Node 2");
+
+        // still need to test that sfid is an input and tfid is an output
+       
+        // get the out edges of the source node
+        typedef typename boost::graph_traits<FSceneGraph>::out_edge_iterator eo;
+        std::pair<eo,eo> p = boost::out_edges(suid,sg);
+
+        for(;p.first!=p.second;++p.first){
+            if(sg[*p.first].f1 == sfid && sg[*p.first].f2 == tfid) {
+                // TODO - there might be some cleanup to do here
+                boost::remove_edge(p.first,sg);
+                // remove the connection from the fields connections vector
+
+                field::FieldBase* tfield = get_node_fieldBase(tuid,tfid);
+                std::cout << "the target field has " << tfield->connections.size() << " connections\n";
+
+                unsigned int i=0;
+                for(auto conn : tfield->connections){
+                    if(conn.puid == suid && conn.pfid == sfid) {
+                        std::cout << "removed existing connection in the fields.connections array for parent uid:" << suid << " fid:" << sfid << " and target uid:" << tuid << " fid:" << tfid << std::endl;
+                        tfield->connections.erase(tfield->connections.begin() + i);
+                    }
+                    i++;
+                }
+                std::cout << "there are now " << tfield->connections.size() << " connections\n";
+                std::cout << "found connection to disconnect!\n";
+            }
+        }
+
+        return status();   
+    }
+
+
+    /*!
      * Connect two node fields together.
      * For these fields to be connected they need to be of the same type and not in the same node.
      * If the input field already has a connection, it's input connection will be deleted and
@@ -773,7 +813,30 @@ namespace scenegraph
         }
 
         // is the input field already connected to something else
-        //if(tfield->connected){
+        if(tfield->connected()){
+            // if the tfield is any of the below types, then the connection needs to be removed
+            if(tfield->type == field::Bool ||
+                    tfield->type == field::Int ||
+                    tfield->type == field::Float ||
+                    tfield->type == field::Double ||
+                    tfield->type == field::Real ||
+                    tfield->type == field::Vertex ||
+                    tfield->type == field::Vector ||
+                    tfield->type == field::Mesh ||
+                    tfield->type == field::RGB ||
+                    tfield->type == field::RGBA ||
+                    tfield->type == field::Time ||
+                    tfield->type == field::Node ||
+                    tfield->type == field::Matrix3x3 ||
+                    tfield->type == field::Matrix4x4
+              ) {
+                // TODO - currently, for safety, I'm going through all the connections but there should only be one.
+                // Later, after things seem more stable, I'll make it so that only the one connection is removed
+                for(auto conn : tfield->connections)
+                    disconnect(conn.puid, conn.pfid, n2, f2);
+            }
+
+            /*
             typedef typename boost::graph_traits<FSceneGraph>::out_edge_iterator ei;
             std::pair<ei,ei> p = boost::out_edges(n2,sg);
 
@@ -783,9 +846,9 @@ namespace scenegraph
                 std::cout << "edge iter " << *p.first << " fid1:" << sg[*p.first].f1  << " fid2:" << sg[*p.first].f2 << std::endl;
                 //uids.push_back(target(*p.first,sg));
             }
+            */
 
-
-        //}
+        } 
              
         // check to see if another field is already connected
         if(field::can_types_connect<field::START,field::START>::exec(sfield->type,tfield->type)) {
@@ -811,34 +874,7 @@ namespace scenegraph
         return status();
     };
 
-
-    /*!
-     * Disconnect node n1 for n2
-     */
-    status disconnect(int suid, int sfid, int tuid, int tfid)
-    {
-        // verify that the disconnect rules are meet
-        if(suid == tuid)
-            return status(FAILED,"Node 1 can't be the same as Node 2");
-
-        // still need to test that sfid is an input and tfid is an output
-       
-        // get the out edges of the source node
-        typedef typename boost::graph_traits<FSceneGraph>::out_edge_iterator eo;
-        std::pair<eo,eo> p = boost::out_edges(suid,sg);
-
-        for(;p.first!=p.second;++p.first){
-            if(sg[*p.first].f1 == sfid && sg[*p.first].f2 == tfid) {
-                // TODO - there might be some cleanup to do here
-                boost::remove_edge(p.first,sg);
-                //std::cout << "found connection to disconnect!\n";
-            }
-        }
-
-
-        return status();   
-    }
-
+ 
     std::vector<unsigned int>* get_updated_nodes()
     {
         return &cstate.uid_update;
