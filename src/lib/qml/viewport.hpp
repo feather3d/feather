@@ -126,12 +126,16 @@ class Mesh : public DrawItem
         void updateItem();
         void test();
 
+    private slots:
+        void clicked(Qt3DRender::QPickEvent* event);
+
     private:
         void build();
         Qt3DCore::QTransform *m_pTransform;
         Qt3DExtras::QPhongMaterial *m_pMaterial;
         Qt3DRender::QGeometryRenderer *m_pMesh;
-        Qt3DRender::QPointLight* m_pLight;
+        Qt3DRender::QPointLight *m_pLight;
+        Qt3DRender::QObjectPicker *m_pObjectPicker;
 };
 
 
@@ -321,6 +325,8 @@ class FrameGraph : public Qt3DRender::QRenderSettings
         Qt3DRender::QCameraSelector* m_pCameraSelector;
         Qt3DRender::QLayerFilter* m_pLayerFilter;
         Qt3DRender::QRenderSurfaceSelector* m_pRenderSurfaceSelector;
+        //Qt3DRender::QPickingSettings* m_pPickingSettings;
+ 
 };
 
 
@@ -428,10 +434,10 @@ class Viewport : public Qt3DCore::QEntity
         Qt3DInput::QAction* m_pMiddleMouseButtonAction;
         Qt3DInput::QActionInput* m_pMiddleMouseButtonInput;
         Qt3DInput::QAxis* m_pRx;
-        Qt3DInput::QAnalogAxisInput* m_pMouseRxInput;
         Qt3DInput::QAxis* m_pRy;
         Qt3DInput::QAnalogAxisInput* m_pMouseRyInput;
-        Qt3DRender::QPickingSettings* m_pPickingSettings;
+        Qt3DInput::QAnalogAxisInput* m_pMouseRxInput;
+        //Qt3DRender::QPickingSettings* m_pPickingSettings;
         Qt3DInput::QLogicalDevice* m_pLogicalDevice;
         Qt3DLogic::QFrameAction* m_pFrameAction;
         Line* m_pLine;

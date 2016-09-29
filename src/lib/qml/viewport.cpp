@@ -374,7 +374,8 @@ Mesh::Mesh(Qt3DRender::QLayer* layer, feather::draw::Item* _item, QNode *parent)
     m_pTransform(new Qt3DCore::QTransform()),
     m_pMaterial(new Qt3DExtras::QPhongMaterial()),
     m_pMesh(new Qt3DRender::QGeometryRenderer()),
-    m_pLight(new Qt3DRender::QPointLight())
+    m_pLight(new Qt3DRender::QPointLight()),
+    m_pObjectPicker(new Qt3DRender::QObjectPicker())
 {
     m_pMesh->setPrimitiveType(Qt3DRender::QGeometryRenderer::Triangles);
     m_pMesh->setGeometry(new MeshGeometry(_item->uid,_item->nid,static_cast<feather::draw::Mesh*>(item())->fid,this));
@@ -405,10 +406,14 @@ Mesh::Mesh(Qt3DRender::QLayer* layer, feather::draw::Item* _item, QNode *parent)
     // GONE
     //addComponent(static_cast<Viewport2*>(parent)->frameGraph());
 
+    m_pObjectPicker->setHoverEnabled(true);
+    connect(m_pObjectPicker,SIGNAL(clicked(Qt3DRender::QPickEvent*)),this,SLOT(clicked(Qt3DRender::QPickEvent*)));
+
     addComponent(layer);
     addComponent(m_pTransform);
     addComponent(m_pMaterial);
     addComponent(m_pMesh);
+    addComponent(m_pObjectPicker);
     //addComponent(m_pLight);
 
     //m_pMaterial->setEffect(m_pMaterialEffect);
@@ -460,6 +465,28 @@ void Mesh::test()
     //removeAllComponents();
 }
 
+void Mesh::clicked(Qt3DRender::QPickEvent* event)
+{
+    std::cout << "OBJECT CLICKED\n";
+    std::cout << "Pick Details\n"
+        << "\tdistance:" << event->distance() << "\n"
+        << "\taccepted:" << event->isAccepted() << "\n"
+        //<< "\tlocal intersection:" << event->localIntersection() << "\n"
+        //<< "\tposition:" << event->position() << "\n"
+        //<< "\tworld intersection:" << event->worldIntersection() << "\n"
+        ;
+
+    Qt3DRender::QPickTriangleEvent* trievent = static_cast<Qt3DRender::QPickTriangleEvent*>(event);
+    std::cout << "Pick Triangle Details\n"
+        << "\tindex:" << trievent->triangleIndex() << "\n"
+        << "\tv1:" << trievent->vertex1Index() << "\n"
+        << "\tv2:" << trievent->vertex2Index() << "\n"
+        << "\tv3:" << trievent->vertex3Index() << "\n"
+        ; 
+
+
+
+}
 
 
 // LINE
@@ -1225,6 +1252,7 @@ FrameGraph::FrameGraph(Qt3DCore::QNode* parent)
     m_pCameraSelector(new Qt3DRender::QCameraSelector()),
     m_pLayerFilter(new Qt3DRender::QLayerFilter()),
     m_pRenderSurfaceSelector(new Qt3DRender::QRenderSurfaceSelector())
+    //m_pPickingSettings(new Qt3DRender::QPickingSettings(this))
 {
     m_pViewport->setNormalizedRect(QRect(0,0,1,1));
     // GONE
@@ -1236,6 +1264,9 @@ FrameGraph::FrameGraph(Qt3DCore::QNode* parent)
     //m_pCameraSelector->setParent(m_pClearBuffer);
     m_pCameraSelector->setParent(m_pLayerFilter);
  
+    //m_pPickingSettings->setPickMethod(Qt3DRender::QPickingSettings::TrianglePicking);
+    //m_pPickingSettings->setPickResultMode(Qt3DRender::QPickingSettings::NearestPick);
+
     m_pClearBuffer->setParent(m_pCameraSelector);
     m_pLayerFilter->setParent(m_pRenderSurfaceSelector);
     m_pRenderSurfaceSelector->setParent(m_pViewport);
@@ -1285,10 +1316,10 @@ Viewport::Viewport(Qt3DCore::QNode* parent)
     m_pMiddleMouseButtonAction(new Qt3DInput::QAction()),
     m_pMiddleMouseButtonInput(new Qt3DInput::QActionInput()),
     m_pRx(new Qt3DInput::QAxis()),
-    m_pMouseRxInput(new Qt3DInput::QAnalogAxisInput()),
     m_pRy(new Qt3DInput::QAxis()),
+    m_pMouseRxInput(new Qt3DInput::QAnalogAxisInput()),
     m_pMouseRyInput(new Qt3DInput::QAnalogAxisInput()),
-    m_pPickingSettings(new Qt3DRender::QPickingSettings()),
+    //m_pPickingSettings(new Qt3DRender::QPickingSettings()),
     m_pLogicalDevice(new Qt3DInput::QLogicalDevice()),
     m_pFrameAction(new Qt3DLogic::QFrameAction()),
  
@@ -1324,8 +1355,11 @@ Viewport::Viewport(Qt3DCore::QNode* parent)
     //m_pAxis = new Axis(m_pFrameGraph->layer(),this);
     //m_pTorus = new Qt3DExtras::QTorusMesh();
 
-    m_pPickingSettings->setPickMethod(Qt3DRender::QPickingSettings::TrianglePicking);
-    m_pPickingSettings->setPickResultMode(Qt3DRender::QPickingSettings::AllPicks);
+    //m_pPickingSettings->setPickMethod(Qt3DRender::QPickingSettings::TrianglePicking);
+    //m_pPickingSettings->setPickResultMode(Qt3DRender::QPickingSettings::AllPicks);
+    m_pFrameGraph->pickingSettings()->setPickMethod(Qt3DRender::QPickingSettings::TrianglePicking);
+    m_pFrameGraph->pickingSettings()->setPickResultMode(Qt3DRender::QPickingSettings::AllPicks);
+
 
     m_pInputSettings->setEventSource(m_pMouseHandler);
     m_pMouseHandler->setSourceDevice(m_pMouseDevice);
