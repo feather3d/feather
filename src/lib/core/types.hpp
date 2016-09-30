@@ -177,7 +177,8 @@ namespace feather
         FFaceArray f;
 
         inline void add_face(const FFace face) { f.push_back(face); };
-
+        inline std::vector<int> verts_per_face() { std::vector<int> fc; for(auto face : f){ fc.push_back(face.size()); } return fc; }; 
+        inline std::vector<int> vert_indices_per_face() { std::vector<int> vi; for(auto face : f){ for(auto fp : face){ vi.push_back(fp.v); } } return vi; }; 
         inline void assign_v(const FVertex3DArray& _v) { v.assign(_v.begin(),_v.end()); };
         inline void assign_st(const FTextureCoordArray& _st) { st.assign(_st.begin(),_st.end()); };
         inline void assign_vn(const FVertex3DArray& _vn) { vn.assign(_vn.begin(),_vn.end()); };

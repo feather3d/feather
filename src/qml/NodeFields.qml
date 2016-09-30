@@ -111,6 +111,14 @@ FieldModel {
         // Out 
         addFieldName("mesh",322,4)
 
+        // Polygon SubDiv 
+        // In
+        addFieldName("mesh",323,1)
+        addFieldName("level",323,2)
+        addFieldName("weights",323,3)
+        // Out 
+        addFieldName("mesh",323,4)
+
         // ANIMATION PLUGIN
         // Key
         // In

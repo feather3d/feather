@@ -34,6 +34,7 @@ v0.1 Features
 * Keyframe Editor
 * DopeSheet Editor
 * 3D Viewport Editor
+* Subdivision Mesh support via Pixar's OpenSubdiv library 
 * Objects - Curves, Plane, Cube, MeshShape
 * Modify Tools - Bevel, Extrude, Inset
 * Selection Tools - Pick, Box, Ring, Loop
