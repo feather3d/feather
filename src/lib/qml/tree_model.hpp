@@ -91,6 +91,7 @@ class TreeModel : public QAbstractItemModel
         Leaf* getLeaf(const QModelIndex& index) const;
         Q_INVOKABLE void removeNode(int uid, const QModelIndex &parent=QModelIndex());
         Q_INVOKABLE void clearTree(); // this is used to remove every node from the outliner
+
     protected:
         QHash<int,QByteArray> roleNames() const;
 

@@ -29,6 +29,7 @@ import Qt3D.Extras 2.0
 import Qt3D.Input 2.0
 import feather.viewport 1.0
 import feather.scenegraph 1.0
+import feather.outliner 1.0
 
 Rectangle {
     id: frame
@@ -37,6 +38,8 @@ Rectangle {
     property alias showAxis: vp.showAxis
     property alias majorSubDividLevel: vp.majorSubDividLevel
     property alias minorSubDividLevel: vp.minorSubDividLevel
+
+    OutlinerModel { id: treeModel }
 
     Scene3D {
         id: scene3d

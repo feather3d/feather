@@ -119,6 +119,12 @@ FieldModel {
         // Out 
         addFieldName("mesh",323,4)
 
+        // Polygon SubDiv 
+        // In
+        addFieldName("mesh",324,1)
+        // Out 
+        addFieldName("mesh",324,2)
+
         // ANIMATION PLUGIN
         // Key
         // In

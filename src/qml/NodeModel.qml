@@ -49,6 +49,7 @@ ListModel {
     ListElement { text: "Plane"; nid: 321; type: Node.Polygon }
     ListElement { text: "Cube"; nid: 322; type: Node.Polygon }
     ListElement { text: "SubDiv"; nid: 323; type: Node.Polygon }
+    ListElement { text: "Mesh"; nid: 324; type: Node.Polygon }
 
     // ANIMATION PLUGIN
     ListElement { text: "Key"; nid: 420; type: Node.Animation }

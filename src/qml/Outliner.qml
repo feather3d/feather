@@ -29,13 +29,6 @@ import feather.scenegraph 1.0
 import feather.outliner 1.0
 
 Item {
-//Window {
-    id: outliner
-    //title: "Outliner"
-    //visible: true
-    //flags: Qt.Tool
-    //width: 300
-    //height: 600
     property Properties properties: Null
   
     OutlinerModel { id: treeModel }
@@ -100,7 +93,7 @@ Item {
         sortIndicatorVisible: true
         headerVisible: false
         horizontalScrollBarPolicy: Qt.ScrollBarAlwaysOff
-        style: OutlinerLeafNode {}
+        style: OutlinerLeafNode { }
  
         //onActivated: { console.log("item activated " + model.data(index,260)); SceneGraph.clear_selection(); SceneGraph.select_node(model.data(index,260)) }
         onClicked: {
@@ -133,11 +126,17 @@ Item {
         tree.model.removeNode(uid,tree.model.index(0,0))
     }
 
+    function layoutChanged(){
+        // TESTING
+        console.log("layoutChanged()")
+    }
+
     Component.onCompleted: {
         SceneGraph.updateGraph.connect(updateSg)
         // when we only want to update the tree's selected node, not the scenegraph's
         SceneGraph.nodeSelected.connect(selectNode)
         SceneGraph.cleared.connect(clear)
         SceneGraph.nodeRemoved.connect(remove_node)
+        treeModel.layoutChanged.connect(layoutChanged)
     }
 }

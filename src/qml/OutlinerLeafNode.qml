@@ -60,7 +60,7 @@ TreeViewStyle {
             height: 20
             Image {
                 id: visible_icon
-                visible: true 
+                visible: (model.visible) ? true : false
                 sourceSize.width: 18
                 sourceSize.height: 18
                 source: "icons/visible.svg"
@@ -68,7 +68,7 @@ TreeViewStyle {
 
             Image {
                 id: not_visible_icon
-                visible: false 
+                visible: (model.visible) ? false : true 
                 sourceSize.width: 18
                 sourceSize.height: 18
                 source: "icons/not_visible.svg"
@@ -77,14 +77,24 @@ TreeViewStyle {
             MouseArea {
                 anchors.fill: parent
                 onClicked: {
+                    /*
                     visible_icon.visible = (visible_icon.visible) ? false : true
                     not_visible_icon.visible = (not_visible_icon.visible) ? false : true
+                    */
                 }
             }
         }
         //Item { id: nodeVisible; visible: false; CheckBox { checked: model.visible } }
 
+        function updateVisiblity(uid,state){
+            console.log("updateVisiblity() reached")
+            // TODO - latter I may add a check here to save a little time
+            visible_icon.visible = (model.visible) ? false : true
+            not_visible_icon.visible = (model.visible) ? true : false 
+        }
+
         Component.onCompleted: {
+            //model.visiblityChanged.connect(updateVisiblity)
             switch(styleData.column){
                 case 0:
                     nodeName.visible=true;
