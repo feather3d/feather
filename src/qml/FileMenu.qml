@@ -81,20 +81,9 @@ Menu {
         onRejected: {} 
     }
 
-    FileDialog {
+    ExportPlyDialog {
         id: exportDialog
-        title: "Choose Ply Target Folder"
-        selectExisting: true
-        selectFolder: true 
-        selectMultiple: false
-        //nameFilters: [ "Ply format ( *.ply)" ]
-        onAccepted: {
-            console.log("EXPORT PLY FILE DIALOG")
-            exportPlyFilename.stringValue = tools.urlToString(exportDialog.folder) + "/" 
-            exportPly.exec()       
-            SceneGraph.triggerUpdate()
-        }
-        onRejected: {} 
+        properties: fileMenu.properties
     }
 
     FileDialog {
@@ -154,24 +143,6 @@ Menu {
             Parameter { 
                 id: importObjFilename
                 name: "filename"
-                type: Parameter.String
-                stringValue: ""
-            },
-            Parameter { 
-                name: "selection"
-                type: Parameter.Bool
-                boolValue: true
-            }
-        ]
-    }
-
-    Command {
-        id: exportPly 
-        name: "export_ply"
-        parameters: [
-            Parameter { 
-                id: exportPlyFilename
-                name: "path"
                 type: Parameter.String
                 stringValue: ""
             },
