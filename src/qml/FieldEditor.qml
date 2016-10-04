@@ -36,6 +36,7 @@ Item {
     //height: 500
     property Properties properties: Null
     property alias fieldModel: view.model
+    //focus: true
 
     Rectangle {
         id: nodeFrame
@@ -47,7 +48,8 @@ Item {
         border.color: "black"
         border.width: 1
         color: properties.getColor("windowBg")
- 
+        //focus: true
+
         // Node Title
         Rectangle {
             id: nodeTitle
@@ -78,6 +80,7 @@ Item {
             anchors.right: parent.right
             anchors.bottom: parent.bottom
             anchors.margins: 1
+            focus: true
 
             delegate: FieldEditorValue {
                 properties: fieldEditor.properties

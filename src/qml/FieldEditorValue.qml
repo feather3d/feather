@@ -28,12 +28,14 @@ import feather.scenegraph 1.0
 Rectangle {
     id: fieldvalue
     height: 14
-   
+    //width: 200
     property alias uidKey: field.uid 
     property alias nidKey: field.nid // this if the node's number assigned by the plugin
     property alias fidKey: field.fid // this is the fields number assigned by the plugin
     //property alias label: label.text 
     property int fieldType: 0 
+    property double valueStep: 0.1
+
     property double value: {
         switch(field.type) {
             case Field.Bool:
@@ -42,14 +44,6 @@ Rectangle {
             case Field.Int:
                 return field.intVal
                 break
-            /*
-            case Field.Float:
-                return field.realVal
-                break
-            case Field.Double:
-                return field.realVal
-                break
-            */
             case Field.Real:
                 return Math.floor(field.realVal*100,-2)/100.00
                 break
@@ -59,6 +53,7 @@ Rectangle {
     }
     property Properties properties: Null
     property alias label: label.text
+    //focus: true
 
     Field { id: field }
 
@@ -93,6 +88,42 @@ Rectangle {
         border.color: "black"
         border.width: 1
 
+        IntValidator {
+            id: boolValidator
+            bottom: 0
+            top: 1
+        }
+
+        IntValidator {
+            id: intValidator
+        }
+
+        DoubleValidator {
+            id: realValidator
+        }
+
+        TextInput {
+            id: valueEdit
+            anchors.fill: parent
+            visible: false
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+            font.bold: false 
+            font.pixelSize: 10
+            validator: {
+                switch(field.type){
+                    case Field.Bool:
+                        return boolValidator;
+                    case Field.Int:
+                        return intValidator;
+                    case Field.Real:
+                        return realValidator;
+                    default:
+                        return intValidator;
+                }
+            }
+        }
+
         Text {
             id: valueText
             text: value 
@@ -102,6 +133,7 @@ Rectangle {
             font.bold: false 
             font.pixelSize: 10
         }
+
     } 
 
 
@@ -186,6 +218,27 @@ Rectangle {
 
     ]
 
+    Item {
+        id: keyArea
+        anchors.fill: parent
+        focus: true 
+        Keys.onPressed: {
+             console.log("FieldEditorValue - key pressed for field value - key:" + event.key + " modifier:" + event.modifiers)
+             if(event.key == Qt.Key_Shift){
+                console.log("shift key hit")
+                valueStep = 1.0
+            } else {
+                valueStep = 0.1
+            }
+            //event.accepted = false
+        }
+
+        Keys.onReleased: {
+            valueStep = 0.1
+        }
+    } 
+
+    Keys.onReturnPressed: { console.log("return hit for FieldEditorValue") }
 
     MouseArea {
         id: mouseArea
@@ -201,20 +254,29 @@ Rectangle {
             fieldvalue.update()
         }
 
+        onDoubleClicked: {
+            valueEdit.visible=true
+            valueText.visible=false
+            valueEdit.focus=true
+        }
+
         //onPositionChanged: { }
         onReleased: { fieldvalue.state="normal" }
-        onEntered: { fieldvalue.state="hover" }
-        onExited: { fieldvalue.state="normal" }
+
+        // NOTE!!! - on listviews, currentIndex has to be set to accept key events
+        onEntered: { fieldvalue.state="hover"; view.currentIndex=index; keyArea.focus=true }
+
+        onExited: { fieldvalue.state="normal"; keyArea.focus=false }
+
         onWheel: {
             //console.log("fieldType:" + field.type)
             var offset = wheel.angleDelta.y/120.0
             //console.log("wheel delta:",wheel.pixelDelta," angle:",wheel.angleDelta," offset:",offset)
+            console.log("valueStep for FieldEditorValue="+valueStep)
             switch(field.type) {
                 case Field.Bool || Field.BoolArray: field.boolVal = (!field.boolVal) ? true : false ; break;
-                case Field.Int || Field.IntArray: field.intVal = field.intVal + offset; break;
-                //case Field.Float || Field.RealArray: field.realVal = field.floatVal + 1 ; break;
-                //case Field.Double || Field.DoubleArray: field.realVal = field.realVal + 0.1; valueText.text = field.realVal.toFixed(2); SceneGraph.nodeFieldChanged(uidKey,nidKey,fidKey); break;
-                case Field.Real || Field.RealArray: field.realVal = field.realVal + (offset*0.1); valueText.text = field.realVal.toFixed(2); /*SceneGraph.triggerUpdate();*/ SceneGraph.nodeFieldChanged(uidKey,nidKey,fidKey); break;
+                case Field.Int || Field.IntArray: field.intVal = field.intVal + ((valueStep*10) * offset); break;
+                case Field.Real || Field.RealArray: field.realVal = field.realVal + (valueStep * offset); valueText.text = field.realVal.toFixed(2); /*SceneGraph.triggerUpdate();*/ SceneGraph.nodeFieldChanged(uidKey,nidKey,fidKey); break;
                 case Field.Vertex || Field.VertexArray: ; break;
                 case Field.Vector || Field.VectorArray: ; break;
                 case Field.Mesh: ; break;
@@ -250,9 +312,27 @@ Rectangle {
     }
     */
 
+    function setEditValue(){
+        valueText.text=valueEdit.text
+        switch(field.type) {
+            case Field.Bool: field.boolVal = valueText.text; SceneGraph.nodeFieldChanged(uidKey,nidKey,fidKey); break;
+            case Field.Int: field.intVal = valueText.text; SceneGraph.nodeFieldChanged(uidKey,nidKey,fidKey); break;
+            case Field.Real: field.realVal = valueText.text; SceneGraph.nodeFieldChanged(uidKey,nidKey,fidKey); break;
+            case Field.Vertex: ; break;
+            case Field.Vector: ; break;
+            case Field.Mesh: ; break;
+            case Field.RGB: ; break;
+            default: break;
+        }
+        valueEdit.visible=false
+        valueText.visible=true
+        valueEdit.focus=false
+    }
+
     Component.onCompleted: { 
         fieldvalue.state="normal"
         SceneGraph.nodeFieldChanged.connect(updateValue)
         //SceneGraph.updateGraph.connect(updateValue)
+        valueEdit.accepted.connect(setEditValue)
     }
 }

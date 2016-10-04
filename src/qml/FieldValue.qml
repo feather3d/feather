@@ -36,9 +36,8 @@ Rectangle {
     property alias fid: field.fid 
     property alias boolValue: field.boolVal
     property alias intValue: field.intVal
-    //property alias floatValue: field.floatVal
-    //property alias doubleValue: field.doubleVal
     property alias realValue: field.realVal
+    property double valueStep: 0.1
 
     Field {
         id: field
@@ -56,14 +55,6 @@ Rectangle {
                 case Field.Int:
                     return field.intVal
                     break
-                /*
-                case Field.Float:
-                    return field.realVal
-                    break
-                case Field.Double:
-                    return field.realVal
-                    break
-                */
                 case Field.Real:
                     return field.realVal
                     break
@@ -127,28 +118,38 @@ Rectangle {
         }
     ]
 
-    Keys.onEnterPressed: {
-        switch(field.type) {
-            case Field.Bool:
-                field.boolVal = box.value
-                break
-            case Field.Int:
-                field.intVal = box.value
-                break
-            /*
-            case Field.Float:
-                field.realVal = box.value
-                break
-            case Field.Double:
-                field.realVal = box.value
-                break
-            */
-            case Field.Real:
-                field.realVal = box.value
-                break
-            default:
-                field.intVal = box.value
+    Item {
+        id: keyArea
+        anchors.fill: parent
+        focus: false 
+
+        Keys.onEnterPressed: {
+            switch(field.type) {
+                case Field.Bool:
+                    field.boolVal = box.value
+                    break
+                case Field.Int:
+                    field.intVal = box.value
+                    break
+                case Field.Real:
+                    field.realVal = box.value
+                    break
+                default:
+                    field.intVal = box.value
+            }
         }
+
+        Keys.onPressed: {
+             console.log("key pressed for field value - key:" + event.key + " modifier:" + event.modifiers)
+             if(event.key == Qt.Key_Shift){
+                console.log("shift key hit")
+                valueStep = 1.0
+            } else {
+                valueStep = 0.1
+            }
+            event.accepted = false
+        }
+
     }
 
     MouseArea {
@@ -168,14 +169,6 @@ Rectangle {
                 case Field.Int:
                     return field.intVal
                     break
-                /*
-                case Field.Float:
-                    return field.realVal
-                    break
-                case Field.Double:
-                    return field.realVal
-                    break
-                */
                 case Field.Real:
                     return field.realVal
                     break
@@ -190,26 +183,19 @@ Rectangle {
 
         //onPositionChanged: { }
         onReleased: { box.state="Normal" }
-        onEntered: { box.state="Hover" }
-        onExited: { box.state="Normal" }
+        onEntered: { box.state="Hover"; keyArea.focus=true }
+        onExited: { box.state="Normal"; keyArea.focus=false }
         onWheel: {
+            console.log("valueStep="+valueStep)
             switch(field.type) {
                 case Field.Bool:
                     field.boolVal = (!field.boolVal) ? 1 : 0
                     break
                 case Field.Int:
-                    field.intVal = field.intVal + 1
+                    field.intVal = field.intVal + (valueStep * 100)
                     break
-                /*
-                case Field.Float:
-                    field.realVal = field.realVal + 0.1
-                    break
-                case Field.Double:
-                    field.realVal = field.realVal + 0.1
-                    break
-                */
                 case Field.Real:
-                    field.realVal = field.realVal + 0.1
+                    field.realVal = field.realVal + valueStep
                     break
                 default:
                     field.intVal = field.intVal + 1
@@ -226,14 +212,6 @@ Rectangle {
             case Field.Int:
                 label.text = field.intVal
                 break
-            /*
-            case Field.Float:
-                label.text = field.realVal
-                break
-            case Field.Double:
-                label.text = field.realVal
-                break
-            */
             case Field.Real:
                 label.text = field.realVal
                 break

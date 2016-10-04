@@ -126,9 +126,10 @@ ApplicationWindow {
     }
 
     // this is for catching key presses on the main window
+    /*
     Item {
         anchors.fill: parent
-        focus: true
+        focus: false 
 
         Keys.onPressed: {
             console.log("key pressed")
@@ -139,9 +140,11 @@ ApplicationWindow {
                 else
                     window.visibility = Window.FullScreen
                 event.accepted=true
-            }
+            } 
+            event.accepted=false
         }
     }
+    */
 
     Component.onCompleted: {
         //window.showFullScreen()        
