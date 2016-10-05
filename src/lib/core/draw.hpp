@@ -32,7 +32,7 @@ namespace feather {
     namespace draw {
 
         struct Item {
-            enum Type { None, PerspCamera, OrthoCamera, Mesh, Line };
+            enum Type { None, PerspCamera, OrthoCamera, ShadedMesh, ComponentMesh, Line };
             Item(Type _type=None):type(_type){}; 
             Type type;
             unsigned int uid;
@@ -49,9 +49,15 @@ namespace feather {
             Type linetype;
         };
 
-        struct Mesh : public Item
+        struct ShadedMesh : public Item
         {
-            Mesh(unsigned int _fid) : Item(Item::Mesh),fid(_fid) {};
+            ShadedMesh(unsigned int _fid) : Item(Item::ShadedMesh),fid(_fid) {};
+            unsigned int fid;
+        };
+
+        struct ComponentMesh : public Item
+        {
+            ComponentMesh(unsigned int _fid) : Item(Item::ComponentMesh),fid(_fid) {};
             unsigned int fid;
         };
 
@@ -87,8 +93,11 @@ namespace feather {
 #define ADD_LINE(__startpoint,__endpoint,__color,__type)\
     items.push_back(new draw::Line(__startpoint,__endpoint,__color,__type));
  
-#define ADD_MESH(__fid)\
-    items.push_back(new draw::Mesh(__fid));
+#define ADD_SHADED_MESH(__fid)\
+    items.push_back(new draw::ShadedMesh(__fid));
+  
+#define ADD_COMPONENT_MESH(__fid)\
+    items.push_back(new draw::ComponentMesh(__fid));
  
 #define ADD_PERSP_CAMERA(__typefid,__fovfid,__nearfid,__farfid)\
     items.push_back(new draw::PerspCamera(__typefid,__fovfid,__nearfid,__farfid));

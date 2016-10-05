@@ -27,7 +27,6 @@
 #include "qml_deps.hpp"
 #include "types.hpp"
 
-
 class DrawItem : public Qt3DCore::QEntity
 {
     Q_OBJECT
@@ -36,7 +35,8 @@ class DrawItem : public Qt3DCore::QEntity
         enum Type{
             None,
             Line,
-            Mesh,
+            ShadedMesh,
+            ComponentMesh,
             PerspCamera
         };
         DrawItem(feather::draw::Item* _item, Type _type=None, Qt3DCore::QNode *parent=0);
@@ -91,8 +91,9 @@ class WireEffect : public Qt3D::QEffect
 };
 */
 
-// MESH 
+// GEOMETRY 
 
+// Shaded Mesh
 class MeshGeometry : public Qt3DRender::QGeometry
 {
     Q_OBJECT
@@ -116,13 +117,59 @@ class MeshGeometry : public Qt3DRender::QGeometry
 };
 
 
-class Mesh : public DrawItem 
+// Points
+class MeshPointGeometry : public Qt3DRender::QGeometry
+{
+    Q_OBJECT
+
+    public:
+        MeshPointGeometry(int _uid=0, int _nid=0, int _fid=0, Qt3DCore::QNode *parent=0);
+        ~MeshPointGeometry();
+        void updateBuffers();
+ 
+    private:
+        void build();
+        int uid;
+        int nid;
+        int fid;
+        std::vector<feather::FVertex3D> m_aMeshVData;
+        Qt3DRender::QAttribute *m_pVAttribute;
+        Qt3DRender::QBuffer *m_pVertexBuffer;
+};
+
+
+// Edges 
+class MeshEdgeGeometry : public Qt3DRender::QGeometry
+{
+    Q_OBJECT
+
+    public:
+        MeshEdgeGeometry(int _uid=0, int _nid=0, int _fid=0, Qt3DCore::QNode *parent=0);
+        ~MeshEdgeGeometry();
+        void updateBuffers();
+ 
+    private:
+        void build();
+        int uid;
+        int nid;
+        int fid;
+        std::vector<feather::FVertex3D> m_aMeshVData;
+        Qt3DRender::QAttribute *m_pVAttribute;
+        Qt3DRender::QBuffer *m_pVertexBuffer;
+};
+
+
+// There will be two types of Mesh types - Shaded and Component
+//      ShadedMesh is for meshes that are only drawn and can not be selected or interacted with
+//      ComponentMesh is a mesh that can have all it's components selected
+
+class ShadedMesh : public DrawItem 
 {
     Q_OBJECT
     
     public:
-        Mesh(Qt3DRender::QLayer* layer, feather::draw::Item* _item, Qt3DCore::QNode *parent=0);
-        ~Mesh();
+        ShadedMesh(Qt3DRender::QLayer* layer, feather::draw::Item* _item, Qt3DCore::QNode *parent=0);
+        ~ShadedMesh();
         void updateItem();
         void test();
 
@@ -137,6 +184,31 @@ class Mesh : public DrawItem
         Qt3DRender::QPointLight *m_pLight;
         Qt3DRender::QObjectPicker *m_pObjectPicker;
 };
+
+
+class ComponentMesh : public DrawItem 
+{
+    Q_OBJECT
+    
+    public:
+        ComponentMesh(Qt3DRender::QLayer* layer, feather::draw::Item* _item, Qt3DCore::QNode *parent=0);
+        ~ComponentMesh();
+        void updateItem();
+        void test();
+
+    private slots:
+        void clicked(Qt3DRender::QPickEvent* event);
+
+    private:
+        void build();
+        Qt3DCore::QTransform *m_pTransform;
+        Qt3DExtras::QPhongMaterial *m_pMaterial;
+        Qt3DRender::QGeometryRenderer *m_pMeshPoints;
+        Qt3DRender::QGeometryRenderer *m_pMeshEdges;
+        Qt3DRender::QPointLight *m_pLight;
+        Qt3DRender::QObjectPicker *m_pObjectPicker;
+};
+
 
 
 
@@ -325,6 +397,7 @@ class FrameGraph : public Qt3DRender::QRenderSettings
         Qt3DRender::QCameraSelector* m_pCameraSelector;
         Qt3DRender::QLayerFilter* m_pLayerFilter;
         Qt3DRender::QRenderSurfaceSelector* m_pRenderSurfaceSelector;
+        Qt3DRender::QRenderStateSet* m_pRenderStateSet;
         //Qt3DRender::QPickingSettings* m_pPickingSettings;
  
 };
@@ -441,7 +514,7 @@ class Viewport : public Qt3DCore::QEntity
         Qt3DInput::QLogicalDevice* m_pLogicalDevice;
         Qt3DLogic::QFrameAction* m_pFrameAction;
         Line* m_pLine;
-        Qt3DRender::QPointLight* m_pLight;
+        Qt3DRender::QDirectionalLight* m_pCameraLight;
         Qt3DRender::QClearBuffers m_clearBuffer;
         Qt3DExtras::QTorusMesh* m_pTorus;
         Qt3DRender::QCamera* m_pCamera; // this is qt3d's camera

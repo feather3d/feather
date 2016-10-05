@@ -196,7 +196,10 @@ WireEffect::~WireEffect()
 }
 */
 
- 
+// GEOMETRY
+
+
+// SHADED MESH 
 MeshGeometry::MeshGeometry(int _uid, int _nid, int _fid, Qt3DCore::QNode *parent)
     : Qt3DRender::QGeometry(parent),
     m_pVAttribute(new Qt3DRender::QAttribute(this)),
@@ -367,10 +370,160 @@ void MeshGeometry::updateBuffers()
     //m_pVnAttribute->setBuffer(m_pNormalBuffer);
 }
 
+
+// MESH POINTS 
+MeshPointGeometry::MeshPointGeometry(int _uid, int _nid, int _fid, Qt3DCore::QNode *parent)
+    : Qt3DRender::QGeometry(parent),
+    m_pVAttribute(new Qt3DRender::QAttribute(this)),
+    m_pVertexBuffer(new Qt3DRender::QBuffer(Qt3DRender::QBuffer::VertexBuffer, this))
+{
+    uid=_uid;
+    nid=_nid;
+    fid=_fid;
+
+    build();
+
+    // V
+    const int vsize = m_aMeshVData.size() * sizeof(feather::FVertex3D);
+    QByteArray meshVBytes;
+    meshVBytes.resize(vsize);
+    memcpy(meshVBytes.data(), m_aMeshVData.data(), vsize);
+
+    m_pVertexBuffer->setData(meshVBytes);
+    
+    m_pVAttribute->setName(Qt3DRender::QAttribute::defaultPositionAttributeName());
+    m_pVAttribute->setDataType(Qt3DRender::QAttribute::Float);
+    m_pVAttribute->setDataSize(3);
+    m_pVAttribute->setCount(m_aMeshVData.size());
+    m_pVAttribute->setByteStride(sizeof(feather::FVertex3D));
+    m_pVAttribute->setBuffer(m_pVertexBuffer);
+
+    addAttribute(m_pVAttribute);
+}
+
+MeshPointGeometry::~MeshPointGeometry()
+{
+    //Qt3DCore::QNode::cleanup();
+    delete m_pVAttribute;
+    m_pVAttribute=0;
+    delete m_pVertexBuffer;
+    m_pVertexBuffer=0;
+}
+
+void MeshPointGeometry::build()
+{
+    m_aMeshVData.clear();
+
+    //feather::FMesh mesh;
+    //feather::qml::command::get_field_val(uid,nid,fid,mesh);
+    feather::FMesh mesh = static_cast<feather::field::Field<feather::FMesh>*>(feather::plugin::get_field_base(uid,nid,fid))->value;
+ 
+    // build gl mesh from mesh
+    feather::FIntArray gli;
+    feather::FColorRGBAArray glc;
+    //feather::FVertex3DArray glv;
+    uint id=0;
+    for(auto v : mesh.v){
+            glc.push_back(feather::FColorRGBA(0.0,1.0,0.0,1.0));
+            m_aMeshVData.push_back(v);
+            gli.push_back(id);
+            id++;
+    }
+}
+
+void MeshPointGeometry::updateBuffers()
+{
+    build();
+    
+    // Position Buffer
+    const int vsize = m_aMeshVData.size() * sizeof(feather::FVertex3D);
+    QByteArray meshVBytes;
+    meshVBytes.resize(vsize);
+    memcpy(meshVBytes.data(), m_aMeshVData.data(), vsize);
+    m_pVertexBuffer->setData(meshVBytes);
+}
+
+
+// MESH EDGES 
+MeshEdgeGeometry::MeshEdgeGeometry(int _uid, int _nid, int _fid, Qt3DCore::QNode *parent)
+    : Qt3DRender::QGeometry(parent),
+    m_pVAttribute(new Qt3DRender::QAttribute(this)),
+    m_pVertexBuffer(new Qt3DRender::QBuffer(Qt3DRender::QBuffer::VertexBuffer, this))
+{
+    uid=_uid;
+    nid=_nid;
+    fid=_fid;
+
+    build();
+
+    // V
+    const int vsize = m_aMeshVData.size() * sizeof(feather::FVertex3D);
+    QByteArray meshVBytes;
+    meshVBytes.resize(vsize);
+    memcpy(meshVBytes.data(), m_aMeshVData.data(), vsize);
+
+    m_pVertexBuffer->setData(meshVBytes);
+    
+    m_pVAttribute->setName(Qt3DRender::QAttribute::defaultPositionAttributeName());
+    m_pVAttribute->setDataType(Qt3DRender::QAttribute::Float);
+    m_pVAttribute->setDataSize(3);
+    m_pVAttribute->setCount(m_aMeshVData.size());
+    m_pVAttribute->setByteStride(sizeof(feather::FVertex3D));
+    m_pVAttribute->setBuffer(m_pVertexBuffer);
+
+    addAttribute(m_pVAttribute);
+}
+
+MeshEdgeGeometry::~MeshEdgeGeometry()
+{
+    //Qt3DCore::QNode::cleanup();
+    delete m_pVAttribute;
+    m_pVAttribute=0;
+    delete m_pVertexBuffer;
+    m_pVertexBuffer=0;
+}
+
+void MeshEdgeGeometry::build()
+{
+    m_aMeshVData.clear();
+
+    //feather::FMesh mesh;
+    //feather::qml::command::get_field_val(uid,nid,fid,mesh);
+    feather::FMesh mesh = static_cast<feather::field::Field<feather::FMesh>*>(feather::plugin::get_field_base(uid,nid,fid))->value;
+ 
+    // build gl mesh from mesh
+    feather::FIntArray gli;
+    feather::FColorRGBAArray glc;
+    //feather::FVertex3DArray glv;
+    uint id=0;
+    for(auto v : mesh.v){
+            glc.push_back(feather::FColorRGBA(0.0,1.0,0.0,1.0));
+            m_aMeshVData.push_back(v);
+            gli.push_back(id);
+            id++;
+    }
+}
+
+void MeshEdgeGeometry::updateBuffers()
+{
+    build();
+    
+    // Position Buffer
+    const int vsize = m_aMeshVData.size() * sizeof(feather::FVertex3D);
+    QByteArray meshVBytes;
+    meshVBytes.resize(vsize);
+    memcpy(meshVBytes.data(), m_aMeshVData.data(), vsize);
+    m_pVertexBuffer->setData(meshVBytes);
+}
+
+
+
 // MESHES
 
-Mesh::Mesh(Qt3DRender::QLayer* layer, feather::draw::Item* _item, QNode *parent)
-    : DrawItem(_item,DrawItem::Mesh,parent),
+// SHADED MESH
+
+ShadedMesh::ShadedMesh(Qt3DRender::QLayer* layer, feather::draw::Item* _item, QNode *parent)
+    : DrawItem(_item,DrawItem::ShadedMesh,parent),
     m_pTransform(new Qt3DCore::QTransform()),
     m_pMaterial(new Qt3DExtras::QPhongMaterial()),
     m_pMesh(new Qt3DRender::QGeometryRenderer()),
@@ -378,11 +531,11 @@ Mesh::Mesh(Qt3DRender::QLayer* layer, feather::draw::Item* _item, QNode *parent)
     m_pObjectPicker(new Qt3DRender::QObjectPicker())
 {
     m_pMesh->setPrimitiveType(Qt3DRender::QGeometryRenderer::Triangles);
-    m_pMesh->setGeometry(new MeshGeometry(_item->uid,_item->nid,static_cast<feather::draw::Mesh*>(item())->fid,this));
+    m_pMesh->setGeometry(new MeshGeometry(_item->uid,_item->nid,static_cast<feather::draw::ShadedMesh*>(item())->fid,this));
 
     // Shaded Material 
     //m_pMaterial->addParameter(new Qt3D::QParameter(QStringLiteral("meshColor"),QColor(Qt::blue)));  
-    m_pMaterial->setDiffuse(QColor(Qt::green));
+    m_pMaterial->setDiffuse(QColor(Qt::white));
     m_pMaterial->setAmbient(Qt::black);
     m_pMaterial->setSpecular(Qt::white);
     m_pMaterial->setShininess(100.0f);
@@ -419,13 +572,12 @@ Mesh::Mesh(Qt3DRender::QLayer* layer, feather::draw::Item* _item, QNode *parent)
     //m_pMaterial->setEffect(m_pMaterialEffect);
 }
 
-Mesh::~Mesh()
+ShadedMesh::~ShadedMesh()
 {
     //Qt3DCore::QNode::cleanup();
 }
 
-
-void Mesh::updateItem()
+void ShadedMesh::updateItem()
 {
     // TODO - I don't like the fact I have to delete the whole mesh and build it from scratch
     // for every update. I should be able to find a way of changing the vertex in the buffer.
@@ -441,12 +593,12 @@ void Mesh::updateItem()
     m_pMesh = new Qt3DRender::QGeometryRenderer(); 
     //Qt3DRender::QGeometryRenderer* pMesh = new Qt3DRender::QGeometryRenderer(); 
     //m_pMesh->setPrimitiveType(Qt3DRender::QGeometryRenderer::Triangles);
-    m_pMesh->setGeometry(new MeshGeometry(item()->uid,item()->nid,static_cast<feather::draw::Mesh*>(item())->fid,this));
+    m_pMesh->setGeometry(new MeshGeometry(item()->uid,item()->nid,static_cast<feather::draw::ShadedMesh*>(item())->fid,this));
 
-    //removeAllComponents();
-    //addComponent(m_pLayer);
-    //addComponent(m_pTransform);
-    //addComponent(m_pMaterial);
+    //removeAllShadeds();
+    //addShaded(m_pLayer);
+    //addShaded(m_pTransform);
+    //addShaded(m_pMaterial);
 
     //emit(m_pMesh->geometryChanged(m_pMesh->geometry()));
  
@@ -457,15 +609,15 @@ void Mesh::updateItem()
     //m_pMesh = pMesh; 
 }
 
-void Mesh::test()
+void ShadedMesh::test()
 {
     //m_pTransform->matrix().translate(1,0,0); 
-    //removeComponent(m_pMesh);
+    //removeShaded(m_pMesh);
     //setParent(Q_NULLPTR);
-    //removeAllComponents();
+    //removeAllShadeds();
 }
 
-void Mesh::clicked(Qt3DRender::QPickEvent* event)
+void ShadedMesh::clicked(Qt3DRender::QPickEvent* event)
 {
     std::cout << "OBJECT CLICKED\n";
     std::cout << "Pick Details\n"
@@ -483,10 +635,148 @@ void Mesh::clicked(Qt3DRender::QPickEvent* event)
         << "\tv2:" << trievent->vertex2Index() << "\n"
         << "\tv3:" << trievent->vertex3Index() << "\n"
         ; 
-
-
-
 }
+
+
+// COMPONENT MESH
+
+ComponentMesh::ComponentMesh(Qt3DRender::QLayer* layer, feather::draw::Item* _item, QNode *parent)
+    : DrawItem(_item,DrawItem::ComponentMesh,parent),
+    m_pTransform(new Qt3DCore::QTransform()),
+    m_pMaterial(new Qt3DExtras::QPhongMaterial()),
+    m_pMeshPoints(new Qt3DRender::QGeometryRenderer()),
+    m_pMeshEdges(new Qt3DRender::QGeometryRenderer()),
+    m_pLight(new Qt3DRender::QPointLight()),
+    m_pObjectPicker(new Qt3DRender::QObjectPicker())
+{
+    // Points
+    m_pMeshPoints->setPrimitiveType(Qt3DRender::QGeometryRenderer::Points);
+    m_pMeshPoints->setGeometry(new MeshPointGeometry(_item->uid,_item->nid,static_cast<feather::draw::ComponentMesh*>(item())->fid,this));
+    
+    // Edges
+    //m_pMeshEdges->setPrimitiveType(Qt3DRender::QGeometryRenderer::Lines);
+    //m_pMeshEdges->setGeometry(new MeshEdgeGeometry(_item->uid,_item->nid,static_cast<feather::draw::ComponentMesh*>(item())->fid,this));
+
+
+    // Shaded Material 
+    //m_pMaterial->addParameter(new Qt3D::QParameter(QStringLiteral("meshColor"),QColor(Qt::blue)));  
+    //m_pMaterial->setDiffuse(QColor(Qt::black));
+    m_pMaterial->setAmbient(Qt::magenta);
+
+
+    // THIS WAS FROM SHADER TESTING
+    /*
+    m_pMaterial->addParameter(new Qt3D::QParameter(QStringLiteral("ambient"),QColor(Qt::blue)));
+    m_pMaterial->addParameter(new Qt3D::QParameter(QStringLiteral("diffuse"),QColor(Qt::red)));
+    m_pMaterial->addParameter(new Qt3D::QParameter(QStringLiteral("specular"),QColor(Qt::white)));
+    m_pMaterial->addParameter(new Qt3D::QParameter(QStringLiteral("shininess"),150.0));
+    m_pMaterial->addParameter(new Qt3D::QParameter(QStringLiteral("line.width"),0.8));
+    m_pMaterial->addParameter(new Qt3D::QParameter(QStringLiteral("line.color"),QColor(Qt::black)));
+    */
+
+    // Light testing
+    //m_pLight->setColor(Qt::blue);
+    //m_pLight->setIntensity(10.5f);
+    //m_pLight->setTranslation(QVector3D(4,4,4)); 
+
+    // GONE
+    //addComponent(static_cast<Viewport2*>(parent)->frameGraph());
+
+    m_pObjectPicker->setHoverEnabled(true);
+    connect(m_pObjectPicker,SIGNAL(clicked(Qt3DRender::QPickEvent*)),this,SLOT(clicked(Qt3DRender::QPickEvent*)));
+
+    addComponent(layer);
+    addComponent(m_pTransform);
+    addComponent(m_pMaterial);
+    addComponent(m_pMeshPoints);
+    //addComponent(m_pMeshEdges);
+    addComponent(m_pObjectPicker);
+    //addComponent(m_pLight);
+
+    //m_pMaterial->setEffect(m_pMaterialEffect);
+}
+
+ComponentMesh::~ComponentMesh()
+{
+    //Qt3DCore::QNode::cleanup();
+}
+
+void ComponentMesh::updateItem()
+{
+    // TODO - I don't like the fact I have to delete the whole mesh and build it from scratch
+    // for every update. I should be able to find a way of changing the vertex in the buffer.
+
+    removeComponent(m_pMeshPoints);
+    static_cast<MeshPointGeometry*>(m_pMeshPoints->geometry())->updateBuffers();
+
+    //removeComponent(m_pMeshEdges);
+    //static_cast<MeshEdgeGeometry*>(m_pMeshEdges->geometry())->updateBuffers();
+
+
+    //emit(m_pMesh->geometryChanged(m_pMesh->geometry()));
+    //Qt3DRender::QGeometryRenderer* pMesh = new Qt3DRender::QGeometryRenderer();
+ 
+    delete m_pMeshPoints;
+    //delete m_pMeshEdges;
+    //m_pMesh=0;
+    m_pMeshPoints = new Qt3DRender::QGeometryRenderer(); 
+    //m_pMeshEdges = new Qt3DRender::QGeometryRenderer(); 
+
+    //Qt3DRender::QGeometryRenderer* pMesh = new Qt3DRender::QGeometryRenderer(); 
+    //m_pMesh->setPrimitiveType(Qt3DRender::QGeometryRenderer::Triangles);
+
+    // Points
+    m_pMeshPoints->setPrimitiveType(Qt3DRender::QGeometryRenderer::Points);
+    m_pMeshPoints->setGeometry(new MeshPointGeometry(item()->uid,item()->nid,static_cast<feather::draw::ComponentMesh*>(item())->fid,this));
+
+    // Edges
+    //m_pMeshEdges->setPrimitiveType(Qt3DRender::QGeometryRenderer::Lines);
+    //m_pMeshEdges->setGeometry(new MeshEdgeGeometry(item()->uid,item()->nid,static_cast<feather::draw::ComponentMesh*>(item())->fid,this));
+
+    //removeAllComponents();
+    //addComponent(m_pLayer);
+    //addComponent(m_pTransform);
+    //addComponent(m_pMaterial);
+
+    //emit(m_pMesh->geometryChanged(m_pMesh->geometry()));
+ 
+    addComponent(m_pMeshPoints);
+    //addComponent(m_pMeshEdges);
+    //setParent(Q_NULLPTR);
+    //delete m_pMesh;
+    //m_pMesh=0;
+    //m_pMesh = pMesh; 
+}
+
+void ComponentMesh::test()
+{
+    //m_pTransform->matrix().translate(1,0,0); 
+    //removeComponent(m_pMesh);
+    //setParent(Q_NULLPTR);
+    //removeAllComponents();
+}
+
+void ComponentMesh::clicked(Qt3DRender::QPickEvent* event)
+{
+    std::cout << "OBJECT CLICKED\n";
+    std::cout << "Pick Details\n"
+        << "\tdistance:" << event->distance() << "\n"
+        << "\taccepted:" << event->isAccepted() << "\n"
+        //<< "\tlocal intersection:" << event->localIntersection() << "\n"
+        //<< "\tposition:" << event->position() << "\n"
+        //<< "\tworld intersection:" << event->worldIntersection() << "\n"
+        ;
+
+    Qt3DRender::QPickTriangleEvent* trievent = static_cast<Qt3DRender::QPickTriangleEvent*>(event);
+    std::cout << "Pick Triangle Details\n"
+        << "\tindex:" << trievent->triangleIndex() << "\n"
+        << "\tv1:" << trievent->vertex1Index() << "\n"
+        << "\tv2:" << trievent->vertex2Index() << "\n"
+        << "\tv3:" << trievent->vertex3Index() << "\n"
+        ; 
+}
+
+
 
 
 // LINE
@@ -1251,7 +1541,8 @@ FrameGraph::FrameGraph(Qt3DCore::QNode* parent)
     m_pClearBuffer(new Qt3DRender::QClearBuffers()),
     m_pCameraSelector(new Qt3DRender::QCameraSelector()),
     m_pLayerFilter(new Qt3DRender::QLayerFilter()),
-    m_pRenderSurfaceSelector(new Qt3DRender::QRenderSurfaceSelector())
+    m_pRenderSurfaceSelector(new Qt3DRender::QRenderSurfaceSelector()),
+    m_pRenderStateSet(new Qt3DRender::QRenderStateSet(m_pLayerFilter))
     //m_pPickingSettings(new Qt3DRender::QPickingSettings(this))
 {
     m_pViewport->setNormalizedRect(QRect(0,0,1,1));
@@ -1263,7 +1554,19 @@ FrameGraph::FrameGraph(Qt3DCore::QNode* parent)
     m_pClearBuffer->setBuffers(Qt3DRender::QClearBuffers::ColorDepthBuffer);
     //m_pCameraSelector->setParent(m_pClearBuffer);
     m_pCameraSelector->setParent(m_pLayerFilter);
- 
+
+    // Set the Point Size
+    Qt3DRender::QPointSize* pointSize = new Qt3DRender::QPointSize();
+    pointSize->setSizeMode(Qt3DRender::QPointSize::Fixed);
+    pointSize->setValue(4);
+    // This will allow the points to show in front of objects
+    Qt3DRender::QDepthTest* depthTest = new Qt3DRender::QDepthTest();
+    depthTest->setDepthFunction(Qt3DRender::QDepthTest::Less);
+
+    m_pRenderStateSet->addRenderState(pointSize); 
+    m_pRenderStateSet->addRenderState(depthTest); 
+
+
     //m_pPickingSettings->setPickMethod(Qt3DRender::QPickingSettings::TrianglePicking);
     //m_pPickingSettings->setPickResultMode(Qt3DRender::QPickingSettings::NearestPick);
 
@@ -1323,7 +1626,7 @@ Viewport::Viewport(Qt3DCore::QNode* parent)
     m_pLogicalDevice(new Qt3DInput::QLogicalDevice()),
     m_pFrameAction(new Qt3DLogic::QFrameAction()),
  
-    //m_pLight(new Qt3DRender::QPointLight(this)),
+    m_pCameraLight(new Qt3DRender::QDirectionalLight()),
     m_pCamera(new Qt3DRender::QCamera()),
     //m_pRenderSettings(new Qt3DRender::QRenderSettings()),
     //m_pRenderSurfaceSelector(new Qt3DRender::QRenderSurfaceSelector()),
@@ -1339,6 +1642,10 @@ Viewport::Viewport(Qt3DCore::QNode* parent)
     m_pCamera->setPosition(QVector3D(0,3,20));
     m_pCamera->setUpVector(QVector3D(0,1,0));
     //m_pCamera->setViewCenter(QVector3D(0,0,0));
+
+    m_pCameraLight->setWorldDirection(m_pCamera->viewVector());
+
+    connect(m_pCamera, &Qt3DRender::QCamera::viewVectorChanged,m_pCameraLight,&Qt3DRender::QDirectionalLight::setWorldDirection);
 
     // GONE
     //m_pConfiguration->setControlledCamera(m_pCamera);
@@ -1409,20 +1716,15 @@ Viewport::Viewport(Qt3DCore::QNode* parent)
     connect(m_pKeyboardHandler,SIGNAL(spacePressed(Qt3DInput::QKeyEvent*)),this,SLOT(doSpacePressed(Qt3DInput::QKeyEvent*)));
     connect(m_pKeyboardHandler,SIGNAL(pressed(Qt3DInput::QKeyEvent*)),this,SLOT(keyEvent(Qt3DInput::QKeyEvent*)));
 
-
-
-    // Light testing
-    //m_pLight->setColor(Qt::blue);
-    //m_pLight->setIntensity(1.5f);
-    
-    //m_pLight->setPosition(QVector3D(0,4,0)); 
     //Qt3D::QClearBuffer clearBuffer(this);
+
     addComponent(m_pFrameGraph);
     addComponent(m_pMouseHandler);
     addComponent(m_pKeyboardHandler);
     addComponent(m_pInputSettings);
     addComponent(m_pLogicalDevice);
     addComponent(m_pFrameAction);
+    addComponent(m_pCameraLight);
 
     if(!m_pMouseHandler->containsMouse())
         std::cout << "THERE IS NO MOUSE DETECTED FOR THE VIEWPORT\n";
@@ -1644,12 +1946,13 @@ void Viewport::updateScene()
 
     for(auto item : m_apDrawItems) {
         switch(item->item()->type){
-            case feather::draw::Item::Mesh:
-                std::cout << "updating Mesh draw item\n";
-                static_cast<Mesh*>(item)->updateItem();
-                // GONE
-                //removeAllComponents();
-                //delete item;
+            case feather::draw::Item::ShadedMesh:
+                std::cout << "updating ShadedMesh draw item\n";
+                static_cast<ShadedMesh*>(item)->updateItem();
+                break;
+            case feather::draw::Item::ComponentMesh:
+                std::cout << "updating ComponentMesh draw item\n";
+                static_cast<ComponentMesh*>(item)->updateItem();
                 break;
             case feather::draw::Item::Line:
                 std::cout << "updating Line draw item\n";
@@ -1750,9 +2053,13 @@ void Viewport::buildScene(feather::draw::DrawItems& items)
 {
     for(auto item : items) {
         switch(item->type){
-            case feather::draw::Item::Mesh:
-                std::cout << "build Mesh\n";
-                m_apDrawItems.append(new Mesh(m_pFrameGraph->layer(),item,this));
+            case feather::draw::Item::ShadedMesh:
+                std::cout << "build ShadedMesh\n";
+                m_apDrawItems.append(new ShadedMesh(m_pFrameGraph->layer(),item,this));
+                break;
+            case feather::draw::Item::ComponentMesh:
+                std::cout << "build ComponentMesh\n";
+                m_apDrawItems.append(new ComponentMesh(m_pFrameGraph->layer(),item,this));
                 break;
             case feather::draw::Item::Line:
                 std::cout << "build Line\n";
@@ -1804,9 +2111,13 @@ void Viewport::addItems(unsigned int uid)
         item->nid=nid;
         std::cout << "add drawitem uid:" << uid << " nid:" << nid << " type:" << item->type << std::endl;
         switch(item->type){
-            case feather::draw::Item::Mesh:
-                std::cout << "add Mesh\n";
-                m_apDrawItems.append(new Mesh(m_pFrameGraph->layer(),item,this));
+            case feather::draw::Item::ShadedMesh:
+                std::cout << "add ShadedMesh\n";
+                m_apDrawItems.append(new ShadedMesh(m_pFrameGraph->layer(),item,this));
+                break;
+            case feather::draw::Item::ComponentMesh:
+                std::cout << "add ComponentMesh\n";
+                m_apDrawItems.append(new ComponentMesh(m_pFrameGraph->layer(),item,this));
                 break;
             case feather::draw::Item::Line:
                 std::cout << "add Line\n";
@@ -1829,9 +2140,13 @@ void Viewport::updateItems(unsigned int uid)
     for(auto item : m_apDrawItems) {
         if(item->item()->uid == uid){
             switch(item->item()->type){
-                case feather::draw::Item::Mesh:
-                    std::cout << "updating Mesh draw item\n";
-                    static_cast<Mesh*>(item)->updateItem();
+                case feather::draw::Item::ShadedMesh:
+                    std::cout << "updating ShadedMesh draw item\n";
+                    static_cast<ShadedMesh*>(item)->updateItem();
+                    break;
+                case feather::draw::Item::ComponentMesh:
+                    std::cout << "updating ComponentMesh draw item\n";
+                    static_cast<ComponentMesh*>(item)->updateItem();
                     break;
                 case feather::draw::Item::Line:
                     std::cout << "updating Line draw item\n";
