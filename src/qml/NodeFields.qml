@@ -115,9 +115,11 @@ FieldModel {
         // In
         addFieldName("mesh",323,1)
         addFieldName("level",323,2)
-        addFieldName("weights",323,3)
+        addFieldName("corner weights",323,3)
+        addFieldName("crease weights",323,4)
         // Out 
-        addFieldName("mesh",323,4)
+        addFieldName("mesh",323,5)
+
 
         // Polygon SubDiv 
         // In

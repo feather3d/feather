@@ -263,7 +263,11 @@ class Field: public QObject
             Node=field::Node,
             NodeArray=field::NodeArray,
             Matrix3x3=field::Matrix3x3,
-            Matrix4x4=field::Matrix4x4
+            Matrix4x4=field::Matrix4x4,
+            VertexIndiceWeight=field::VertexIndiceWeight,
+            VertexIndiceGroupWeight=field::VertexIndiceGroupWeight,
+            VertexIndiceWeightArray=field::VertexIndiceWeightArray,
+            VertexIndiceGroupWeightArray=field::VertexIndiceGroupWeightArray
         };
 
         enum ConnectionType {

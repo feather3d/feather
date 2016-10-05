@@ -67,7 +67,11 @@ namespace feather
             NodeArray=20,
             Matrix3x3=21,
             Matrix4x4=22,
-            START=23
+            VertexIndiceWeight=23,
+            VertexIndiceGroupWeight=24,
+            VertexIndiceWeightArray=25,
+            VertexIndiceGroupWeightArray=26,
+            START=27
         };
 
         // TODO

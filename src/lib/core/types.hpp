@@ -102,9 +102,21 @@ namespace feather
     //typedef struct{std::vector<FFacePoint> f; } FFace;
     typedef std::vector<FFacePoint> FFace;
     typedef float FMatrix3x3[3][3];
-    struct FMatrix4x4{
+    struct FMatrix4x4 {
         FMatrix4x4(){};
         float value[4][4] = {{1,0,0,0},{0,1,0,0},{0,0,1,0},{0,0,0,1}};
+    };
+
+    struct FVertexIndiceWeight {
+        FVertexIndiceWeight(){};
+        unsigned int v;
+        FDouble weight;
+    };
+
+    struct FVertexIndiceGroupWeight {
+        FVertexIndiceGroupWeight(){};
+        std::vector<unsigned int> v;
+        FDouble weight;
     };
 
     // Arrays
@@ -120,6 +132,8 @@ namespace feather
     typedef std::vector<FTextureCoord> FTextureCoordArray;
     typedef std::vector<FNormal3D> FNormal3DArray;
     typedef std::vector<FFace> FFaceArray;
+    typedef std::vector<FVertexIndiceWeight> FVertexIndiceWeightArray;
+    typedef std::vector<FVertexIndiceGroupWeight> FVertexIndiceGroupWeightArray;
 
     struct FStatus
     {
