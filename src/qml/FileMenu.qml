@@ -49,7 +49,6 @@ Menu {
             openFeatherFilename.stringValue = tools.urlToString(openDialog.fileUrl)
             openFeather.exec()       
             SceneGraph.triggerUpdate()
-            //SceneGraph.nodesAdded()
         }
         onRejected: {} 
     }
@@ -63,7 +62,6 @@ Menu {
             saveFeatherFilename.stringValue = tools.urlToString(saveDialog.fileUrl)
             saveFeather.exec()       
             SceneGraph.triggerUpdate()
-            SceneGraph.nodesAdded()
         }
         onRejected: {} 
     }
@@ -76,7 +74,6 @@ Menu {
             importObjFilename.stringValue = tools.urlToString(importDialog.fileUrl)
             importObj.exec()       
             SceneGraph.triggerUpdate()
-            //SceneGraph.nodesAdded()
         }
         onRejected: {} 
     }
