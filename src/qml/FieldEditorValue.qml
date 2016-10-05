@@ -274,8 +274,8 @@ Rectangle {
             //console.log("wheel delta:",wheel.pixelDelta," angle:",wheel.angleDelta," offset:",offset)
             console.log("valueStep for FieldEditorValue="+valueStep)
             switch(field.type) {
-                case Field.Bool || Field.BoolArray: field.boolVal = (!field.boolVal) ? true : false ; break;
-                case Field.Int || Field.IntArray: field.intVal = field.intVal + ((valueStep*10) * offset); break;
+                case Field.Bool || Field.BoolArray: field.boolVal = (!field.boolVal) ? true : false; SceneGraph.nodeFieldChanged(uidKey,nidKey,fidKey); break;
+                case Field.Int || Field.IntArray: field.intVal = field.intVal + ((valueStep*10) * offset); SceneGraph.nodeFieldChanged(uidKey,nidKey,fidKey); break;
                 case Field.Real || Field.RealArray: field.realVal = field.realVal + (valueStep * offset); valueText.text = field.realVal.toFixed(2); /*SceneGraph.triggerUpdate();*/ SceneGraph.nodeFieldChanged(uidKey,nidKey,fidKey); break;
                 case Field.Vertex || Field.VertexArray: ; break;
                 case Field.Vector || Field.VectorArray: ; break;
