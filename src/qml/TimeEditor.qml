@@ -158,7 +158,7 @@ Rectangle {
         timecode.pos = cposfield.realVal
         startTimeChanged(stimefield.realValue)
         endTimeChanged(etimefield.realValue)
-        currentTimeChanged(cposfield.realValue)
+        currentTimeChanged(cposfield.realVal)
     }
 
     function nodeSelected() {
