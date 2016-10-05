@@ -115,6 +115,7 @@ namespace feather
 
     struct FVertexIndiceGroupWeight {
         FVertexIndiceGroupWeight(){};
+        std::string name;
         std::vector<unsigned int> v;
         FDouble weight;
     };
