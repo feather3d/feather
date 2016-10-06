@@ -186,4 +186,13 @@ namespace feather
 
 } // namespace feather 
 
+#define GET_FIELD_DATA(__key,__type,__name,__conn)\
+    field::Field<__type> *__name;\
+    for(auto f : fields){ if(f->id==__key){ __name = static_cast<field::Field<__type>*>(f); } }\
+    if(__conn == field::connection::In && __name->connections.size()){\
+        __name->value = static_cast<field::Field<__type>*>(plugin::get_node_field_base(__name->connections.at(0).puid,__name->connections.at(0).pfid))->value;\
+        __name->update = static_cast<field::Field<__type>*>(plugin::get_node_field_base(__name->connections.at(0).puid,__name->connections.at(0).pfid))->update;\
+    }\
+
+
 #endif
