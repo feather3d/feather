@@ -70,6 +70,7 @@
 #include <Qt3DExtras/QCuboidMesh>
 #include <Qt3DExtras/QTorusMesh>
 #include <Qt3DExtras/QPhongMaterial>
+#include <Qt3DExtras/QPerVertexColorMaterial>
 #include <Qt3DRender/QShaderProgram>
 #include <Qt3DRender/QPointLight>
 #include <Qt3DRender/QEffect>

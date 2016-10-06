@@ -55,7 +55,7 @@ namespace feather
 
     struct FColorRGB
     {
-        FColorRGB(FFloat _r=1.0, FFloat _g=1.0, FFloat _b=1.0, FFloat _a=1.0):r(_r),g(_g),b(_b){};
+        FColorRGB(FFloat _r=1.0, FFloat _g=1.0, FFloat _b=1.0):r(_r),g(_g),b(_b){};
         inline FInt int_red() { return 255 * r; };
         inline FInt int_green() { return 255 * g; };
         inline FInt int_blue() { return 255 * b; };
@@ -65,7 +65,6 @@ namespace feather
         FFloat r;
         FFloat g;
         FFloat b;
-        FFloat a;
     };
 
     struct FColorRGBA

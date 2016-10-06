@@ -132,9 +132,10 @@ class MeshPointGeometry : public Qt3DRender::QGeometry
         int uid;
         int nid;
         int fid;
-        std::vector<feather::FVertex3D> m_aMeshVData;
+        int vcount; // how many vertex
         Qt3DRender::QAttribute *m_pVAttribute;
         Qt3DRender::QBuffer *m_pVertexBuffer;
+        Qt3DRender::QAttribute *m_pColorAttribute;
 };
 
 
@@ -202,7 +203,7 @@ class ComponentMesh : public DrawItem
     private:
         void build();
         Qt3DCore::QTransform *m_pTransform;
-        Qt3DExtras::QPhongMaterial *m_pMaterial;
+        Qt3DExtras::QPerVertexColorMaterial *m_pMaterial;
         Qt3DRender::QGeometryRenderer *m_pMeshPoints;
         Qt3DRender::QGeometryRenderer *m_pMeshEdges;
         Qt3DRender::QPointLight *m_pLight;

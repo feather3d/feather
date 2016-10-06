@@ -294,9 +294,9 @@ void MeshGeometry::build()
             glc.push_back(feather::FColorRGBA(0.0,1.0,0.0,1.0));
             glc.push_back(feather::FColorRGBA(0.0,1.0,0.0,1.0));
             } else {
-            glc.push_back(feather::FColorRGBA());
-            glc.push_back(feather::FColorRGBA());
-            glc.push_back(feather::FColorRGBA());
+            glc.push_back(feather::FColorRGBA(1,0,1,1));
+            glc.push_back(feather::FColorRGBA(1,0,1,1));
+            glc.push_back(feather::FColorRGBA(1,0,1,1));
             }
 
             //std::cout << "v.y id:" << id << "=" << mesh.v.at(_face.at(id).v).y << ",";
@@ -375,7 +375,8 @@ void MeshGeometry::updateBuffers()
 MeshPointGeometry::MeshPointGeometry(int _uid, int _nid, int _fid, Qt3DCore::QNode *parent)
     : Qt3DRender::QGeometry(parent),
     m_pVAttribute(new Qt3DRender::QAttribute(this)),
-    m_pVertexBuffer(new Qt3DRender::QBuffer(Qt3DRender::QBuffer::VertexBuffer, this))
+    m_pVertexBuffer(new Qt3DRender::QBuffer(Qt3DRender::QBuffer::VertexBuffer, this)),
+    m_pColorAttribute(new Qt3DRender::QAttribute(this))
 {
     uid=_uid;
     nid=_nid;
@@ -384,63 +385,75 @@ MeshPointGeometry::MeshPointGeometry(int _uid, int _nid, int _fid, Qt3DCore::QNo
     build();
 
     // V
-    const int vsize = m_aMeshVData.size() * sizeof(feather::FVertex3D);
+    /*
+    const int vsize = (m_aMeshVData.size() * sizeof(feather::FVertex3D)) + (m_aColorColorData.size() * sizeof(feather::FColorRGB));
     QByteArray meshVBytes;
     meshVBytes.resize(vsize);
     memcpy(meshVBytes.data(), m_aMeshVData.data(), vsize);
 
     m_pVertexBuffer->setData(meshVBytes);
-    
-    m_pVAttribute->setName(Qt3DRender::QAttribute::defaultPositionAttributeName());
+    */
+
+    m_pVAttribute->setAttributeType(Qt3DRender::QAttribute::VertexAttribute);
+    m_pVAttribute->setBuffer(m_pVertexBuffer);
     m_pVAttribute->setDataType(Qt3DRender::QAttribute::Float);
     m_pVAttribute->setDataSize(3);
-    m_pVAttribute->setCount(m_aMeshVData.size());
-    m_pVAttribute->setByteStride(sizeof(feather::FVertex3D));
-    m_pVAttribute->setBuffer(m_pVertexBuffer);
+    m_pVAttribute->setByteOffset(0);
+    m_pVAttribute->setByteStride(6 * sizeof(float));
+    m_pVAttribute->setCount(vcount);
+    m_pVAttribute->setName(Qt3DRender::QAttribute::defaultPositionAttributeName());
 
     addAttribute(m_pVAttribute);
+
+    m_pColorAttribute->setAttributeType(Qt3DRender::QAttribute::VertexAttribute);
+    m_pColorAttribute->setBuffer(m_pVertexBuffer);
+    m_pColorAttribute->setDataType(Qt3DRender::QAttribute::Float);
+    m_pColorAttribute->setDataSize(3);
+    m_pColorAttribute->setByteOffset(sizeof(feather::FVertex3D));
+    m_pColorAttribute->setByteStride(6 * sizeof(float));
+    m_pColorAttribute->setCount(vcount);
+    m_pColorAttribute->setName(Qt3DRender::QAttribute::defaultColorAttributeName());
+
+    addAttribute(m_pColorAttribute);
 }
 
 MeshPointGeometry::~MeshPointGeometry()
 {
-    //Qt3DCore::QNode::cleanup();
     delete m_pVAttribute;
     m_pVAttribute=0;
     delete m_pVertexBuffer;
     m_pVertexBuffer=0;
+    delete m_pColorAttribute;
+    m_pColorAttribute=0;
 }
 
 void MeshPointGeometry::build()
 {
-    m_aMeshVData.clear();
-
-    //feather::FMesh mesh;
-    //feather::qml::command::get_field_val(uid,nid,fid,mesh);
     feather::FMesh mesh = static_cast<feather::field::Field<feather::FMesh>*>(feather::plugin::get_field_base(uid,nid,fid))->value;
  
-    // build gl mesh from mesh
-    feather::FIntArray gli;
-    feather::FColorRGBAArray glc;
-    //feather::FVertex3DArray glv;
-    uint id=0;
+    vcount = mesh.v.size();
+    const int vsize = (vcount * (3 + 3) * sizeof(float));
+    QByteArray meshVBytes;
+    meshVBytes.resize(vsize);
+
+    float *rawVertexArray = reinterpret_cast<float *>(meshVBytes.data());
+    int idx = 0;
+
     for(auto v : mesh.v){
-            glc.push_back(feather::FColorRGBA(0.0,1.0,0.0,1.0));
-            m_aMeshVData.push_back(v);
-            gli.push_back(id);
-            id++;
+            rawVertexArray[idx++]=v.x;
+            rawVertexArray[idx++]=v.y;
+            rawVertexArray[idx++]=v.z;
+            rawVertexArray[idx++]=1.0;
+            rawVertexArray[idx++]=0.0;
+            rawVertexArray[idx++]=1.0;
     }
+
+    m_pVertexBuffer->setData(meshVBytes);
 }
 
 void MeshPointGeometry::updateBuffers()
 {
     build();
-    
-    // Position Buffer
-    const int vsize = m_aMeshVData.size() * sizeof(feather::FVertex3D);
-    QByteArray meshVBytes;
-    meshVBytes.resize(vsize);
-    memcpy(meshVBytes.data(), m_aMeshVData.data(), vsize);
-    m_pVertexBuffer->setData(meshVBytes);
 }
 
 
@@ -643,7 +656,7 @@ void ShadedMesh::clicked(Qt3DRender::QPickEvent* event)
 ComponentMesh::ComponentMesh(Qt3DRender::QLayer* layer, feather::draw::Item* _item, QNode *parent)
     : DrawItem(_item,DrawItem::ComponentMesh,parent),
     m_pTransform(new Qt3DCore::QTransform()),
-    m_pMaterial(new Qt3DExtras::QPhongMaterial()),
+    m_pMaterial(new Qt3DExtras::QPerVertexColorMaterial()),
     m_pMeshPoints(new Qt3DRender::QGeometryRenderer()),
     m_pMeshEdges(new Qt3DRender::QGeometryRenderer()),
     m_pLight(new Qt3DRender::QPointLight()),
@@ -661,7 +674,7 @@ ComponentMesh::ComponentMesh(Qt3DRender::QLayer* layer, feather::draw::Item* _it
     // Shaded Material 
     //m_pMaterial->addParameter(new Qt3D::QParameter(QStringLiteral("meshColor"),QColor(Qt::blue)));  
     //m_pMaterial->setDiffuse(QColor(Qt::black));
-    m_pMaterial->setAmbient(Qt::magenta);
+    //m_pMaterial->setAmbient(Qt::white);
 
 
     // THIS WAS FROM SHADER TESTING
