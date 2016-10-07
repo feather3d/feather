@@ -202,10 +202,12 @@ WireEffect::~WireEffect()
 // SHADED MESH 
 MeshGeometry::MeshGeometry(int _uid, int _nid, int _fid, Qt3DCore::QNode *parent)
     : Qt3DRender::QGeometry(parent),
-    m_pVAttribute(new Qt3DRender::QAttribute(this)),
     m_pVertexBuffer(new Qt3DRender::QBuffer(Qt3DRender::QBuffer::VertexBuffer, this)),
+    m_pIndexBuffer(new Qt3DRender::QBuffer(Qt3DRender::QBuffer::IndexBuffer, this)),
+    m_pVAttribute(new Qt3DRender::QAttribute(this)),
     m_pVnAttribute(new Qt3DRender::QAttribute(this)),
-    m_pNormalBuffer(new Qt3DRender::QBuffer(Qt3DRender::QBuffer::VertexBuffer, this))
+    //m_pColorAttribute(new Qt3DRender::QAttribute(this)),
+    m_pIndexAttribute(new Qt3DRender::QAttribute(this))
 {
     uid=_uid;
     nid=_nid;
@@ -214,160 +216,145 @@ MeshGeometry::MeshGeometry(int _uid, int _nid, int _fid, Qt3DCore::QNode *parent
     build();
 
     // V
-    const int vsize = m_aMeshVData.size() * sizeof(feather::FVertex3D);
-    QByteArray meshVBytes;
-    meshVBytes.resize(vsize);
-    memcpy(meshVBytes.data(), m_aMeshVData.data(), vsize);
-
-    //m_pVertexBuffer->setUsage(Qt3DRender::QBuffer::DynamicDraw);
-    m_pVertexBuffer->setData(meshVBytes);
-    
-    m_pVAttribute->setName(Qt3DRender::QAttribute::defaultPositionAttributeName());
+    m_pVAttribute->setAttributeType(Qt3DRender::QAttribute::VertexAttribute);
+    m_pVAttribute->setBuffer(m_pVertexBuffer);
     m_pVAttribute->setDataType(Qt3DRender::QAttribute::Float);
     m_pVAttribute->setDataSize(3);
-    m_pVAttribute->setCount(m_aMeshVData.size());
-    m_pVAttribute->setByteStride(sizeof(feather::FVertex3D));
-    m_pVAttribute->setBuffer(m_pVertexBuffer);
-
-    // VN
-    const int vnsize = m_aMeshVnData.size() * sizeof(feather::FVertex3D);
-    QByteArray meshVnBytes;
-    meshVnBytes.resize(vnsize);
-    memcpy(meshVnBytes.data(), m_aMeshVnData.data(), vsize);
-
-    //m_pNormalBuffer->setUsage(Qt3DRender::QBuffer::DynamicDraw);
-    m_pNormalBuffer->setData(meshVnBytes);
-
-    m_pVnAttribute->setName(Qt3DRender::QAttribute::defaultNormalAttributeName());
-    m_pVnAttribute->setDataType(Qt3DRender::QAttribute::Float);
-    m_pVnAttribute->setDataSize(3);
-    m_pVnAttribute->setCount(m_aMeshVnData.size());
-    m_pVnAttribute->setByteStride(sizeof(feather::FVertex3D));
-    m_pVnAttribute->setBuffer(m_pNormalBuffer);
+    m_pVAttribute->setByteOffset(0);
+    m_pVAttribute->setByteStride(6 * sizeof(float));
+    m_pVAttribute->setCount(vcount);
+    m_pVAttribute->setName(Qt3DRender::QAttribute::defaultPositionAttributeName());
 
     addAttribute(m_pVAttribute);
+
+    // VN
+    m_pVnAttribute->setAttributeType(Qt3DRender::QAttribute::VertexAttribute);
+    m_pVnAttribute->setBuffer(m_pVertexBuffer);
+    m_pVnAttribute->setDataType(Qt3DRender::QAttribute::Float);
+    m_pVnAttribute->setDataSize(3);
+    m_pVnAttribute->setByteOffset(3 * sizeof(float));
+    m_pVnAttribute->setByteStride(6 * sizeof(float));
+    m_pVnAttribute->setCount(vcount);
+    m_pVnAttribute->setName(Qt3DRender::QAttribute::defaultNormalAttributeName());
+
     addAttribute(m_pVnAttribute);
+
+    // Color is not needed for this but I left it here in case it will be later.
+    /*
+    // COLOR
+    m_pColorAttribute->setAttributeType(Qt3DRender::QAttribute::VertexAttribute);
+    m_pColorAttribute->setBuffer(m_pVertexBuffer);
+    m_pColorAttribute->setDataType(Qt3DRender::QAttribute::Float);
+    m_pColorAttribute->setDataSize(3);
+    m_pColorAttribute->setByteOffset(6 * sizeof(float));
+    m_pColorAttribute->setByteStride(9 * sizeof(float));
+    m_pColorAttribute->setCount(vcount);
+    m_pColorAttribute->setName(Qt3DRender::QAttribute::defaultColorAttributeName());
+
+    addAttribute(m_pColorAttribute);
+    */
+
+    // INDEX 
+    m_pIndexAttribute->setAttributeType(Qt3DRender::QAttribute::IndexAttribute);
+    m_pIndexAttribute->setBuffer(m_pIndexBuffer);
+    m_pIndexAttribute->setDataType(Qt3DRender::QAttribute::UnsignedInt);
+    m_pIndexAttribute->setDataSize(1);
+    m_pIndexAttribute->setByteOffset(0);
+    m_pIndexAttribute->setByteStride(0);
+    m_pIndexAttribute->setCount(icount);
+
+    addAttribute(m_pIndexAttribute);
 }
 
 MeshGeometry::~MeshGeometry()
 {
     //Qt3DCore::QNode::cleanup();
-    delete m_pVAttribute;
-    m_pVAttribute=0;
     delete m_pVertexBuffer;
     m_pVertexBuffer=0;
+    delete m_pIndexBuffer;
+    m_pIndexBuffer=0;
+    delete m_pVAttribute;
+    m_pVAttribute=0;
     delete m_pVnAttribute;
     m_pVnAttribute=0;
-    delete m_pNormalBuffer;
-    m_pNormalBuffer=0;
+    delete m_pVnAttribute;
+    /*
+    m_pColorAttribute=0;
+    delete m_pVnAttribute;
+    */
+    m_pIndexAttribute=0;
 }
 
 void MeshGeometry::build()
 {
-    m_aMeshVData.clear();
-    m_aMeshVnData.clear();
-
-    //feather::FMesh mesh;
-    //feather::qml::command::get_field_val(uid,nid,fid,mesh);
     feather::FMesh mesh = static_cast<feather::field::Field<feather::FMesh>*>(feather::plugin::get_field_base(uid,nid,fid))->value;
  
-    // build gl mesh from mesh
-    feather::FIntArray glei;
-    feather::FIntArray gli;
-    feather::FColorRGBAArray glc;
-    //feather::FVertex3DArray glv;
     uint id=0;
-    int fcount=0; // this is a temp value to test selection
-    //std::cout << "face count:" << mesh.f.size() << std::endl;
-    std::for_each(mesh.f.begin(), mesh.f.end(), [this,&mesh,&id,&fcount,&glei,&gli,&glc](feather::FFace _face){
+    std::vector<float> vertexBuffer;
+    // THIS IS IMPORTANT TO REMEMBER
+    // The index type will set limits on how many vertex can be loaded.
+    // If the model has more vertex then what the index buffer can store, holes will show up in the model.
+    // uint has a limit of 4.3G which should be enough for what I'm doing.
+    std::vector<uint> indexBuffer;
+    icount = 0;
+    vcount = 0;
+
+    std::for_each(mesh.f.begin(), mesh.f.end(), [this,&vertexBuffer,&indexBuffer,&mesh,&id](feather::FFace _face){
              
-            for_each(_face.begin(),_face.end(),[&mesh,&glei](feather::FFacePoint _fp){ glei.push_back(_fp.v); });
-            /*
-               std::cout << "build glei\n";
-               for_each(glei.begin(),glei.end(),[this](int _v){ std::cout << _v << " "; });
-               std::cout << std::endl;
-               */
-
+            uint startid = vcount;
+            uint stepid = startid;
+            // Now we need to layout the index's
             while(id+2 <= _face.size()) {
-            if(fcount==3) {
-            glc.push_back(feather::FColorRGBA(0.0,1.0,0.0,1.0));
-            glc.push_back(feather::FColorRGBA(0.0,1.0,0.0,1.0));
-            glc.push_back(feather::FColorRGBA(0.0,1.0,0.0,1.0));
-            } else {
-            glc.push_back(feather::FColorRGBA(1,0,1,1));
-            glc.push_back(feather::FColorRGBA(1,0,1,1));
-            glc.push_back(feather::FColorRGBA(1,0,1,1));
+                indexBuffer.push_back(stepid);
+                indexBuffer.push_back(stepid+1);
+                if(id+2 < _face.size()) {
+                    indexBuffer.push_back(stepid+2); 
+                } else {
+                    indexBuffer.push_back(startid); 
+                }
+                id+=2;
+                stepid+=2;
             }
 
-            //std::cout << "v.y id:" << id << "=" << mesh.v.at(_face.at(id).v).y << ",";
-            //std::cout << "v.y id:" << id+1 << "=" << mesh.v.at(_face.at(id+1).v).y << ",";
- 
-            //std::cout << "v" << id << ":" << _face.at(id).v << ",";
-            //std::cout << "v.y" << id << ":" << mesh.v.at(_face.at(id).v).y << "," << std::endl;
-            m_aMeshVData.push_back(mesh.v.at(_face.at(id).v));
-            m_aMeshVnData.push_back(mesh.vn.at(_face.at(id).vn));
-            //glvn.push_back(vn.at(_face.at(id).vn));
-            gli.push_back(_face.at(id).v);
-
-            //std::cout << "v" << id+1 << ":" << _face.at(id+1).v << "," << std::endl;
-            m_aMeshVData.push_back(mesh.v.at(_face.at(id+1).v));
-            m_aMeshVnData.push_back(mesh.vn.at(_face.at(id+1).vn));
-            //glvn.push_back(vn.at(_face.at(id+1).vn));
-            gli.push_back(_face.at(id+1).v);
-
-            if(id+2 < _face.size()) {
-                //std::cout << "v.y id:" << id+2 << "=" << mesh.v.at(_face.at(id+2).v).y << ",";
-                //std::cout << "v" << id+2 << ":" << _face.at(id+2).v << "," << std::endl;
-                m_aMeshVData.push_back(mesh.v.at(_face.at(id+2).v));
-                m_aMeshVnData.push_back(mesh.vn.at(_face.at(id+2).vn));
-                //glvn.push_back(vn.at(_face.at(id+2).vn));
-                gli.push_back(_face.at(id+2).v);
-            } else {
-                //std::cout << "v.y id:" << 0 << "=" << mesh.v.at(_face.at(0).v).y << ",";
-                //std::cout << "v" << 0 << ":" << _face.at(0).v << "," << std::endl;
-                m_aMeshVData.push_back(mesh.v.at(_face.at(0).v));
-                m_aMeshVnData.push_back(mesh.vn.at(_face.at(0).vn));
-                //glvn.push_back(vn.at(_face.at(0).vn));
-                gli.push_back(_face.at(0).v);
+            // Load up each point of the vertex
+            for(auto fp : _face){
+                // V
+                vertexBuffer.push_back(mesh.v.at(fp.v).x);
+                vertexBuffer.push_back(mesh.v.at(fp.v).y);
+                vertexBuffer.push_back(mesh.v.at(fp.v).z);
+                // VN 
+                vertexBuffer.push_back(mesh.vn.at(fp.vn).x);
+                vertexBuffer.push_back(mesh.vn.at(fp.vn).y);
+                vertexBuffer.push_back(mesh.vn.at(fp.vn).z);
+                // COLOR
+                /* 
+                vertexBuffer.push_back(1.0);
+                vertexBuffer.push_back(1.0); 
+                vertexBuffer.push_back(1.0);
+                */
+                vcount++; 
             }
-
-            id=id+2;
-            }
-            //std::cout << "\n";
-            fcount++;
             id=0;
     });
 
+    const int vsize = vertexBuffer.size() * sizeof(float);
+    QByteArray meshVBytes;
+    meshVBytes.resize(vsize);
+    memcpy(meshVBytes.data(), vertexBuffer.data(), vsize);
+    m_pVertexBuffer->setData(meshVBytes);
+
+    icount = indexBuffer.size();
+ 
+    const int isize = icount * sizeof(uint);
+    QByteArray meshIBytes;
+    meshIBytes.resize(isize);
+    memcpy(meshIBytes.data(), indexBuffer.data(), isize);
+    m_pIndexBuffer->setData(meshIBytes);
 }
 
 void MeshGeometry::updateBuffers()
 {
     build();
-    
-    // Position Buffer
-    const int vsize = m_aMeshVData.size() * sizeof(feather::FVertex3D);
-    QByteArray meshVBytes;
-    meshVBytes.resize(vsize);
-    memcpy(meshVBytes.data(), m_aMeshVData.data(), vsize);
-    m_pVertexBuffer->setData(meshVBytes);
-    //emit(m_pVAttribute->buffer()->dataChanged(meshVBytes));
-    //m_pVAttribute->setBuffer(m_pVertexBuffer);
-
-    /* 
-    std::cout << "V Buffer size=" << m_pVertexBuffer->data().size() << std::endl;
-    std::cout << "V Attribute Buffer size=" << m_pVAttribute->buffer()->data().size()
-        << ", count size=" << m_pVAttribute->count()
-        << ", vertex size=" << m_pVAttribute->vertexSize()
-        << std::endl;
-    */
-
-    // Normal Buffer
-    const int vnsize = m_aMeshVnData.size() * sizeof(feather::FVertex3D);
-    QByteArray meshVnBytes;
-    meshVnBytes.resize(vnsize);
-    memcpy(meshVnBytes.data(), m_aMeshVnData.data(), vsize);
-    m_pNormalBuffer->setData(meshVnBytes);
-    //m_pVnAttribute->setBuffer(m_pNormalBuffer);
 }
 
 
@@ -385,15 +372,6 @@ MeshPointGeometry::MeshPointGeometry(int _uid, int _nid, int _fid, Qt3DCore::QNo
     build();
 
     // V
-    /*
-    const int vsize = (m_aMeshVData.size() * sizeof(feather::FVertex3D)) + (m_aColorColorData.size() * sizeof(feather::FColorRGB));
-    QByteArray meshVBytes;
-    meshVBytes.resize(vsize);
-    memcpy(meshVBytes.data(), m_aMeshVData.data(), vsize);
-
-    m_pVertexBuffer->setData(meshVBytes);
-    */
-
     m_pVAttribute->setAttributeType(Qt3DRender::QAttribute::VertexAttribute);
     m_pVAttribute->setBuffer(m_pVertexBuffer);
     m_pVAttribute->setDataType(Qt3DRender::QAttribute::Float);
@@ -405,6 +383,7 @@ MeshPointGeometry::MeshPointGeometry(int _uid, int _nid, int _fid, Qt3DCore::QNo
 
     addAttribute(m_pVAttribute);
 
+    // COLOR
     m_pColorAttribute->setAttributeType(Qt3DRender::QAttribute::VertexAttribute);
     m_pColorAttribute->setBuffer(m_pVertexBuffer);
     m_pColorAttribute->setDataType(Qt3DRender::QAttribute::Float);

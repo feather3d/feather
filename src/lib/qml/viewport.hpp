@@ -108,12 +108,14 @@ class MeshGeometry : public Qt3DRender::QGeometry
         int uid;
         int nid;
         int fid;
-        std::vector<feather::FVertex3D> m_aMeshVData;
-        std::vector<feather::FVertex3D> m_aMeshVnData;
-        Qt3DRender::QAttribute *m_pVAttribute;
+        uint vcount; // vertex count
+        uint icount; // index count
         Qt3DRender::QBuffer *m_pVertexBuffer;
+        Qt3DRender::QBuffer *m_pIndexBuffer;
+        Qt3DRender::QAttribute *m_pVAttribute;
         Qt3DRender::QAttribute *m_pVnAttribute;
-        Qt3DRender::QBuffer *m_pNormalBuffer;
+        //Qt3DRender::QAttribute *m_pColorAttribute;
+        Qt3DRender::QAttribute *m_pIndexAttribute;
 };
 
 
