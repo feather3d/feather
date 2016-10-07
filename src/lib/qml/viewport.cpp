@@ -1617,18 +1617,18 @@ FrameGraph::FrameGraph(Qt3DCore::QNode* parent)
 
 FrameGraph::~FrameGraph()
 {
-    delete m_pViewport;
-    m_pViewport=0;
     delete m_pClearBuffer;
     m_pClearBuffer=0;
     delete m_pCameraSelector;
     m_pCameraSelector=0;
+    delete m_pRenderStateSet;
+    m_pRenderStateSet=0;
     delete m_pLayerFilter;
     m_pLayerFilter=0;
     delete m_pRenderSurfaceSelector;
     m_pRenderSurfaceSelector=0;
-    delete m_pRenderStateSet;
-    m_pRenderStateSet=0;
+    delete m_pViewport;
+    m_pViewport=0;
 }
 
 void FrameGraph::setCamera(Qt3DRender::QCamera* camera)
@@ -1780,6 +1780,7 @@ Viewport::Viewport(Qt3DCore::QNode* parent)
 
 Viewport::~Viewport()
 {
+    qDeleteAll(m_apDrawItems);
     for(auto comp : components())
         removeComponent(comp);
 
@@ -1802,7 +1803,6 @@ Viewport::~Viewport()
     m_pGrid=0;
     delete m_pAxis;
     m_pAxis=0;
-    qDeleteAll(m_apDrawItems);
 }
 
 void Viewport::handleTriggered(float dt)
