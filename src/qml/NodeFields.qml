@@ -144,6 +144,15 @@ FieldModel {
         // Out 
         addFieldName("value",425,3)
 
+        // Morph 
+        // In
+        addFieldName("base",426,1)
+        addFieldName("targets",426,2)
+        addFieldName("weights",426,3)
+        // Out 
+        addFieldName("mesh",426,4)
+
+
         // DEFORMER PLUGIN
         // Cluster
         // In
