@@ -242,6 +242,8 @@ namespace feather
         };
     };
 
+    typedef std::vector<FMesh*> FMeshArray;
+
     // SceneGraph Types
 
     struct FNode;

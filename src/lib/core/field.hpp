@@ -71,7 +71,8 @@ namespace feather
             VertexIndiceGroupWeight=24,
             VertexIndiceWeightArray=25,
             VertexIndiceGroupWeightArray=26,
-            START=27
+            MeshArray=27,
+            START=28
         };
 
         // TODO
@@ -113,11 +114,15 @@ namespace feather
         // I need to add all the instances for each type.
         // Currently this is just a brief list for testing.
         template <> bool can_connect<Bool,Bool>() { return true; };
+        template <> bool can_connect<Bool,BoolArray>() { return true; };
         template <> bool can_connect<Int,Int>() { return true; };
+        template <> bool can_connect<Int,IntArray>() { return true; };
         template <> bool can_connect<Double,Double>() { return true; };
         template <> bool can_connect<Float,Float>() { return true; };
         template <> bool can_connect<Real,Real>() { return true; };
+        template <> bool can_connect<Real,RealArray>() { return true; };
         template <> bool can_connect<Mesh,Mesh>() { return true; };
+        template <> bool can_connect<Mesh,MeshArray>() { return true; };
         template <> bool can_connect<Node,Node>() { return true; };
         template <> bool can_connect<Node,NodeArray>() { return true; };
         template <> bool can_connect<Time,Time>() { return true; };

@@ -267,7 +267,8 @@ class Field: public QObject
             VertexIndiceWeight=field::VertexIndiceWeight,
             VertexIndiceGroupWeight=field::VertexIndiceGroupWeight,
             VertexIndiceWeightArray=field::VertexIndiceWeightArray,
-            VertexIndiceGroupWeightArray=field::VertexIndiceGroupWeightArray
+            VertexIndiceGroupWeightArray=field::VertexIndiceGroupWeightArray,
+            MeshArray=field::MeshArray
         };
 
         enum ConnectionType {
