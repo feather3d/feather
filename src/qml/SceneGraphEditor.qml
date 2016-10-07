@@ -36,6 +36,7 @@ Rectangle {
     property Properties properties: Null
     property alias fieldModel: sg_editor.connection
 
+    signal nodeToBeRemoved(int uid)
     signal statusChanged(int state, string msg)
  
     // Dialogs
@@ -58,6 +59,7 @@ Rectangle {
         tooltip: "Remove selected node from scenegraph"
         onTriggered: {
             var uid = SceneGraph.selected_node()
+            sgWindow.nodeToBeRemoved(uid)
             SceneGraph.remove_node(uid)
             SceneGraph.nodesRemoved()
             SceneGraph.triggerUpdate()

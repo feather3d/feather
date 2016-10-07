@@ -62,6 +62,11 @@ Rectangle {
         vp.addItems(uid) 
     }
 
+    function removeNode(uid) {
+        console.log("vp.removeNode(",uid,")")
+        vp.removeItem(uid) 
+    }
+
     function addDrawItems(item) {
         console.log("vp.addDrawItems(",item,")")
         vp.addItems(item)
@@ -87,5 +92,6 @@ Rectangle {
         SceneGraph.nodeUpdateDrawItems.connect(updateDrawItems)
         SceneGraph.nodeFieldChanged.connect(updateViewport)
         SceneGraph.updateGraph.connect(graphUpdated)
+        SceneGraph.nodeRemoved.connect(removeNode)
     }
 }

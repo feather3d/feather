@@ -39,7 +39,8 @@ DrawItem::DrawItem(feather::draw::Item* _item, Type _type, Qt3DCore::QNode *pare
 
 DrawItem::~DrawItem()
 {
-    //Qt3DCore::QNode::cleanup();
+    delete m_item;
+    m_item=0;
 }
 
 
@@ -268,7 +269,6 @@ MeshGeometry::MeshGeometry(int _uid, int _nid, int _fid, Qt3DCore::QNode *parent
 
 MeshGeometry::~MeshGeometry()
 {
-    //Qt3DCore::QNode::cleanup();
     delete m_pVertexBuffer;
     m_pVertexBuffer=0;
     delete m_pIndexBuffer;
@@ -566,7 +566,17 @@ ShadedMesh::ShadedMesh(Qt3DRender::QLayer* layer, feather::draw::Item* _item, QN
 
 ShadedMesh::~ShadedMesh()
 {
-    //Qt3DCore::QNode::cleanup();
+    for(auto comp : components())
+        removeComponent(comp);
+
+    delete m_pObjectPicker;
+    m_pObjectPicker=0;
+    delete m_pMesh;
+    m_pMesh=0;
+    delete m_pMaterial;
+    m_pMaterial=0;
+    delete m_pTransform;
+    m_pTransform=0;
 }
 
 void ShadedMesh::updateItem()
@@ -690,7 +700,17 @@ ComponentMesh::ComponentMesh(Qt3DRender::QLayer* layer, feather::draw::Item* _it
 
 ComponentMesh::~ComponentMesh()
 {
-    //Qt3DCore::QNode::cleanup();
+    for(auto comp : components())
+        removeComponent(comp);
+
+    delete m_pObjectPicker;
+    m_pObjectPicker=0;
+    delete m_pMeshPoints;
+    m_pMeshPoints=0;
+    delete m_pMaterial;
+    m_pMaterial=0;
+    delete m_pTransform;
+    m_pTransform=0;
 }
 
 void ComponentMesh::updateItem()
@@ -821,7 +841,16 @@ Line::Line(Qt3DRender::QLayer* layer, feather::draw::Item* _item, Qt3DCore::QNod
 
 Line::~Line()
 {
-    //Qt3DCore::QNode::cleanup();
+    for(auto comp : components())
+        removeComponent(comp);
+
+    delete m_pMesh;
+    m_pMesh=0;
+    delete m_pMaterial;
+    m_pMaterial=0;
+    delete m_pTransform;
+    m_pTransform=0;
+
     delete m_meshAttribute;
     m_meshAttribute=0;
     delete m_vertexBuffer;
@@ -1264,7 +1293,15 @@ Axis::Axis(Qt3DRender::QLayer* layer, Qt3DCore::QNode *parent)
 
 Axis::~Axis()
 {
+    for(auto comp : components())
+        removeComponent(comp);
 
+    delete m_pMesh;
+    m_pMesh=0;
+    delete m_pMaterial;
+    m_pMaterial=0;
+    delete m_pTransform;
+    m_pTransform=0;
 }
 
 /*
@@ -1383,7 +1420,15 @@ Grid::Grid(Qt3DRender::QLayer* layer, Qt3DCore::QNode *parent)
 
 Grid::~Grid()
 {
+    for(auto comp : components())
+        removeComponent(comp);
 
+    delete m_pMesh;
+    m_pMesh=0;
+    delete m_pMaterial;
+    m_pMaterial=0;
+    delete m_pTransform;
+    m_pTransform=0;
 }
 
 void Grid::setDiffuseColor(const QColor &diffuseColor)
@@ -1572,7 +1617,18 @@ FrameGraph::FrameGraph(Qt3DCore::QNode* parent)
 
 FrameGraph::~FrameGraph()
 {
-    //QNode::cleanup();
+    delete m_pViewport;
+    m_pViewport=0;
+    delete m_pClearBuffer;
+    m_pClearBuffer=0;
+    delete m_pCameraSelector;
+    m_pCameraSelector=0;
+    delete m_pLayerFilter;
+    m_pLayerFilter=0;
+    delete m_pRenderSurfaceSelector;
+    m_pRenderSurfaceSelector=0;
+    delete m_pRenderStateSet;
+    m_pRenderStateSet=0;
 }
 
 void FrameGraph::setCamera(Qt3DRender::QCamera* camera)
@@ -1724,6 +1780,24 @@ Viewport::Viewport(Qt3DCore::QNode* parent)
 
 Viewport::~Viewport()
 {
+    for(auto comp : components())
+        removeComponent(comp);
+
+    delete m_pFrameGraph;
+    m_pFrameGraph=0;
+    delete m_pMouseHandler;
+    m_pMouseHandler=0;
+    delete m_pKeyboardHandler;
+    m_pKeyboardHandler=0;
+    delete m_pInputSettings;
+    m_pInputSettings=0;
+    delete m_pLogicalDevice;
+    m_pLogicalDevice=0;
+    delete m_pFrameAction;
+    m_pFrameAction=0;
+    delete m_pCameraLight;
+    m_pCameraLight=0;
+
     delete m_pGrid;
     m_pGrid=0;
     delete m_pAxis;
@@ -2171,4 +2245,13 @@ void Viewport::updateChangedNodes()
 void Viewport::setCamera(unsigned int uid)
 {
     // TODO
+}
+
+void Viewport::removeItem(unsigned int uid)
+{
+    for(auto item : m_apDrawItems){
+        if(item->uid() == uid){
+            m_apDrawItems.removeOne(item);
+        }
+    }
 }

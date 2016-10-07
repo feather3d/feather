@@ -26,7 +26,6 @@ import QtQuick.Window 2.2
 import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.2
 import feather.scenegraph 1.0
-import feather.viewport 1.0
 
 Item {
     id: editor 
@@ -225,10 +224,7 @@ Item {
         anchors.bottom: parent.bottom
     }
 
-    //function updateGL() { viewport.updateGL() }
-
     Component.onCompleted: { 
         //editor.update(); updateGL()
     }
-
 }
