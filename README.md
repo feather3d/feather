@@ -33,6 +33,7 @@ v0.1 Features
 * Layer Editor
 * Keyframe Editor
 * DopeSheet Editor
+* Morph Editor
 * 3D Viewport Editor
 * Subdivision Mesh support via Pixar's OpenSubdiv library 
 * Objects - Curves, Plane, Cube, MeshShape
