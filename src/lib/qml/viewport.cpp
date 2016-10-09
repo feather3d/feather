@@ -2207,12 +2207,16 @@ void Viewport::updateItems(unsigned int uid)
         if(item->item()->uid == uid){
             switch(item->item()->type){
                 case feather::draw::Item::ShadedMesh:
-                    std::cout << "updating ShadedMesh draw item\n";
-                    static_cast<ShadedMesh*>(item)->updateItem();
+                    if(feather::plugin::get_field_base(item->uid(),static_cast<feather::draw::ShadedMesh*>(item->item())->fid)->update){
+                        std::cout << "updating ShadedMesh draw item\n";
+                        static_cast<ShadedMesh*>(item)->updateItem();
+                    }
                     break;
                 case feather::draw::Item::ComponentMesh:
-                    std::cout << "updating ComponentMesh draw item\n";
-                    static_cast<ComponentMesh*>(item)->updateItem();
+                    if(feather::plugin::get_field_base(item->uid(),static_cast<feather::draw::ComponentMesh*>(item->item())->fid)->update){
+                        std::cout << "updating ComponentMesh draw item\n";
+                        static_cast<ComponentMesh*>(item)->updateItem();
+                    }
                     break;
                 case feather::draw::Item::Line:
                     std::cout << "updating Line draw item\n";
