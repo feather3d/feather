@@ -22,25 +22,22 @@
  ***********************************************************************/
 
 import QtQuick 2.3
-import QtQuick.Window 2.2
-import QtQuick.Dialogs 1.0 
+import QtQuick.Dialogs 1.2 
 import QtQuick.Controls 1.4
 import QtQuick.Controls.Styles 1.4
 import feather.scenegraph 1.0
 import feather.command 1.0
 import feather.tools 1.0
 
-Window {
+Dialog {
     id: dialog
     title: "Export Ply Options"
     width: 400
-    height: 160
-    modality: Qt.WindowModal
-    flags: Qt.Dialog
+    height: 240
+    modality: Qt.ApplicationModal
     visible: false
-    x: (Screen.desktopAvailableWidth - width)/2
-    y: (Screen.desktopAvailableHeight - height)/2
-    color: properties.getColor("windowBg")
+    //color: properties.getColor("windowBg")
+    standardButtons: StandardButton.Cancel | StandardButton.Ok
 
     property Properties properties: Null
     property bool pathSet: false
@@ -61,6 +58,24 @@ Window {
                 name: "selection"
                 type: Parameter.Bool
                 boolValue: true
+            },
+            Parameter { 
+                id: exportAnimation
+                name: "animation"
+                type: Parameter.Bool
+                boolValue: false 
+            },
+            Parameter { 
+                id: exportStartFrame
+                name: "sframe"
+                type: Parameter.Int
+                intValue: 0 
+            },
+            Parameter { 
+                id: exportEndFrame
+                name: "eframe"
+                type: Parameter.Int
+                intValue: 24 
             }
         ]
     }
@@ -85,8 +100,9 @@ Window {
         anchors.fill: parent
         anchors.margins: 4
 
+        // Selection
         GroupBox {
-            title: "Exported Meshes"
+            title: "Export Options"
 
             Row {
                 spacing: 4
@@ -107,6 +123,41 @@ Window {
             }
         }
 
+        IntValidator { id: intValidator }
+
+        // Animation
+        GroupBox {
+            title: "Animation Options"
+
+            Row {
+                spacing: 4
+
+                RadioButton {
+                    text: "Animation"
+                    checked: false 
+                    //exclusiveGroup: exportedMeshesGroup
+                    onClicked: { (checked) ? exportAnimation.boolValue = true : exportAnimation.boolValue = false }
+                 }
+
+                TextField {
+                    text: "0"
+                    width: 80 
+                    height: 30
+                    validator: intValidator
+                    onEditingFinished: { exportStartFrame.intValue = text }
+                }
+
+                TextField {
+                    text: "24"
+                    width: 80 
+                    height: 30
+                    validator: intValidator
+                    onEditingFinished: { exportEndFrame.intValue = text }
+                }
+            }
+        }
+
+        // Path
         GroupBox {
             title: "Path"
 
@@ -147,6 +198,7 @@ Window {
         }
 
 
+        /*
         Row {
             spacing: 4
             anchors.horizontalCenter: parent.horizontalCenter
@@ -167,23 +219,18 @@ Window {
                 properties: dialog.properties 
             }
         }
+        */
     }
 
-    function onCancel() {
-        dialog.visible = false
-    }
-
-    function onExport() {
-        if(pathSet){
-            console.log("EXPORTINT PLY FILES")
-            exportPly.exec()       
+    onAccepted: {
+         console.log("animation:",exportAnimation.boolValue," sframe:",exportStartFrame.intValue," eframe:",exportEndFrame.intValue) 
+         if(pathSet){
+            console.log("EXPORTING PLY FILES")
+            exportPly.exec()
             SceneGraph.triggerUpdate()
             dialog.visible = false
         }
     }
 
-    Component.onCompleted: {
-        cancelButton.clicked.connect(onCancel)
-        exportButton.clicked.connect(onExport)
-    }
+    onRejected: { dialog.visible = false}
 }
