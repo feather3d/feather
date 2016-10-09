@@ -140,7 +140,7 @@ Rectangle {
         var suid = SceneGraph.selected_node()
         var snid = SceneGraph.node_id(suid)
         console.log("TRACK UID:",suid," NID:",snid)
-        if(snid == 425 || snid == 426){
+        if(snid == 425){
             uid = suid
             trackmodel.clear()
             trackmodel.insert(0,{"name": SceneGraph.node_name(uid), "uid": uid })

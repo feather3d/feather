@@ -169,6 +169,8 @@ class Field: public QObject
         Q_PROPERTY(bool boolVal READ boolVal WRITE setBoolVal NOTIFY boolValChanged)
         Q_PROPERTY(int intVal READ intVal WRITE setIntVal NOTIFY intValChanged)
         Q_PROPERTY(double realVal READ realVal WRITE setRealVal NOTIFY realValChanged)
+        //Q_PROPERTY(QQmlListProperty<double> realArrayVal READ realArrayVal)
+        Q_PROPERTY(QList<double> realArrayVal READ realArrayVal WRITE setRealArrayVal NOTIFY realArrayValChanged)
         Q_PROPERTY(bool connected READ connected NOTIFY connectedChanged)
         Q_PROPERTY(QQmlListProperty<Connection> connections READ connections )
  
@@ -237,6 +239,19 @@ class Field: public QObject
 
         FReal realVal() { get_real_val(); return m_realVal; };
 
+        // realVal 
+        void setRealArrayVal(QList<double>& v) {
+            if(m_realArrayVal != v) {
+                //std::cout << "real changed\n";
+                m_realArrayVal = v;
+                set_real_array_val();
+                emit realArrayValChanged();
+            }
+        }
+
+        //QQmlListProperty<double> realArrayVal();
+        QList<double> realArrayVal();
+
         bool connected() { get_connected(); return m_connected; };
 
         QQmlListProperty<Connection> connections();
@@ -281,6 +296,7 @@ class Field: public QObject
         void boolValChanged();
         void intValChanged();
         void realValChanged();
+        void realArrayValChanged();
         void connectedChanged();
         
     private:
@@ -293,6 +309,7 @@ class Field: public QObject
         void set_bool_val();
         void set_int_val();
         void set_real_val();
+        void set_real_array_val();
 
         void get_connected();
  
@@ -303,6 +320,7 @@ class Field: public QObject
         bool m_boolVal;
         int m_intVal;
         FReal m_realVal;
+        QList<double> m_realArrayVal;
         bool m_connected;
         QList<Connection*> m_connections;
 };

@@ -199,5 +199,9 @@ namespace feather
         __name->update = static_cast<field::Field<__type>*>(plugin::get_node_field_base(__name->connections.at(0).puid,__name->connections.at(0).pfid))->update;\
     }\
 
+#define GET_FIELD_ARRAY_DATA(__key,__type,__name,__conn)\
+    field::Field<__type> *__name;\
+    for(auto f : fields){ if(f->id==__key){ __name = static_cast<field::Field<__type>*>(f); } }\
+
 
 #endif

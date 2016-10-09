@@ -34,6 +34,7 @@ Menu {
 
     style: MenuStyle { properties: windowMenu.properties }
 
+    MorphEditor { id: morphEditor }
 
     // ACTIONS
 
@@ -54,6 +55,14 @@ Menu {
         onTriggered: {}
     }
 
+    // Material 
+    Action {
+        id: morphEditorAction
+        text: "Morph Editor"
+        tooltip: "Open Morph Editor"
+        onTriggered: { morphEditor.visible=true}
+    }
+
 
     // MENU
 
@@ -61,6 +70,11 @@ Menu {
     // Outliner 
     MenuItem {
         action: outlinerAction
+    }
+
+    // Morph Editor 
+    MenuItem {
+        action: morphEditorAction 
     }
 
     // Material 

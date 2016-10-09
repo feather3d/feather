@@ -231,6 +231,55 @@ void Field::set_real_val()
     qml::command::set_field_val(m_uid,m_nid,m_fid,m_realVal);
 }
 
+void Field::set_real_array_val()
+{
+    FRealArray value;
+
+    int i=0;
+    for ( auto val : m_realArrayVal){
+        std::cout << "setting weight " << i << " to " << val << std::endl;
+        value.push_back(val);
+        i++;
+    }
+    qml::command::set_field_val(m_uid,m_nid,m_fid,value);
+}
+
+// Real Array
+
+//QQmlListProperty<double> Field::realArrayVal()
+QList<double> Field::realArrayVal()
+{
+    m_realArrayVal.clear();
+
+    // TODO - put a check here to verify that this is actually a realArray field
+
+    field::Field<FRealArray>* array = static_cast<field::Field<FRealArray>*>(plugin::get_node_field_base(m_uid,m_fid));
+
+    for(auto val : array->value){
+        m_realArrayVal.append(val);
+    }
+ 
+    return m_realArrayVal;     
+    //return QQmlListProperty<double>(this,m_realArrayVal);     
+
+    /*
+    std::vector<field::Connection> connections;
+    plugin::connections(m_uid,m_fid,connections);
+ 
+    for ( auto connection : connections ) {
+        Connection* conn = new Connection();
+        conn->setSuid(connection.puid);
+        conn->setSfid(connection.pfid);
+        conn->setTuid(m_uid);
+        conn->setTfid(m_fid);
+        m_connections.append(conn);
+    }
+
+    return QQmlListProperty<Connection>(this,m_connections);
+    */
+}
+
+
 // GET CONNECTED
 
 void Field::get_connected()

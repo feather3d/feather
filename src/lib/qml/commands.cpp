@@ -365,6 +365,23 @@ status qml::command::set_field_val(unsigned int uid, unsigned int nid, unsigned 
     return status();
 }
 
+// real array 
+status qml::command::set_field_val(unsigned int uid, unsigned int nid, unsigned int fid, FRealArray& val)
+{
+    typedef field::Field<FRealArray>* fielddata;
+    fielddata f = static_cast<fielddata>(scenegraph::get_node_fieldBase(uid,nid,fid));
+    if(!f)
+        std::cout << "NULL REAL ARRAY FIELD\n";
+    else {
+        std::cout << "setting real array value for uid:" << uid << " nid:" << nid << " fid:" << fid << " real array value" << std::endl; 
+        f->value=val;
+        f->update=true;
+        scenegraph::update();
+    }
+    return status();
+}
+
+
 
 status qml::command::get_field_connection_status(int uid, int field, bool& val)
 {
