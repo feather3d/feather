@@ -128,9 +128,13 @@ namespace feather
             // SG SELECTION
             int selected_node();
             status select_node(int uid);
+
+            /* 
             status select_node(int type, int uid);
             status select_node(int type, int uid, int nid);
             status select_node(int type, int uid, int nid, int fid);
+            */
+
             status get_selected_nodes(std::vector<unsigned int>& uids);
             void clear_selection();
    

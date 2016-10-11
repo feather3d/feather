@@ -479,45 +479,61 @@ namespace feather
 
     // SELECTION
 
+    /*
     int get_selected_node() {
         if(smg::Instance()->count()>0)
-            return smg::Instance()->get_uid(smg::Instance()->count()-1);
+            return smg::Instance()->get_selected_uids(smg::Instance()->count()-1);
         else 
             return -1; // nothing selected
     };
+    */
 
-    status add_selection(int uid) {
-        smg::Instance()->add_state(static_cast<selection::Type>(sg[uid].type),uid,sg[uid].node);
+    // add selections
+
+    status add_selection(unsigned int uid) {
+        smg::Instance()->add_state(selection::Object,uid,sg[uid].node);
         return status();
     };
 
-    status add_selection(int type, int uid) {
-        smg::Instance()->add_state(static_cast<selection::Type>(type),uid,sg[uid].node);
-        return status();
-    };
-
-    status add_selection(int type, int uid, int nid) {
+    status add_selection(unsigned int uid, unsigned int fid, unsigned int type, std::vector<unsigned int> ids) {
         // status was returned here because we'll probably use it later
-        smg::Instance()->add_state(static_cast<selection::Type>(type),uid,nid,0);
+        smg::Instance()->add_state(static_cast<selection::Type>(type),uid,sg[uid].node,fid,ids);
         return status();
     };
 
-    status add_selection(int type, int uid, int nid, int fid) {
+    status add_selection(unsigned int type, unsigned int uid, unsigned int nid, unsigned int fid) {
         // status was returned here because we'll probably use it later
         smg::Instance()->add_state(static_cast<selection::Type>(type),uid,nid,fid);
         return status();
     };
 
+    // remove selections
+
     void clear_selection() {
         smg::Instance()->clear();
     };
 
+    void remove_selection(unsigned int uid) {
+        smg::Instance()->remove_selection(uid);
+    };
+
+    // get selection data
+
     status get_selected_nodes(std::vector<unsigned int>& uids) {
-        for(uint i=0; i < smg::Instance()->count(); i++)
-            uids.push_back(smg::Instance()->get_uid(i));
+        //for(uint i=0; i < smg::Instance()->count(); i++)
+        //    uids.push_back(smg::Instance()->get_uid(i));
+        smg::Instance()->get_selected_uids(uids);
         return status();
     };
 
+    bool node_selected(unsigned int uid, unsigned int fid=0) {
+        return smg::Instance()->selected(uid,fid);
+    };
+
+    selection::SelectionState* get_selection_state(unsigned int uid, unsigned int fid=0) {
+        return smg::Instance()->get_selection_state(uid,fid); 
+    };
+ 
     status get_fid_list(int uid, int nid, field::connection::Type conn, std::vector<field::FieldBase*>& list) {
         return plugins.get_fid_list(nid,conn,sg[uid].fields,list);
     }

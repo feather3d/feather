@@ -34,40 +34,110 @@ namespace feather
 
         // Selection State
         struct SelectionState {
-            SelectionState(Type _type, int _uid, int _nid, int _fid=0) : type(_type), uid(_uid), nid(_nid), fid(_fid) { };
+            SelectionState(
+                    Type _type,
+                    unsigned int _uid,
+                    unsigned int _nid,
+                    unsigned int _fid=0,
+                    std::vector<unsigned int> _ids=std::vector<unsigned int>()
+                    ) :
+                type(_type),
+                uid(_uid),
+                nid(_nid),
+                fid(_fid),
+                ids(_ids)
+            { };
 
             Type type;
-            int uid;
-            int nid;
-            int fid;
+            unsigned int uid;
+            unsigned int nid;
+            unsigned int fid;
+            std::vector<unsigned int> ids;
         };
 
         // Selection Manager
         class SelectionManager {
+
             public:
+
                 SelectionManager(){};
+
                 ~SelectionManager(){};
-                void clear() { m_aStates.clear(); };
-                uint count() { return m_aStates.size(); };
-                void add_state(Type _type, int _uid, int _nid, int _fid=0) {
+
+                inline void clear() { m_aStates.clear(); };
+
+                inline uint count() { return m_aStates.size(); };
+
+                inline void add_state(Type _type, int _uid, int _nid, int _fid=0, std::vector<unsigned int> _ids=std::vector<unsigned int>()) {
                     // don't add the state if the uid is already selected
                     bool found=false;
                     std::for_each(m_aStates.begin(), m_aStates.end(), [_uid,&found](SelectionState s){if(s.uid==_uid){found=true;}});
                     if(!found)
-                        m_aStates.push_back(SelectionState(_type,_uid,_nid,_fid));
+                        m_aStates.push_back(SelectionState(_type,_uid,_nid,_fid,_ids));
                 };
-                SelectionState& get_state(int _i) { return m_aStates.at(_i); };
-                int get_uid(int _i) { return m_aStates.at(_i).uid; };
-                bool selected(int _uid) {
-                    for(SelectionState i: m_aStates){
-                        if(i.uid==_uid)
+
+                //inline SelectionState& get_state(int _i) { return m_aStates[_i]; };
+
+                inline selection::SelectionState* get_selection_state(unsigned int _uid, unsigned int _fid=0) {
+                    // if there is no fid, just return the object or node if it exist
+                    if(!_fid){
+                        for ( auto state : m_aStates ) {
+                            if(state.uid == _uid && (state.type == selection::Object || selection::Node))
+                                return &state;
+                        }
+                    }
+                    // look for a node selection with a matching fid
+                    for ( auto state : m_aStates ) {
+                        if ( state.uid == _uid && state.type == selection::Field )
+                            return &state;
+                    }
+
+                    // if we made it this far, there is no selection
+                    return nullptr; 
+                };
+
+                void get_selected_uids(std::vector<unsigned int>& uids) {
+                    for ( auto state : m_aStates ) {
+                        bool add = true;
+                        for ( auto uid : uids ) {
+                            if ( uid == state.uid )
+                                add = false;
+                        }
+                        if ( add )
+                            uids.push_back(state.uid);
+                    }
+                };
+
+                //inline int get_uid(int _i) { return m_aStates.at(_i).uid; };
+
+                inline bool selected(unsigned int _uid, unsigned int _fid=0) {
+                    for ( auto state : m_aStates ) {
+                        if ( state.uid == _uid && ( state.fid == _fid || _fid == 0 ) )
                             return true;
                     }
                     return false;
                 };
 
+                inline void remove_selection(unsigned int _uid) {
+                    //m_aStates.remove_if ( [] (auto state) { return state.uid == _uid; } );
+                    std::list<SelectionState>::iterator it;
+                    it = m_aStates.begin();
+                    // TODO - This seq faults if you let it continue after it removes
+                    // an object, so I changed it so that it returns after the first
+                    // match but it's possible to have more than one match so I need
+                    // make it that all states with the uid are removed.
+                    for ( auto state : m_aStates ) {
+                        if ( state.uid == _uid ) {
+                            m_aStates.erase(it);
+                            return;
+                        } else {
+                            it++;
+                        }
+                    }
+                };
+
             private:
-                std::vector<SelectionState> m_aStates;
+                std::list<SelectionState> m_aStates;
         };
 
     } // namespace selection

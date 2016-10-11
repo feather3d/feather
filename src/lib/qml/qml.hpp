@@ -51,7 +51,8 @@ class Selection : public QObject
             Edge = selection::Edge,
             Face = selection::Face,
             Object = selection::Object,
-            Field = selection::Field,
+            Node = selection::Node,
+            Field = selection::Field
         };
 };
 
@@ -129,9 +130,9 @@ class SceneGraph : public QObject
         Q_INVOKABLE int node_id(int uid);
         Q_INVOKABLE int connect_nodes(int n1, int f1, int n2, int f2);
         Q_INVOKABLE int selected_node();
-        Q_INVOKABLE int select_node(int uid);
-        Q_INVOKABLE int select_node(int type, int uid);
-        Q_INVOKABLE int select_field(int type, int uid, int fid);
+        Q_INVOKABLE int select_node(unsigned int uid);
+        //Q_INVOKABLE int select_node(int type, int uid);
+        Q_INVOKABLE int select_field(unsigned int type, unsigned int uid, unsigned int fid);
         Q_INVOKABLE void clear_selection();
         Q_INVOKABLE int run_command_string(QString str);
         Q_INVOKABLE void triggerUpdate();

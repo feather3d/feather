@@ -96,11 +96,6 @@ unsigned int plugin::get_node_id(unsigned int uid, status& error)
     return api::get_node_id(uid,error);
 }
 
-std::vector<unsigned int> plugin::get_selected_nodes()
-{
-    return api::get_selected_nodes();
-}
-
 unsigned int plugin::get_node_type(unsigned int uid)
 {
     return api::get_node_type(uid);
@@ -125,6 +120,36 @@ std::vector<unsigned int>* plugin::get_updated_nodes()
 {
     return api::get_updated_nodes();
 }
+
+
+
+// SELECTION
+
+void plugin::select_node(unsigned int uid)
+{
+    api::select_node(uid);
+}
+
+void plugin::select_node(unsigned int uid, unsigned int fid, unsigned int type, std::vector<unsigned int> ids)
+{
+    api::select_node(uid,fid,type,ids);
+}
+
+void plugin::remove_selection(unsigned int uid)
+{
+    api::remove_selection(uid);
+}
+
+std::vector<unsigned int> plugin::get_selected_nodes()
+{
+    return api::get_selected_nodes();
+}
+
+bool plugin::node_selected(unsigned int uid)
+{
+    return api::node_selected(uid);
+}
+
 
 
 // FIELD DATA

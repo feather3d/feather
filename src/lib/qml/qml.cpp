@@ -102,25 +102,27 @@ int SceneGraph::selected_node()
     return qml::command::selected_node();
 }
    
-int SceneGraph::select_node(int uid)
+int SceneGraph::select_node(unsigned int uid)
 {
-    status p = qml::command::select_node(uid);
+    plugin::select_node(uid);
     emit nodeSelected();
-    return p.state;
+    return 0;
 }
- 
+
+/* 
 int SceneGraph::select_node(int type, int uid)
 {
     status p = qml::command::select_node(type,uid);
     emit nodeSelected();
     return p.state;
 }
+*/
 
-int SceneGraph::select_field(int type, int uid, int fid)
+int SceneGraph::select_field(unsigned int type, unsigned int uid, unsigned int fid)
 {
-    status p = qml::command::select_node(type,uid,fid);
+    plugin::select_node(uid,fid,type);
     emit fieldSelected(uid,fid);
-    return p.state;
+    return 0;
 }
 
 void SceneGraph::clear_selection()

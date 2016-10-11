@@ -90,13 +90,6 @@ unsigned int api::get_node_id(unsigned int uid, status& error)
     return scenegraph::get_node_id(uid,error);
 }
 
-std::vector<unsigned int> api::get_selected_nodes()
-{
-    std::vector<unsigned int> uids;
-    status p = scenegraph::get_selected_nodes(uids);
-    return uids;
-}
-
 unsigned int api::get_node_type(unsigned int uid)
 {
     return scenegraph::get_node_type(uid);
@@ -140,6 +133,38 @@ std::vector<unsigned int>* api::get_updated_nodes()
 {
     return scenegraph::get_updated_nodes();
 }
+
+
+
+// SELECTION
+
+void api::select_node(unsigned int uid)
+{
+    scenegraph::add_selection(uid);
+}
+
+void api::select_node(unsigned int uid, unsigned int fid, unsigned int type, std::vector<unsigned int> ids)
+{
+    scenegraph::add_selection(uid,fid,type,ids);
+}
+
+void api::remove_selection(unsigned int uid)
+{
+    scenegraph::remove_selection(uid);
+}
+
+std::vector<unsigned int> api::get_selected_nodes()
+{
+    std::vector<unsigned int> uids;
+    status p = scenegraph::get_selected_nodes(uids);
+    return uids;
+}
+
+bool api::node_selected(unsigned int uid)
+{
+    return scenegraph::node_selected(uid);
+}
+
 
 
 // FIELD DATA

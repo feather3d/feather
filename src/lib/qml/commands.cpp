@@ -24,7 +24,7 @@
 #include "commands.hpp"
 #include "field.hpp"
 #include "scenegraph.hpp"
-#include "selection.hpp"
+//#include "selection.hpp"
 
 using namespace feather;
 
@@ -45,7 +45,8 @@ status qml::command::init() {
     //int uid1 = add_node(320,"CubeShape"); // PolyShape
     //scenegraph::connect(0,4,uid1,1); // connect PolyCube.out to PolyShape.in
 
-    smg::Instance()->add_state(selection::Node,0,0,0);
+    //smg::Instance()->add_state(selection::Node,0,0,0);
+    scenegraph::add_selection(0);
  
     // just testing the do_it plugin calls
     cstate.sgMode = state::DoIt;
@@ -503,7 +504,12 @@ void qml::command::get_plugins(std::vector<PluginInfo>& list)
 
 int qml::command::selected_node()
 {
-    return scenegraph::get_selected_node();
+    // for now we'll just return the base seleted uid
+    std::vector<unsigned int> uids;
+    scenegraph::get_selected_nodes(uids);
+    if(!uids.size())
+        return 0;
+    return uids.at(0);
 }
 
 status qml::command::select_node(int uid)
@@ -511,6 +517,7 @@ status qml::command::select_node(int uid)
     return scenegraph::add_selection(uid);
 }
 
+/*
 status qml::command::select_node(int type, int uid)
 {
     return scenegraph::add_selection(type,uid);
@@ -520,11 +527,14 @@ status qml::command::select_node(int type, int uid, int nid)
 {
     return scenegraph::add_selection(type,uid,nid);
 }
+*/
 
+/*
 status qml::command::select_node(int type, int uid, int nid, int fid)
 {
     return scenegraph::add_selection(type,uid,nid,fid);
 }
+*/
 
 status qml::command::get_selected_nodes(std::vector<unsigned int>& uids)
 {

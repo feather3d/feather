@@ -33,7 +33,8 @@
 DrawItem::DrawItem(feather::draw::Item* _item, Type _type, Qt3DCore::QNode *parent)
     : Qt3DCore::QEntity(parent),
     m_item(_item),
-    m_type(_type)
+    m_type(_type),
+    m_update(false)
 {
 }
 
@@ -562,6 +563,9 @@ ShadedMesh::ShadedMesh(Qt3DRender::QLayer* layer, feather::draw::Item* _item, QN
     //addComponent(m_pLight);
 
     //m_pMaterial->setEffect(m_pMaterialEffect);
+
+    connect(this,SIGNAL(itemChanged(unsigned int)),parent,SLOT(updateItems(unsigned int)));
+    //connect(this, &itemChanged, parent, &updateItems);
 }
 
 ShadedMesh::~ShadedMesh()
@@ -603,7 +607,22 @@ void ShadedMesh::updateItem()
     //addShaded(m_pMaterial);
 
     //emit(m_pMesh->geometryChanged(m_pMesh->geometry()));
- 
+
+    bool selected = feather::plugin::node_selected(uid());
+    if( selected ) {
+        m_pMaterial->setDiffuse(QColor(Qt::red));
+        m_pMaterial->setAmbient(QColor(0.5f,0.5f,0.5f));
+        m_pMaterial->setSpecular(Qt::white);
+        m_pMaterial->setShininess(0.0f);
+    } else {
+        m_pMaterial->setDiffuse(QColor(Qt::white));
+        m_pMaterial->setAmbient(Qt::black);
+        m_pMaterial->setSpecular(Qt::white);
+        m_pMaterial->setShininess(100.0f);
+    }
+
+    setUpdate(false);
+
     addComponent(m_pMesh);
     //setParent(Q_NULLPTR);
     //delete m_pMesh;
@@ -636,7 +655,19 @@ void ShadedMesh::clicked(Qt3DRender::QPickEvent* event)
         << "\tv1:" << trievent->vertex1Index() << "\n"
         << "\tv2:" << trievent->vertex2Index() << "\n"
         << "\tv3:" << trievent->vertex3Index() << "\n"
-        ; 
+        ;
+
+    // check the selected objects - add if not selected or deselect if already selected
+    bool selected = feather::plugin::node_selected(uid());
+    if( selected ) {
+        feather::plugin::remove_selection(uid());     
+    } else {
+        feather::plugin::select_node(uid());
+    }
+   
+    setUpdate(true); 
+    
+    itemChanged(uid());
 }
 
 
@@ -2207,13 +2238,21 @@ void Viewport::updateItems(unsigned int uid)
         if(item->item()->uid == uid){
             switch(item->item()->type){
                 case feather::draw::Item::ShadedMesh:
-                    if(feather::plugin::get_field_base(item->uid(),static_cast<feather::draw::ShadedMesh*>(item->item())->fid)->update){
+                    if (
+                            feather::plugin::get_field_base(item->uid(),static_cast<feather::draw::ShadedMesh*>(item->item())->fid)->update ||
+                            item->update()
+                      )
+                    {
                         std::cout << "updating ShadedMesh draw item\n";
                         static_cast<ShadedMesh*>(item)->updateItem();
                     }
                     break;
                 case feather::draw::Item::ComponentMesh:
-                    if(feather::plugin::get_field_base(item->uid(),static_cast<feather::draw::ComponentMesh*>(item->item())->fid)->update){
+                    if (
+                            feather::plugin::get_field_base(item->uid(),static_cast<feather::draw::ComponentMesh*>(item->item())->fid)->update ||
+                            item->update()
+                       )
+                    {
                         std::cout << "updating ComponentMesh draw item\n";
                         static_cast<ComponentMesh*>(item)->updateItem();
                     }

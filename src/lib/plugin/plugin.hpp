@@ -26,6 +26,7 @@
 
 #include "deps.hpp"
 #include "types.hpp"
+#include "selection.hpp"
 
 namespace feather
 {
@@ -73,9 +74,6 @@ namespace feather
         // get node id
         unsigned int get_node_id(unsigned int uid, status& error);
 
-        // get node id
-        std::vector<unsigned int> get_selected_nodes();
-
         // get node type
         unsigned int get_node_type(unsigned int uid);
 
@@ -91,6 +89,27 @@ namespace feather
 
         // get all the nodes that have been updated on the last scenegraph update
         std::vector<unsigned int>* get_updated_nodes();
+
+
+        // SELECTION
+
+        // just select the node itself
+        void select_node(unsigned int uid);
+
+        // use this to select field components, like in meshes or just the field
+        void select_node(unsigned int uid, unsigned int fid, unsigned int type, std::vector<unsigned int> ids=std::vector<unsigned int>());
+
+        // remove all selections for a node
+        void remove_selection(unsigned int uid);
+
+        // get node id
+        std::vector<unsigned int> get_selected_nodes();
+
+        // returns index value for the selection state, 0 if not selected 
+        bool node_selected(unsigned int uid);
+
+        // get a selection s
+        selection::SelectionState* selection_state(unsigned int uid, unsigned int fid=0);
 
         // FIELD DATA
         

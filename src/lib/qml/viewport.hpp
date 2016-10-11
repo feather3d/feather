@@ -44,13 +44,19 @@ class DrawItem : public Qt3DCore::QEntity
         inline void setType(Type t) { m_type=t; };
         inline Type type() { return m_type; };
         virtual void updateItem(){};
+        inline bool update() { return m_update; };
+        inline void setUpdate(bool state) { m_update=state; };
         inline unsigned int uid() { return m_item->uid; };
         inline unsigned int nid() { return m_item->nid; };
         feather::draw::Item* item() { return m_item; };
         feather::draw::Item* m_item;
 
+    signals:
+        void itemChanged(unsigned int uid);
+
     private:
         Type m_type;
+        bool m_update; // this is to tell the vp to update when something in DrawItem has changed that wouldn't get caught by the sg - like selection
 };
 
 
@@ -468,7 +474,7 @@ class Viewport : public Qt3DCore::QEntity
         void showAxisChanged();
         void widthChanged();
         void heightChanged();
-
+        
     private:
         // use this method to see if there are any items that need to be built
         bool buildItems(feather::draw::DrawItems& items);
