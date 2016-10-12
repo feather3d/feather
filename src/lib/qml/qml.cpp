@@ -97,6 +97,14 @@ int SceneGraph::connect_nodes(int n1, int f1, int n2, int f2)
     return p.state;
 }
 
+unsigned int SceneGraph::disconnect_nodes(unsigned int suid, unsigned int sfid, unsigned int tuid, unsigned int tfid)
+{
+    status p = plugin::disconnect(suid,sfid,tuid,tfid);
+    if(p.state==FAILED)
+        std::cout << p.msg << std::endl;
+    return p.state;
+}
+
 int SceneGraph::selected_node()
 {
     return qml::command::selected_node();

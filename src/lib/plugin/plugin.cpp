@@ -215,6 +215,11 @@ status plugin::connect(unsigned int suid, unsigned int sfid, unsigned int tuid, 
     return api::connect(suid,sfid,tuid,tfid);
 }
 
+status plugin::disconnect(unsigned int suid, unsigned int sfid, unsigned int tuid, unsigned int tfid)
+{
+    return api::disconnect(suid,sfid,tuid,tfid);
+}
+
 status plugin::connections(unsigned int uid, unsigned int fid, std::vector<field::Connection> &connections)
 {
     return api::connections(uid,fid,connections);

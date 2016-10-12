@@ -43,6 +43,8 @@ MenuBar {
 
     AddMenu{ properties: menu.properties }
 
+    SubdivMenu{ properties: menu.properties }
+
     ViewMenu{ properties: menu.properties }
 
     SelectMenu{ properties: menu.properties }

@@ -141,6 +141,8 @@ namespace feather
 
         status connect(unsigned int suid, unsigned int sfid, unsigned int tuid, unsigned int tfid);
 
+        status disconnect(unsigned int suid, unsigned int sfid, unsigned int tuid, unsigned int tfid);
+
         status connections(unsigned int uid, unsigned int fid, std::vector<field::Connection> &connections);
 
     } // namespace api
