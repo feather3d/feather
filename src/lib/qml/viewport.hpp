@@ -141,9 +141,12 @@ class MeshPointGeometry : public Qt3DRender::QGeometry
         int nid;
         int fid;
         int vcount; // how many vertex
-        Qt3DRender::QAttribute *m_pVAttribute;
+        uint icount; // index count
         Qt3DRender::QBuffer *m_pVertexBuffer;
+        Qt3DRender::QBuffer *m_pIndexBuffer;
+        Qt3DRender::QAttribute *m_pVAttribute;
         Qt3DRender::QAttribute *m_pColorAttribute;
+        Qt3DRender::QAttribute *m_pIndexAttribute;
 };
 
 
@@ -184,6 +187,8 @@ class ShadedMesh : public DrawItem
 
     private slots:
         void clicked(Qt3DRender::QPickEvent* event);
+        void pressed(Qt3DRender::QPickEvent* event);
+        void entered();
 
     private:
         void build();
@@ -207,13 +212,15 @@ class ComponentMesh : public DrawItem
 
     private slots:
         void clicked(Qt3DRender::QPickEvent* event);
+        void pressed(Qt3DRender::QPickEvent* event);
+        void entered();
 
     private:
         void build();
         Qt3DCore::QTransform *m_pTransform;
         Qt3DExtras::QPerVertexColorMaterial *m_pMaterial;
         Qt3DRender::QGeometryRenderer *m_pMeshPoints;
-        Qt3DRender::QGeometryRenderer *m_pMeshEdges;
+        //Qt3DRender::QGeometryRenderer *m_pMeshEdges;
         Qt3DRender::QPointLight *m_pLight;
         Qt3DRender::QObjectPicker *m_pObjectPicker;
 };

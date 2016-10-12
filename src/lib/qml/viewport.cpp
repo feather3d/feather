@@ -351,6 +351,7 @@ void MeshGeometry::build()
     meshIBytes.resize(isize);
     memcpy(meshIBytes.data(), indexBuffer.data(), isize);
     m_pIndexBuffer->setData(meshIBytes);
+
 }
 
 void MeshGeometry::updateBuffers()
@@ -362,9 +363,11 @@ void MeshGeometry::updateBuffers()
 // MESH POINTS 
 MeshPointGeometry::MeshPointGeometry(int _uid, int _nid, int _fid, Qt3DCore::QNode *parent)
     : Qt3DRender::QGeometry(parent),
-    m_pVAttribute(new Qt3DRender::QAttribute(this)),
     m_pVertexBuffer(new Qt3DRender::QBuffer(Qt3DRender::QBuffer::VertexBuffer, this)),
-    m_pColorAttribute(new Qt3DRender::QAttribute(this))
+    m_pIndexBuffer(new Qt3DRender::QBuffer(Qt3DRender::QBuffer::IndexBuffer, this)),
+    m_pVAttribute(new Qt3DRender::QAttribute(this)),
+    m_pColorAttribute(new Qt3DRender::QAttribute(this)),
+    m_pIndexAttribute(new Qt3DRender::QAttribute(this))
 {
     uid=_uid;
     nid=_nid;
@@ -395,6 +398,17 @@ MeshPointGeometry::MeshPointGeometry(int _uid, int _nid, int _fid, Qt3DCore::QNo
     m_pColorAttribute->setName(Qt3DRender::QAttribute::defaultColorAttributeName());
 
     addAttribute(m_pColorAttribute);
+
+    // INDEX
+    m_pIndexAttribute->setAttributeType(Qt3DRender::QAttribute::IndexAttribute);
+    m_pIndexAttribute->setBuffer(m_pIndexBuffer);
+    m_pIndexAttribute->setDataType(Qt3DRender::QAttribute::UnsignedInt);
+    m_pIndexAttribute->setDataSize(1);
+    m_pIndexAttribute->setByteOffset(0);
+    m_pIndexAttribute->setByteStride(0);
+    m_pIndexAttribute->setCount(icount);
+
+    addAttribute(m_pIndexAttribute);
 }
 
 MeshPointGeometry::~MeshPointGeometry()
@@ -405,6 +419,7 @@ MeshPointGeometry::~MeshPointGeometry()
     m_pVertexBuffer=0;
     delete m_pColorAttribute;
     m_pColorAttribute=0;
+    m_pIndexAttribute=0;
 }
 
 void MeshPointGeometry::build()
@@ -419,6 +434,10 @@ void MeshPointGeometry::build()
     float *rawVertexArray = reinterpret_cast<float *>(meshVBytes.data());
     int idx = 0;
 
+    std::vector<uint> indexBuffer;
+    icount = 0;
+    vcount = 0;
+
     for(auto v : mesh.v){
             rawVertexArray[idx++]=v.x;
             rawVertexArray[idx++]=v.y;
@@ -426,9 +445,16 @@ void MeshPointGeometry::build()
             rawVertexArray[idx++]=1.0;
             rawVertexArray[idx++]=0.0;
             rawVertexArray[idx++]=1.0;
+            indexBuffer.push_back(icount++);
     }
 
     m_pVertexBuffer->setData(meshVBytes);
+
+    const int isize = icount * sizeof(uint);
+    QByteArray meshIBytes;
+    meshIBytes.resize(isize);
+    memcpy(meshIBytes.data(), indexBuffer.data(), isize);
+    m_pIndexBuffer->setData(meshIBytes);
 }
 
 void MeshPointGeometry::updateBuffers()
@@ -554,6 +580,8 @@ ShadedMesh::ShadedMesh(Qt3DRender::QLayer* layer, feather::draw::Item* _item, QN
 
     m_pObjectPicker->setHoverEnabled(true);
     connect(m_pObjectPicker,SIGNAL(clicked(Qt3DRender::QPickEvent*)),this,SLOT(clicked(Qt3DRender::QPickEvent*)));
+    connect(m_pObjectPicker,SIGNAL(pressed(Qt3DRender::QPickEvent*)),this,SLOT(pressed(Qt3DRender::QPickEvent*)));
+    connect(m_pObjectPicker,SIGNAL(entered()),this,SLOT(entered()));
 
     addComponent(layer);
     addComponent(m_pTransform);
@@ -666,8 +694,18 @@ void ShadedMesh::clicked(Qt3DRender::QPickEvent* event)
     }
    
     setUpdate(true); 
-    
     itemChanged(uid());
+
+}
+
+void ShadedMesh::pressed(Qt3DRender::QPickEvent* event)
+{
+    std::cout << "ShadedMesh pressed\n";
+}
+
+void ShadedMesh::entered()
+{
+    std::cout << "ShadedMesh entered\n";
 }
 
 
@@ -678,7 +716,7 @@ ComponentMesh::ComponentMesh(Qt3DRender::QLayer* layer, feather::draw::Item* _it
     m_pTransform(new Qt3DCore::QTransform()),
     m_pMaterial(new Qt3DExtras::QPerVertexColorMaterial()),
     m_pMeshPoints(new Qt3DRender::QGeometryRenderer()),
-    m_pMeshEdges(new Qt3DRender::QGeometryRenderer()),
+    //m_pMeshEdges(new Qt3DRender::QGeometryRenderer()),
     m_pLight(new Qt3DRender::QPointLight()),
     m_pObjectPicker(new Qt3DRender::QObjectPicker())
 {
@@ -717,6 +755,8 @@ ComponentMesh::ComponentMesh(Qt3DRender::QLayer* layer, feather::draw::Item* _it
 
     m_pObjectPicker->setHoverEnabled(true);
     connect(m_pObjectPicker,SIGNAL(clicked(Qt3DRender::QPickEvent*)),this,SLOT(clicked(Qt3DRender::QPickEvent*)));
+    connect(m_pObjectPicker,SIGNAL(pressed(Qt3DRender::QPickEvent*)),this,SLOT(pressed(Qt3DRender::QPickEvent*)));
+    connect(m_pObjectPicker,SIGNAL(entered()),this,SLOT(entered()));
 
     addComponent(layer);
     addComponent(m_pTransform);
@@ -770,6 +810,7 @@ void ComponentMesh::updateItem()
 
     // Points
     m_pMeshPoints->setPrimitiveType(Qt3DRender::QGeometryRenderer::Points);
+    //m_pMeshPoints->setPrimitiveType(Qt3DRender::QGeometryRenderer::Triangles);
     m_pMeshPoints->setGeometry(new MeshPointGeometry(item()->uid,item()->nid,static_cast<feather::draw::ComponentMesh*>(item())->fid,this));
 
     // Edges
@@ -817,9 +858,20 @@ void ComponentMesh::clicked(Qt3DRender::QPickEvent* event)
         << "\tv2:" << trievent->vertex2Index() << "\n"
         << "\tv3:" << trievent->vertex3Index() << "\n"
         ; 
+
+    setUpdate(true); 
+    itemChanged(uid());
 }
 
+void ComponentMesh::pressed(Qt3DRender::QPickEvent* event)
+{
+    std::cout << "ComponentMesh pressed\n";
+}
 
+void ComponentMesh::entered()
+{
+    std::cout << "ComponentMesh entered\n";
+}
 
 
 // LINE
@@ -1626,7 +1678,7 @@ FrameGraph::FrameGraph(Qt3DCore::QNode* parent)
     // Set the Point Size
     Qt3DRender::QPointSize* pointSize = new Qt3DRender::QPointSize();
     pointSize->setSizeMode(Qt3DRender::QPointSize::Fixed);
-    pointSize->setValue(4);
+    pointSize->setValue(8);
     // This will allow the points to show in front of objects
     Qt3DRender::QDepthTest* depthTest = new Qt3DRender::QDepthTest();
     depthTest->setDepthFunction(Qt3DRender::QDepthTest::Less);
@@ -1744,7 +1796,9 @@ Viewport::Viewport(Qt3DCore::QNode* parent)
     //m_pPickingSettings->setPickMethod(Qt3DRender::QPickingSettings::TrianglePicking);
     //m_pPickingSettings->setPickResultMode(Qt3DRender::QPickingSettings::AllPicks);
     m_pFrameGraph->pickingSettings()->setPickMethod(Qt3DRender::QPickingSettings::TrianglePicking);
-    m_pFrameGraph->pickingSettings()->setPickResultMode(Qt3DRender::QPickingSettings::AllPicks);
+    m_pFrameGraph->pickingSettings()->setPickResultMode(Qt3DRender::QPickingSettings::NearestPick);
+    //m_pFrameGraph->pickingSettings()->setPickResultMode(Qt3DRender::QPickingSettings::AllPicks);
+
 
 
     m_pInputSettings->setEventSource(m_pMouseHandler);

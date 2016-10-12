@@ -87,7 +87,16 @@ Menu {
         text: "Cube"
         tooltip: "Add polygon cube to the scenegraph"
         onTriggered: {
-            SceneGraph.add_node(322,"Cube02")
+            var cube = SceneGraph.add_node(322,"cube")
+            var shape = SceneGraph.add_node(320,"cubeShape")
+            // connect parent/child connections
+            SceneGraph.connect_nodes(0,202,cube,201)
+            SceneGraph.connect_nodes(cube,202,shape,201)
+            // mesh connections
+            SceneGraph.connect_nodes(cube,4,shape,1)
+            SceneGraph.triggerUpdate()
+            SceneGraph.nodeUpdateDrawItems(cube)
+            SceneGraph.nodeUpdateDrawItems(shape)
         }
     }
 
