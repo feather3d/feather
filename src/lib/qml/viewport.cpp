@@ -559,7 +559,6 @@ ShadedMesh::ShadedMesh(Qt3DRender::QLayer* layer, feather::draw::Item* _item, QN
     m_pMaterial->setSpecular(Qt::white);
     m_pMaterial->setShininess(100.0f);
 
-
     // THIS WAS FROM SHADER TESTING
     /*
     m_pMaterial->addParameter(new Qt3D::QParameter(QStringLiteral("ambient"),QColor(Qt::blue)));
@@ -623,12 +622,12 @@ void ShadedMesh::updateItem()
     //Qt3DRender::QGeometryRenderer* pMesh = new Qt3DRender::QGeometryRenderer();
  
     delete m_pMesh;
-    //m_pMesh=0;
+    m_pMesh=0;
     m_pMesh = new Qt3DRender::QGeometryRenderer(); 
     //Qt3DRender::QGeometryRenderer* pMesh = new Qt3DRender::QGeometryRenderer(); 
-    //m_pMesh->setPrimitiveType(Qt3DRender::QGeometryRenderer::Triangles);
+    m_pMesh->setPrimitiveType(Qt3DRender::QGeometryRenderer::Triangles);
     m_pMesh->setGeometry(new MeshGeometry(item()->uid,item()->nid,static_cast<feather::draw::ShadedMesh*>(item())->fid,this));
-
+ 
     //removeAllShadeds();
     //addShaded(m_pLayer);
     //addShaded(m_pTransform);
