@@ -76,9 +76,14 @@ void plugin::get_node_by_name(std::string name, unsigned int& uid)
     api::get_node_by_name(name,uid);
 }
 
-void plugin::get_node_by_type(node::Type type, std::vector<unsigned int>& uids)
+void plugin::get_nodes_by_type(node::Type type, std::vector<unsigned int>& uids)
 {
-    api::get_node_by_type(type,uids);
+    api::get_nodes_by_type(type,uids);
+}
+
+void plugin::get_nodes_by_id(unsigned int id, std::vector<unsigned int>& uids)
+{
+    api::get_nodes_by_id(id,uids);
 }
 
 void plugin::get_node_name(unsigned int uid, std::string& name, status& error)
@@ -101,12 +106,12 @@ unsigned int plugin::get_node_type(unsigned int uid)
     return api::get_node_type(uid);
 }
 
-status plugin::get_node_connected_uids(unsigned int uid, std::vector<int>& uids)
+status plugin::get_node_connected_uids(unsigned int uid, std::vector<unsigned int>& uids)
 {
     return api::get_node_connected_uids(uid,uids);
 }
 
-status plugin::get_node_connected_uids(unsigned int uid, unsigned int fid, std::vector<int>& uids)
+status plugin::get_node_connected_uids(unsigned int uid, unsigned int fid, std::vector<unsigned int>& uids)
 {
     return api::get_node_connected_uids(uid,fid,uids);
 }

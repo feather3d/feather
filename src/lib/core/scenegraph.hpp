@@ -220,10 +220,20 @@ namespace feather
         return sg[uid].type;
     };
 
+    // this will return all nodes base on type (polygons, animation, etc.)
     void get_node_by_type(node::Type type, std::vector<unsigned int>& uids) {
-        int count = num_vertices(sg);
+        unsigned int count = num_vertices(sg);
         for(int i=0; i < count; i++){
             if(sg[i].type == type)
+                uids.push_back(i);
+        }
+    }
+
+    // this will return all nodes base on it's id (polycube, polysphere, etc.)
+    void get_node_by_id(unsigned int id, std::vector<unsigned int>& uids) {
+        unsigned int count = num_vertices(sg);
+        for(int i=0; i < count; i++){
+            if(sg[i].node == id)
                 uids.push_back(i);
         }
     }
@@ -245,7 +255,7 @@ namespace feather
 
 
     /* This will return all the node uids connected to node */
-    status get_node_connected_uids(int uid, std::vector<int>& uids) {
+    status get_node_connected_uids(int uid, std::vector<unsigned int>& uids) {
         typedef boost::graph_traits<FSceneGraph>::out_edge_iterator ei;
         std::pair<ei,ei> p = boost::out_edges(uid,sg);
 
@@ -266,7 +276,7 @@ namespace feather
      * Instead use get_fieldBase_array() to get the all the uids
      * connected to a input field.
      */
-    status get_node_connected_uids(int uid, int fid, std::vector<int>& uids) {
+    status get_node_connected_uids(unsigned int uid, unsigned int fid, std::vector<unsigned int>& uids) {
         typedef boost::graph_traits<FSceneGraph>::out_edge_iterator ei;
 
         std::pair<ei,ei> p = boost::out_edges(uid,sg);

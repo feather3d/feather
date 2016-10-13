@@ -63,7 +63,12 @@ namespace feather
         void get_node_by_name(std::string name, unsigned int& uid);
 
         // get all nodes of a certain type
-        void get_node_by_type(node::Type type, std::vector<unsigned int>& uids);
+        // types = node::Type (polygon, animation, etc)
+        void get_nodes_by_type(node::Type type, std::vector<unsigned int>& uids);
+
+        // get all nodes of a certain id
+        // id = the node's number in the type (polycube, polysphere, etc) 
+        void get_nodes_by_id(unsigned int id, std::vector<unsigned int>& uids);
 
         // get node name
         void get_node_name(unsigned int uid, std::string& name, status& error);
@@ -79,10 +84,10 @@ namespace feather
 
         // get all nodes connected to uid
         // This will only return uids connected to the out fields
-        status get_node_connected_uids(unsigned int uid, std::vector<int>& uids);
+        status get_node_connected_uids(unsigned int uid, std::vector<unsigned int>& uids);
 
         // get all nodes connected to fid
-        status get_node_connected_uids(unsigned int uid, unsigned int fid, std::vector<int>& uids);
+        status get_node_connected_uids(unsigned int uid, unsigned int fid, std::vector<unsigned int>& uids);
 
         // are the two nodes connected in any way
         bool get_node_connection_status(unsigned int suid, unsigned int tuid);

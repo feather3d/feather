@@ -70,9 +70,14 @@ void api::get_node_by_name(std::string name, unsigned int& uid)
     scenegraph::get_node_by_name(name,uid);
 }
 
-void api::get_node_by_type(node::Type type, std::vector<unsigned int>& uids)
+void api::get_nodes_by_type(node::Type type, std::vector<unsigned int>& uids)
 {
     scenegraph::get_node_by_type(type,uids);
+}
+
+void api::get_nodes_by_id(unsigned int id, std::vector<unsigned int>& uids)
+{
+    scenegraph::get_node_by_id(id,uids);
 }
 
 void api::get_node_name(unsigned int uid, std::string& name, status& error)
@@ -95,12 +100,12 @@ unsigned int api::get_node_type(unsigned int uid)
     return scenegraph::get_node_type(uid);
 }
 
-status api::get_node_connected_uids(unsigned int uid, std::vector<int>& uids)
+status api::get_node_connected_uids(unsigned int uid, std::vector<unsigned int>& uids)
 {
     return scenegraph::get_node_connected_uids(uid,uids);
 }
 
-status api::get_node_connected_uids(unsigned int uid, unsigned int fid, std::vector<int>& uids)
+status api::get_node_connected_uids(unsigned int uid, unsigned int fid, std::vector<unsigned int>& uids)
 {
     // the field connection type
     field::connection::Type fidtype = api::get_field_connection_type(uid,fid);
@@ -120,7 +125,7 @@ status api::get_node_connected_uids(unsigned int uid, unsigned int fid, std::vec
 
 bool api::get_node_connection_status(unsigned int suid, unsigned int tuid)
 {
-    std::vector<int> uids; 
+    std::vector<unsigned int> uids; 
     status p = api::get_node_connected_uids(suid,uids);
     for(auto uid : uids){
         if(uid == tuid)

@@ -82,6 +82,28 @@ int SceneGraph::get_node_by_name(QString name)
     return uid;
 }
 
+QList<int> SceneGraph::get_nodes_by_type(unsigned int type)
+{
+    QList<int> list;
+    std::vector<unsigned int> uids;
+    feather::plugin::get_nodes_by_type(static_cast<node::Type>(type),uids);
+    for(auto uid : uids) {
+        list.push_back(uid);
+    }
+    return list;
+}
+
+QList<int> SceneGraph::get_nodes_by_id(unsigned int id)
+{
+    QList<int> list;
+    std::vector<unsigned int> uids;
+    feather::plugin::get_nodes_by_id(id,uids);
+    for(auto uid : uids) {
+        list.push_back(uid);
+    }
+    return list;
+}
+
 int SceneGraph::node_id(int uid)
 {
     status e;
@@ -181,7 +203,7 @@ bool SceneGraph::connected(unsigned int uid, unsigned int fid)
 QList<int> SceneGraph::connected_uids(unsigned int uid, unsigned int fid)
 {
     QList<int> list;
-    std::vector<int> uids;
+    std::vector<unsigned int> uids;
     feather::plugin::get_node_connected_uids(uid,fid,uids);
     std::cout << "connected_uids(" << uid << "," << fid << ") uids count = " << uids.size() << std::endl;
     for(auto uid : uids) {

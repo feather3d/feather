@@ -56,8 +56,8 @@ namespace feather
             void get_node_by_name(std::string name, unsigned int& uid);
             void get_node_by_type(node::Type type, std::vector<unsigned int>& uids);
             unsigned int get_node_id(const unsigned int uid, status& error);
-            status get_node_connected_uids(int uid, std::vector<int>& uids);
-            status get_node_connected_uids(int uid, int fid, std::vector<int>& uids);
+            status get_node_connected_uids(unsigned int uid, std::vector<unsigned int>& uids);
+            status get_node_connected_uids(unsigned int uid, unsigned int fid, std::vector<unsigned int>& uids);
             status get_node_draw_items(int nid, draw::DrawItems& items);
             status load_plugins();
             status run_command(std::string cmd, feather::parameter::ParameterList params);

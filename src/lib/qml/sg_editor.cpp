@@ -612,7 +612,7 @@ void SceneGraphEditor::updateNode(SceneGraphNode* pnode, int uid, int xpos, int 
         node->setY(ypos);
 
         // get the connected nodes
-        std::vector<int> cuids;
+        std::vector<unsigned int> cuids;
         feather::qml::command::get_node_connected_uids(uid,cuids);
 
         // add a link for each connection between the two nodes
@@ -643,7 +643,7 @@ void SceneGraphEditor::updateLinks(int uid)
         return;
 
     // get all the node's output connections
-    std::vector<int> uids;
+    std::vector<unsigned int> uids;
     feather::qml::command::get_node_connected_uids(uid,uids); 
 
     // if there is no connected nodes, no need to go any further

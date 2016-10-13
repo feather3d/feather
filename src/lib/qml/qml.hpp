@@ -127,6 +127,8 @@ class SceneGraph : public QObject
         Q_INVOKABLE bool remove_node(int uid);
         Q_INVOKABLE QString node_name(int uid);
         Q_INVOKABLE int get_node_by_name(QString name);
+        Q_INVOKABLE QList<int> get_nodes_by_type(unsigned int type);
+        Q_INVOKABLE QList<int> get_nodes_by_id(unsigned int id);
         Q_INVOKABLE int node_id(int uid);
         Q_INVOKABLE int connect_nodes(int n1, int f1, int n2, int f2);
         Q_INVOKABLE unsigned int disconnect_nodes(unsigned int suid, unsigned int sfid, unsigned int tuid, unsigned int tfid);

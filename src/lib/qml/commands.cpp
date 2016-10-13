@@ -147,12 +147,12 @@ unsigned int qml::command::get_node_id(const unsigned int uid, status& e)
     return scenegraph::get_node_id(uid,e);
 }
 
-status qml::command::get_node_connected_uids(int uid, std::vector<int>& uids)
+status qml::command::get_node_connected_uids(unsigned int uid, std::vector<unsigned int>& uids)
 {
     return scenegraph::get_node_connected_uids(uid,uids);
 }
 
-status qml::command::get_node_connected_uids(int uid, int fid, std::vector<int>& uids)
+status qml::command::get_node_connected_uids(unsigned int uid, unsigned int fid, std::vector<unsigned int>& uids)
 {
     return scenegraph::get_node_connected_uids(uid,fid,uids);
 }

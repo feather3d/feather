@@ -59,10 +59,10 @@ Menu {
 
     // ACTIONS
 
-    // Add Polygon Plane 
+    // Convert Selected 
     Action {
         id: convertToSubdivAction
-        text: "Poly to Subdiv"
+        text: "Convert Selected"
         tooltip: "convert selected polygon shape to a subdiv"
         onTriggered: {
             // can only convert shapes connected to subdivs
@@ -87,8 +87,61 @@ Menu {
                             SceneGraph.disconnect_nodes(source,4,tuid,1)
                         else if(type == 324)
                             SceneGraph.disconnect_nodes(source,2,tuid,1)
+                        // create the new node name
+                        var subdivname = SceneGraph.node_name(source) + "_subdiv"
                         // create subdiv node and connect between the two
-                        var subdiv = SceneGraph.add_node(323,"subdiv")
+                        var subdiv = SceneGraph.add_node(323,subdivname)
+                        if(type == 322)
+                            SceneGraph.connect_nodes(source,4,subdiv,1)
+                        else if(type == 324)
+                            SceneGraph.connect_nodes(source,2,subdiv,1)
+                        SceneGraph.connect_nodes(subdiv,5,tuid,1)
+                        // update sg
+                        SceneGraph.nodeUpdateDrawItems(subdiv)
+                        SceneGraph.triggerUpdate()
+                        SceneGraph.nodeUpdateDrawItems(tuid)
+                        SceneGraph.triggerUpdate()
+                    }
+                } 
+            }
+        }
+    }
+
+    // Convert All 
+    Action {
+        id: convertAllSubdivAction
+        text: "Convert All"
+        tooltip: "convert all polygon shapes to subdiv"
+        onTriggered: {
+
+            // get all shape nodes
+            var shapes = SceneGraph.get_nodes_by_id(320)
+            console.log("found ",shapes.length," shapes")            
+            // convert each shape
+            for ( var i=0; i < shapes.length; i++ ) {
+
+                var tuid = shapes[i] 
+            
+                console.log("found source shape")
+                var uids = SceneGraph.connected_uids(tuid,1)
+                console.log(" source connection count=",uids.length)
+                for(var j=0; j < uids.length; j++){
+                    console.log("looking at uid:",uids[j])
+                    // if the connected node is a polygon, add a subdiv between the two nodes
+                    var type = SceneGraph.node_id(uids[j])
+                    // for now well only convert cubes and meshes
+                    if(type == 322 || type == 324){
+                        console.log("found cube or mesh input node")
+                        var source = uids[j]
+                        // remove mesh connection between the cube and shape
+                        if(type == 322)
+                            SceneGraph.disconnect_nodes(source,4,tuid,1)
+                        else if(type == 324)
+                            SceneGraph.disconnect_nodes(source,2,tuid,1)
+                        // create the new node name
+                        var subdivname = SceneGraph.node_name(source) + "_subdiv"
+                        // create subdiv node and connect between the two
+                        var subdiv = SceneGraph.add_node(323,subdivname)
                         if(type == 322)
                             SceneGraph.connect_nodes(source,4,subdiv,1)
                         else if(type == 324)
@@ -106,9 +159,14 @@ Menu {
     }
 
 
-    // Plane 
+    // Convert Selected 
     MenuItem {
         action: convertToSubdivAction
+    }
+
+    // Convert All 
+    MenuItem {
+        action: convertAllSubdivAction
     }
 
 }
