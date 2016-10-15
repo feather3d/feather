@@ -32,7 +32,7 @@ import feather.field 1.0
 Rectangle {
     id: frame 
     color: "grey"
-    property int uid: 0 // track node uid
+    property alias uid: keyframes.uid // track node uid
     property double stime: 0.0 // seconds
     property double etime: 10.0 // seconds
     property double fps: 24.0
@@ -46,7 +46,7 @@ Rectangle {
     signal endTimeChanged(double time)
     signal currentTimeChanged(double time)
 
-    Field { id: keyframe; nid: 420 }
+    Field { id: keyframes; nid: 420; fid: 2 }
 
     ListModel { id: curvemodel }
 
@@ -168,19 +168,20 @@ Rectangle {
                     var ppv = parseFloat(height/(maxVal - minVal))
                     for(var i=0; i < curvemodel.count; i++){
                         var key = curvemodel.get(i)
+                        // TODO - FIX THE BELOW
                         if(key.selected){
-                            keyframe.uid = key.uid
+                            //keyframe.uid = key.uid
                             var dVal = dY/ppv
                             // This is only for int values, add type check later
                             if(dVal >= 1 || dVal <= -1){
                                 // get type
-                                keyframe.fid = 4
+                                //keyframe.fid = 4
                                 if(keyframe.intVal == Field.Int){
-                                    keyframe.fid = 2
-                                    keyframe.intVal += dY/ppv
+                                    //keyframe.fid = 2
+                                    //keyframe.intVal += dY/ppv
                                 } else {
-                                    keyframe.fid = 3
-                                    keyframe.realVal += dY/ppv
+                                    //keyframe.fid = 3
+                                    //keyframe.realVal += dY/ppv
                                 }
                                 mouseY = mouse.y
                             }
@@ -202,14 +203,16 @@ Rectangle {
     }
 
     function draw_key(context,key) {
-        keyframe.uid = key.uid
-        keyframe.fid = 4
-        var keytype = keyframe.intVal
-        var keyfid = (keytype == Field.Int) ? 2 : 3 
-        keyframe.fid = keyfid
-        var val = (keytype == Field.Int) ? keyframe.intVal : keyframe.realVal
-        keyframe.fid = 1
-        var keyTime = keyframe.realVal
+        //keyframe.uid = key.uid
+        //keyframe.fid = 4
+        //var keytype = keyframe.intVal
+        //var keyfid = (keytype == Field.Int) ? 2 : 3 
+        //keyframe.fid = keyfid
+        //var val = (keytype == Field.Int) ? keyframe.intVal : keyframe.realVal
+        //keyframe.fid = 1
+        var val = key.value
+        //var keyTime = keyframe.realVal
+        var keyTime = key.time
         var ppv = height/(maxVal - minVal)
         var length = (etime - stime)
         var pps = width/length // pixels per second 
@@ -342,11 +345,21 @@ Rectangle {
     // update the track keys
     function load_keys() {
         // get all the key uids
+        console.log("loading keys")
         curvemodel.clear()
-        var tlist = SceneGraph.connected_uids(uid,2) 
-        for(var i=0; tlist.length > i; i++){
-            console.log("adding ",tlist[i]," to list")
-            curvemodel.insert(i,{"uid":tlist[i],"x":0,"y":0,"selected":false,"hover":false})
+        //keyframes.uid = uid
+        keyframes.nid = SceneGraph.node_id(uid)
+        // verify that we are looking at a track node
+        if ( keyframes.nid != 420 ) {
+            console.log("The keyframes field is not a KeyTrack node")
+            console.log("\tuid:",keyframes.uid," nid:",keyframes.nid," fid:",keyframes.fid)
+            return
+        } 
+        var tlist = keyframes.keyArrayVal 
+        console.log("LOADING TRACK NODE uid:",keyframes.uid," nid:",keyframes.nid," fid:",keyframes.fid)
+        for(var i=0; i < tlist.length; i++){
+            console.log("adding ",tlist[i].time," to list")
+            curvemodel.insert(i,{"time":tlist[i].time,"value":tlist[i].value,"x":0,"y":0,"selected":false,"hover":false})
         } 
     }
 
@@ -355,12 +368,34 @@ Rectangle {
     }
 
     function update_track() {
-        console.log("UPDATEING TRACK")
+        console.log("UPDATING TRACK")
         load_keys()
         track.requestPaint()
     }
 
     function paint_track() {
         track.requestPaint()
+    }
+
+    function updateTrack(uid,nid,fid) {
+        console.log("update key track uid:",uid," nid:",nid," fid:",fid)
+        if ( nid == 420 ) {
+            frame.uid = uid
+        } else {
+            // get the track from the node field
+            var uids = SceneGraph.connected_uids(uid,fid)
+            for ( var i=0; i < uids.length; i++ ) {
+                var cnid = SceneGraph.node_id(uids[i])
+                if ( cnid == 420 ) {
+                    frame.uid = uids[i]
+                    keyframes.nid = 420
+                    update_track()
+                }
+            }
+        }
+    }
+
+    Component.onCompleted: {
+        SceneGraph.keyAdded.connect(updateTrack)
     }
 }

@@ -139,10 +139,11 @@ FieldModel {
  
         // Key Track 
         // In
-        addFieldName("time",425,1)
-        addFieldName("keys",425,2)
+        addFieldName("time",420,1)
+        addFieldName("keys",420,2)
+        addFieldName("type",420,3)
         // Out 
-        addFieldName("value",425,3)
+        addFieldName("value",420,4)
 
         // Morph 
         // In

@@ -213,13 +213,31 @@ QList<int> SceneGraph::connected_uids(unsigned int uid, unsigned int fid)
     return list;
 }
 
+
+// Key
+
+KeyValue::KeyValue(QObject* parent)
+{
+
+}
+
+KeyValue::~KeyValue()
+{
+
+}
+
+
 // Field
+
 Field::Field(QObject* parent): m_uid(0),m_nid(0),m_fid(0),m_boolVal(false),m_intVal(0),m_realVal(0.0),m_connected(false)
 {
+
 }
 
 Field::~Field()
 {
+    m_keyArrayVal.clear();
+    m_connections.clear();
 }
 
 int Field::type()
@@ -263,6 +281,9 @@ void Field::set_real_val()
     qml::command::set_field_val(m_uid,m_nid,m_fid,m_realVal);
 }
 
+
+// Real Array
+
 void Field::set_real_array_val()
 {
     FRealArray value;
@@ -275,8 +296,6 @@ void Field::set_real_array_val()
     }
     qml::command::set_field_val(m_uid,m_nid,m_fid,value);
 }
-
-// Real Array
 
 //QQmlListProperty<double> Field::realArrayVal()
 QList<double> Field::realArrayVal()
@@ -310,6 +329,45 @@ QList<double> Field::realArrayVal()
     return QQmlListProperty<Connection>(this,m_connections);
     */
 }
+
+
+// Key Array
+
+void Field::set_key_array_val()
+{
+    FKeyArray value;
+
+    int i=0;
+    for ( auto val : m_keyArrayVal ) {
+        std::cout << "setting key time:" << val->time() << " value:" << val->value() << std::endl;
+        value.push_back(FKey(val->time(),val->value()));
+        i++;
+    }
+    qml::command::set_field_val(m_uid,m_nid,m_fid,value);
+}
+
+QQmlListProperty<KeyValue> Field::keyArrayVal()
+//QList<KeyValue> Field::keyArrayVal()
+{
+    m_keyArrayVal.clear();
+
+    // TODO - put a check here to verify that this is the right type 
+
+    field::Field<FKeyArray>* array = static_cast<field::Field<FKeyArray>*>(plugin::get_node_field_base(m_uid,m_fid));
+
+    std::cout << "There are " << array->value.size() << " keys in the track\n";
+
+    for ( auto val : array->value ) {
+        KeyValue* key = new KeyValue();
+        key->setTime(val.time);
+        key->setValue(val.value);
+        m_keyArrayVal.append(key);
+    }
+ 
+    //return m_keyArrayVal;     
+    return QQmlListProperty<KeyValue>(this,m_keyArrayVal);     
+}
+
 
 
 // GET CONNECTED

@@ -157,9 +157,49 @@ class SceneGraph : public QObject
         void nodesRemoved();
         void cleared();
         void nodeFieldChanged(unsigned int uid, unsigned int nid, unsigned int fid);
+        void keyAdded(unsigned int uid, unsigned int nid, unsigned int fid);
 
 };
 
+class KeyValue: public QObject
+{
+    Q_OBJECT
+        Q_PROPERTY(double time READ time WRITE setTime NOTIFY timeChanged)
+        Q_PROPERTY(double value READ value WRITE setValue NOTIFY valueChanged)
+
+    public:
+        KeyValue(QObject* parent=0);
+        ~KeyValue();
+
+        // time 
+        void setTime(double& v) {
+            if(m_time != v) {
+                m_time = v;
+                emit timeChanged();
+            }
+        }
+
+        bool time() { return m_time; }
+
+        // value 
+        void setValue(double& v) {
+            if(m_value != v) {
+                m_value = v;
+                emit valueChanged();
+            }
+        }
+
+        bool value() { return m_value; }
+
+    signals:
+        void timeChanged();
+        void valueChanged();
+ 
+    private:
+        double m_time;
+        double m_value; 
+};
+ 
 // FIELD 
 class Field: public QObject
 {
@@ -173,7 +213,9 @@ class Field: public QObject
         Q_PROPERTY(bool boolVal READ boolVal WRITE setBoolVal NOTIFY boolValChanged)
         Q_PROPERTY(int intVal READ intVal WRITE setIntVal NOTIFY intValChanged)
         Q_PROPERTY(double realVal READ realVal WRITE setRealVal NOTIFY realValChanged)
-        //Q_PROPERTY(QQmlListProperty<double> realArrayVal READ realArrayVal)
+        //Q_PROPERTY(QQmlListProperty<KeyValue> keyArrayVal READ keyArrayVal WRITE setKeyArrayVal NOTIFY keyArrayValChanged)
+        Q_PROPERTY(QQmlListProperty<KeyValue> keyArrayVal READ keyArrayVal NOTIFY keyArrayValChanged)
+        //Q_PROPERTY(QList<KeyValue> keyArrayVal READ keyArrayVal WRITE setKeyArrayVal NOTIFY keyArrayValChanged)
         Q_PROPERTY(QList<double> realArrayVal READ realArrayVal WRITE setRealArrayVal NOTIFY realArrayValChanged)
         Q_PROPERTY(bool connected READ connected NOTIFY connectedChanged)
         Q_PROPERTY(QQmlListProperty<Connection> connections READ connections )
@@ -243,7 +285,27 @@ class Field: public QObject
 
         FReal realVal() { get_real_val(); return m_realVal; };
 
-        // realVal 
+        // keyArrayVal
+        void setKeyArrayValue(int index, double time, double value) {
+            m_keyArrayVal[index]->setTime(time);
+            m_keyArrayVal[index]->setValue(value);
+            set_key_array_val();
+            emit keyArrayValChanged();
+        }
+
+        void appendKeyArrayValue(double time, double value) {
+            KeyValue* key = new KeyValue();
+            key->setTime(time);
+            key->setValue(value);
+            m_keyArrayVal.append(key);
+            set_key_array_val();
+            emit keyArrayValChanged();
+        }
+
+        //QList<KeyValue> keyArrayVal();
+        QQmlListProperty<KeyValue> keyArrayVal();
+
+        // realArrayVal 
         void setRealArrayVal(QList<double>& v) {
             if(m_realArrayVal != v) {
                 //std::cout << "real changed\n";
@@ -253,7 +315,6 @@ class Field: public QObject
             }
         }
 
-        //QQmlListProperty<double> realArrayVal();
         QList<double> realArrayVal();
 
         bool connected() { get_connected(); return m_connected; };
@@ -287,7 +348,9 @@ class Field: public QObject
             VertexIndiceGroupWeight=field::VertexIndiceGroupWeight,
             VertexIndiceWeightArray=field::VertexIndiceWeightArray,
             VertexIndiceGroupWeightArray=field::VertexIndiceGroupWeightArray,
-            MeshArray=field::MeshArray
+            MeshArray=field::MeshArray,
+            Key=field::Key,
+            KeyArray=field::KeyArray
         };
 
         enum ConnectionType {
@@ -301,6 +364,7 @@ class Field: public QObject
         void intValChanged();
         void realValChanged();
         void realArrayValChanged();
+        void keyArrayValChanged();
         void connectedChanged();
         
     private:
@@ -314,6 +378,7 @@ class Field: public QObject
         void set_int_val();
         void set_real_val();
         void set_real_array_val();
+        void set_key_array_val();
 
         void get_connected();
  
@@ -325,6 +390,7 @@ class Field: public QObject
         int m_intVal;
         FReal m_realVal;
         QList<double> m_realArrayVal;
+        QList<KeyValue*> m_keyArrayVal;
         bool m_connected;
         QList<Connection*> m_connections;
 };

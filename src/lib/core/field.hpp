@@ -72,7 +72,9 @@ namespace feather
             VertexIndiceWeightArray=25,
             VertexIndiceGroupWeightArray=26,
             MeshArray=27,
-            START=28
+            Key=28,
+            KeyArray=29,
+            START=30
         };
 
         // TODO
@@ -128,6 +130,8 @@ namespace feather
         template <> bool can_connect<Time,Time>() { return true; };
         template <> bool can_connect<Matrix3x3,Matrix3x3>() { return true; };
         template <> bool can_connect<Matrix4x4,Matrix4x4>() { return true; };
+        template <> bool can_connect<Key,Key>() { return true; };
+        template <> bool can_connect<Key,KeyArray>() { return true; };
       
         template <int _Type1, int _Type2>
         struct can_types_connect {

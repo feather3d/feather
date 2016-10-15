@@ -135,6 +135,18 @@ namespace feather
     typedef std::vector<FVertexIndiceWeight> FVertexIndiceWeightArray;
     typedef std::vector<FVertexIndiceGroupWeight> FVertexIndiceGroupWeightArray;
 
+    // Misc Types
+
+    struct FKey
+    {
+        FKey(FReal _value, FReal _time) : value(_value),time(_time){};
+        FReal value;
+        FReal time;
+    };
+
+    typedef std::vector<FKey> FKeyArray;
+
+
     struct FStatus
     {
         FBool pass;

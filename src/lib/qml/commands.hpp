@@ -104,6 +104,7 @@ namespace feather
             status set_field_val(unsigned int uid, unsigned int nid, unsigned int fid, int& val);
             status set_field_val(unsigned int uid, unsigned int nid, unsigned int fid, FReal& val);
             status set_field_val(unsigned int uid, unsigned int nid, unsigned int fid, FRealArray& val);
+            status set_field_val(unsigned int uid, unsigned int nid, unsigned int fid, FKeyArray& val);
 
             status get_field_connection_status(int uid, int field, bool& val);
             status get_field_connection_status(int uid, int node, int field, bool& val);

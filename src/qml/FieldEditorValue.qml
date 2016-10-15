@@ -55,12 +55,22 @@ Rectangle {
     property alias label: label.text
     //focus: true
 
+    signal keyAdded(int uid)
+
     Field { id: field }
 
     FieldPopup { id: popup }
 
     //Translation { id: name }
 
+
+    // cpos
+    Field {
+        id: time 
+        uid: 1 //  we could use SceneGraph.get_node_by_name("time") but the time node is always at 1
+        nid: 4
+        fid: 7
+    }
 
     // LABEL
 
@@ -240,6 +250,7 @@ Rectangle {
 
     Keys.onReturnPressed: { console.log("return hit for FieldEditorValue") }
 
+
     MouseArea {
         id: mouseArea
         anchors.fill: parent
@@ -247,8 +258,15 @@ Rectangle {
         acceptedButtons: Qt.LeftButton | Qt.RightButton
 
         onPressed: {
-            if(mouse.button == Qt.RightButton)
+            if(mouse.button == Qt.RightButton){
+                popup.time = time.realVal
+                popup.value = field.realVal // we'll just use the real types for the time being
+                popup.uid = uidKey
+                popup.nid = nidKey
+                popup.fid = fidKey
+                console.log("Values sent to Field Value popup - time:",popup.time," value:",popup.value," uid:",popup.uid," nid:",popup.nid," fid:",popup.fid)
                 popup.popup()
+            }
 
             fieldvalue.state="pressed"
             fieldvalue.update()
@@ -257,6 +275,7 @@ Rectangle {
         onDoubleClicked: {
             valueEdit.visible=true
             valueText.visible=false
+            valueText.focus=false
             valueEdit.focus=true
         }
 
@@ -274,13 +293,28 @@ Rectangle {
             //console.log("wheel delta:",wheel.pixelDelta," angle:",wheel.angleDelta," offset:",offset)
             console.log("valueStep for FieldEditorValue="+valueStep)
             switch(field.type) {
-                case Field.Bool || Field.BoolArray: field.boolVal = (!field.boolVal) ? true : false; SceneGraph.nodeFieldChanged(uidKey,nidKey,fidKey); break;
-                case Field.Int || Field.IntArray: field.intVal = field.intVal + ((valueStep*10) * offset); SceneGraph.nodeFieldChanged(uidKey,nidKey,fidKey); break;
-                case Field.Real || Field.RealArray: field.realVal = field.realVal + (valueStep * offset); valueText.text = field.realVal.toFixed(2); /*SceneGraph.triggerUpdate();*/ SceneGraph.nodeFieldChanged(uidKey,nidKey,fidKey); break;
-                case Field.Vertex || Field.VertexArray: ; break;
-                case Field.Vector || Field.VectorArray: ; break;
-                case Field.Mesh: ; break;
-                case Field.RGB || Field.RGBA: ; break;
+                case Field.Bool || Field.BoolArray:
+                    field.boolVal = (!field.boolVal) ? true : false;
+                    SceneGraph.nodeFieldChanged(uidKey,nidKey,fidKey);
+                break;
+                case Field.Int || Field.IntArray:
+                    field.intVal = field.intVal + ((valueStep*10) * offset);
+                    SceneGraph.nodeFieldChanged(uidKey,nidKey,fidKey);
+                break;
+                case Field.Real || Field.RealArray:
+                    field.realVal = field.realVal + (valueStep * offset);
+                    valueText.text = field.realVal.toFixed(2);
+                    SceneGraph.triggerUpdate();
+                    SceneGraph.nodeFieldChanged(uidKey,nidKey,fidKey);
+                break;
+                case Field.Vertex || Field.VertexArray: ;
+                    break;
+                case Field.Vector || Field.VectorArray: ;
+                    break;
+                case Field.Mesh: ;
+                    break;
+                case Field.RGB || Field.RGBA: ;
+                    break;
                 default: ;
             }
         }

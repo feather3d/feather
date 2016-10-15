@@ -163,10 +163,31 @@ Rectangle {
         name: "add_key"
         parameters: [
             Parameter { 
-                id: openFeatherFilename
+                id: addKeyTime
                 name: "time"
                 type: Parameter.Real
-                realValue: cpos 
+                realValue: 0.0 
+            },
+
+            Parameter { 
+                id: addKeyValue
+                name: "value"
+                type: Parameter.Real
+                realValue: 0.0 
+            },
+
+            Parameter { 
+                id: addKeyFid
+                name: "fid"
+                type: Parameter.Int
+                intValue: 0.0 
+            },
+
+            Parameter { 
+                id: addKeyUid 
+                name: "uid"
+                type: Parameter.Int
+                intValue: 0
             }
         ]
     }
@@ -175,7 +196,8 @@ Rectangle {
     // FUNCTIONS
 
     function on_add_key(){
-       addKey.exec() 
+        // TODO - this is disabled until the addKey feature is fixed
+       //addKey.exec() 
        SceneGraph.triggerUpdate()
     }
 
