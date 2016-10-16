@@ -333,6 +333,23 @@ QList<double> Field::realArrayVal()
 
 // Key Array
 
+void Field::get_key_array_val()
+{
+    m_keyArrayVal.clear();
+
+    typedef field::Field<FKeyArray>* KeyArray;
+    KeyArray keys = static_cast<KeyArray>(plugin::get_node_field_base(m_uid,m_nid,m_fid));
+
+    for ( auto key : keys->value ) {
+        KeyValue* keyvalue = new KeyValue();
+        keyvalue->setTime(key.time);
+        keyvalue->setValue(key.value);
+        m_keyArrayVal.append(keyvalue);
+    }
+
+    emit keyArrayValChanged();
+}
+
 void Field::set_key_array_val()
 {
     FKeyArray value;
@@ -361,6 +378,10 @@ QQmlListProperty<KeyValue> Field::keyArrayVal()
         KeyValue* key = new KeyValue();
         key->setTime(val.time);
         key->setValue(val.value);
+        std::cout << "field value - key time:" << val.time << " value:" << val.value << std::endl;
+        std::cout << "qml value - key time:" << key->time() << " value:" << key->value() << std::endl;
+        connect(key,SIGNAL(timeChanged()),this,SLOT(updateKeyArray()));
+        connect(key,SIGNAL(valueChanged()),this,SLOT(updateKeyArray()));
         m_keyArrayVal.append(key);
     }
  
@@ -368,6 +389,15 @@ QQmlListProperty<KeyValue> Field::keyArrayVal()
     return QQmlListProperty<KeyValue>(this,m_keyArrayVal);     
 }
 
+void Field::updateKeyArray()
+{
+    std::cout << "updateKeyArray()\n";
+    for ( auto key : m_keyArrayVal ) {
+        std::cout << "key value:" << key->value() << " time:" << key->time() << std::endl;
+    }
+
+    set_key_array_val();
+}
 
 
 // GET CONNECTED

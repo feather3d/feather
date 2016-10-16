@@ -159,8 +159,8 @@ Rectangle {
                     //console.log("y:",mouse.y,", min:",minVal,", max:",maxVal)
                     mouseX = mouse.x
                     mouseY = mouse.y
-                 }
-                else if(movekey){
+                }
+                else if(movekey) {
                     var dX = parseFloat(mouseX - mouse.x)
                     var dY = parseFloat(mouseY - mouse.y)
                     var length = (etime - stime)
@@ -168,30 +168,21 @@ Rectangle {
                     var ppv = parseFloat(height/(maxVal - minVal))
                     for(var i=0; i < curvemodel.count; i++){
                         var key = curvemodel.get(i)
+                        //var key = keyframes.key(keydata.i)
                         // TODO - FIX THE BELOW
                         if(key.selected){
-                            //keyframe.uid = key.uid
                             var dVal = dY/ppv
-                            // This is only for int values, add type check later
                             if(dVal >= 1 || dVal <= -1){
-                                // get type
-                                //keyframe.fid = 4
-                                if(keyframe.intVal == Field.Int){
-                                    //keyframe.fid = 2
-                                    //keyframe.intVal += dY/ppv
-                                } else {
-                                    //keyframe.fid = 3
-                                    //keyframe.realVal += dY/ppv
-                                }
+                                // set value
+                                key.value += dY/ppv
                                 mouseY = mouse.y
                             }
-                            keyframe.fid = 1 // time
-                            keyframe.realVal -= dX/pps
+                            // set time
+                            key.time -= dX/pps
                          }
                     }
                 }
                 mouseX = mouse.x
-                //mouseY = mouse.y
                 track.requestPaint()
             }
 
@@ -210,14 +201,15 @@ Rectangle {
         //keyframe.fid = keyfid
         //var val = (keytype == Field.Int) ? keyframe.intVal : keyframe.realVal
         //keyframe.fid = 1
-        var val = key.value
+        //var val = key.value
         //var keyTime = keyframe.realVal
-        var keyTime = key.time
+        //var keyTime = key.time
+        console.log("drawing key time:",key.key.time," value:",key.key.value)
         var ppv = height/(maxVal - minVal)
         var length = (etime - stime)
         var pps = width/length // pixels per second 
-        var keyX = (keyTime - stime) * pps
-        var keyY = ppv*(maxVal-val)
+        var keyX = (key.key.time - stime) * pps
+        var keyY = ppv*(maxVal-key.key.value)
         context.beginPath()
         context.lineWidth = 1
 
@@ -358,8 +350,8 @@ Rectangle {
         var tlist = keyframes.keyArrayVal 
         console.log("LOADING TRACK NODE uid:",keyframes.uid," nid:",keyframes.nid," fid:",keyframes.fid)
         for(var i=0; i < tlist.length; i++){
-            console.log("adding ",tlist[i].time," to list")
-            curvemodel.insert(i,{"time":tlist[i].time,"value":tlist[i].value,"x":0,"y":0,"selected":false,"hover":false})
+            console.log("adding key time:",tlist[i].time," value:",tlist[i].value," to list")
+            curvemodel.insert(i,{"key":tlist[i],"index":i,"time":tlist[i].time,"value":tlist[i].value,"x":0,"y":0,"selected":false,"hover":false})
         } 
     }
 

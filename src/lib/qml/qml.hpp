@@ -179,7 +179,7 @@ class KeyValue: public QObject
             }
         }
 
-        bool time() { return m_time; }
+        double time() { return m_time; }
 
         // value 
         void setValue(double& v) {
@@ -189,12 +189,13 @@ class KeyValue: public QObject
             }
         }
 
-        bool value() { return m_value; }
+        double value() { return m_value; }
 
     signals:
         void timeChanged();
         void valueChanged();
- 
+
+
     private:
         double m_time;
         double m_value; 
@@ -286,21 +287,69 @@ class Field: public QObject
         FReal realVal() { get_real_val(); return m_realVal; };
 
         // keyArrayVal
-        void setKeyArrayValue(int index, double time, double value) {
-            m_keyArrayVal[index]->setTime(time);
-            m_keyArrayVal[index]->setValue(value);
-            set_key_array_val();
+        KeyValue* key(int i) {
+            return m_keyArrayVal[i];
+        }
+ 
+        // keyArrayVal
+        Q_INVOKABLE void setKeyArrayValue(double time, double value) {
+            // set the value of a key at a certain time
+            // If the key doesn't exist, make one
+            bool found=false;
+            int tval = time * 1000;
+            for ( auto key : m_keyArrayVal ) {
+                // we'll do some rounding just so we don't
+                // end up with a lot of keyframes just a few msec
+                // apart from eachother
+                int keytime = key->time() * 1000;
+                if ( tval == keytime ) {
+                    // change value
+                    key->setValue(value);
+                    found = true;
+                }
+            }
+            if ( !found ) {
+                // make a new key
+                KeyValue* key = new KeyValue();
+                key->setTime(time);
+                key->setValue(value);
+                m_keyArrayVal.append(key);
+                set_key_array_val();
+            }
             emit keyArrayValChanged();
         }
 
-        void appendKeyArrayValue(double time, double value) {
-            KeyValue* key = new KeyValue();
-            key->setTime(time);
-            key->setValue(value);
-            m_keyArrayVal.append(key);
-            set_key_array_val();
-            emit keyArrayValChanged();
+        // this method will only return a value if there is
+        // a key of the same time inside the keyarray. If
+        // there is no matching time, a nullptr will be
+        // returned. It's up to the caller to check to see
+        // if a null has been returned and then look to
+        // the track node to get a value if needed.
+        Q_INVOKABLE KeyValue* getKey(double time) {
+            // we'll do some rounding to keep away from
+            // keys off by a few msecs
+            int ttime = time * 1000;
+            for ( auto key : m_keyArrayVal ) {
+                int keytime = key->time() * 1000;
+                if ( keytime == ttime )
+                    return key;
+            }
+            return nullptr;
         }
+
+        // This is like above except it only tells if a keyframe
+        // already exist in the array at a specific time
+        Q_INVOKABLE bool keyExist(double time) {
+            // we'll do some rounding to keep away from
+            // keys off by a few msecs
+            int ttime = time * 1000;
+            for ( auto key : m_keyArrayVal ) {
+                int keytime = key->time() * 1000;
+                if ( keytime == ttime )
+                    return true;
+            }
+            return false;
+        };
 
         //QList<KeyValue> keyArrayVal();
         QQmlListProperty<KeyValue> keyArrayVal();
@@ -366,12 +415,16 @@ class Field: public QObject
         void realArrayValChanged();
         void keyArrayValChanged();
         void connectedChanged();
+ 
+    protected slots:
+        void updateKeyArray();
         
     private:
         // get field value
         void get_bool_val();
         void get_int_val();
         void get_real_val();
+        void get_key_array_val();
 
         // set field value
         void set_bool_val();
