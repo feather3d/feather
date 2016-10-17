@@ -357,7 +357,7 @@ void Field::set_key_array_val()
     int i=0;
     for ( auto val : m_keyArrayVal ) {
         std::cout << "setting key time:" << val->time() << " value:" << val->value() << std::endl;
-        value.push_back(FKey(val->time(),val->value()));
+        value.push_back(FKey(val->value(),val->time()));
         i++;
     }
     qml::command::set_field_val(m_uid,m_nid,m_fid,value);

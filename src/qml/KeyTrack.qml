@@ -179,7 +179,9 @@ Rectangle {
                             }
                             // set time
                             key.time -= dX/pps
+                            keyframes.setKeyArrayValue(key.index,key.time,key.value)
                          }
+                        
                     }
                 }
                 mouseX = mouse.x
@@ -208,10 +210,10 @@ Rectangle {
         var ppv = height/(maxVal - minVal)
         var length = (etime - stime)
         var pps = width/length // pixels per second 
-        var keyX = (key.key.time - stime) * pps
-        var keyY = ppv*(maxVal-key.key.value)
+        var keyX = (key.time - stime) * pps
+        var keyY = ppv*(maxVal-key.value)
         context.beginPath()
-        context.lineWidth = 1
+        context.lineWidth = 2
 
         if(key.hover)
             context.strokeStyle = "#00ff00"
@@ -229,7 +231,7 @@ Rectangle {
     function draw_curve(context) {
         if(curvemodel.count){
             context.beginPath()
-            context.lineWidth = 1 
+            context.lineWidth = 2 
             context.strokeStyle = "#054552"
             context.moveTo(curvemodel.get(0).x,curvemodel.get(0).y)
             for(var i=1; i < curvemodel.count; i++){

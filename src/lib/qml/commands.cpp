@@ -390,7 +390,7 @@ status qml::command::set_field_val(unsigned int uid, unsigned int nid, unsigned 
     if(!f)
         std::cout << "NULL KEY ARRAY FIELD\n";
     else {
-        std::cout << "setting real array value for uid:" << uid << " nid:" << nid << " fid:" << fid << " real array value" << std::endl; 
+        std::cout << "setting key array value for uid:" << uid << " nid:" << nid << " fid:" << fid << " there are " << val.size() << " keys" << std::endl;
         f->value=val;
         f->update=true;
         scenegraph::update();

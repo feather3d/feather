@@ -339,13 +339,6 @@ Rectangle {
         }
     }
 
-    /*
-    function updataValue() {
-        console.log("Field ",field.fid," update")
-        fieldvalue.update()
-    }
-    */
-
     function setEditValue(){
         valueText.text=valueEdit.text
         switch(field.type) {

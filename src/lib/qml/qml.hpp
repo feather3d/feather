@@ -290,6 +290,13 @@ class Field: public QObject
         KeyValue* key(int i) {
             return m_keyArrayVal[i];
         }
+
+        // keyArrayVal
+        Q_INVOKABLE void setKeyArrayValue(int i, double time, double value) {
+            m_keyArrayVal[i]->setTime(time);
+            m_keyArrayVal[i]->setValue(value);
+            set_key_array_val();
+        }
  
         // keyArrayVal
         Q_INVOKABLE void setKeyArrayValue(double time, double value) {
