@@ -39,8 +39,21 @@ namespace feather
     typedef double FDouble;
     typedef double FReal;
     typedef std::string FString;
-    typedef struct{float x; float y;} FPoint2D;
-    typedef struct{float x; float y; float z;} FPoint3D;
+
+    struct FPoint2D
+    {
+        FPoint2D(float _x=0, float _y=0) : x(_x),y(_y){};
+        float x;
+        float y;
+    };
+
+    struct FPoint3D
+    {
+        FPoint3D(float _x=0, float _y=0, float _z=0) : x(_x),y(_y),z(_z){};
+        float x;
+        float y;
+        float z;
+    };
 
     struct FVertex3D
     {
@@ -135,13 +148,53 @@ namespace feather
     typedef std::vector<FVertexIndiceWeight> FVertexIndiceWeightArray;
     typedef std::vector<FVertexIndiceGroupWeight> FVertexIndiceGroupWeightArray;
 
-    // Misc Types
+    /*
+    // Curves
+    struct CurveProps
+    {
+        CurveProps(){};
+        enum Type { Line, Quad, Cubic, Arc, Svg, CatmullRom };
+    };
+    */
 
+    enum CurveType {
+        CurveTypeLine,
+        CurveTypeBezier,
+        CurveTypeQuadtratic,
+        CurveTypeArc,
+        CurveTypeSvg,
+    };
+
+    struct FCurvePoint2D //: public CurveProps
+    {
+        FCurvePoint2D(){};
+        CurveType type;
+        FPoint2D point;
+        FPoint2D c1; // control point 1
+        FPoint2D c2; // control point 1
+    };
+
+    struct FCurvePoint3D //: public CurveProps
+    {
+        FCurvePoint3D(){};
+        CurveType type;
+        FPoint3D point;
+        FPoint3D c1; // control point 1
+        FPoint3D c2; // control point 1
+    };
+
+    typedef std::vector<FCurvePoint2D> FCurvePoint2DArray;
+    typedef std::vector<FCurvePoint3D> FCurvePoint3DArray;
+
+    // Keys
     struct FKey
     {
-        FKey(FReal _value, FReal _time) : value(_value),time(_time){};
+        FKey(FReal _value, FReal _time) : value(_value),time(_time),type(CurveTypeLine){};
         FReal value;
         FReal time;
+        CurveType type;
+        FPoint2D c1;
+        FPoint2D c2;
     };
 
     typedef std::vector<FKey> FKeyArray;

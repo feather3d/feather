@@ -406,7 +406,11 @@ class Field: public QObject
             VertexIndiceGroupWeightArray=field::VertexIndiceGroupWeightArray,
             MeshArray=field::MeshArray,
             Key=field::Key,
-            KeyArray=field::KeyArray
+            KeyArray=field::KeyArray,
+            CurvePoint2D=field::CurvePoint2D,
+            CurvePoint3D=field::CurvePoint3D,
+            CurvePoint2DArray=field::CurvePoint2DArray,
+            CurvePoint3DArray=field::CurvePoint3DArray
         };
 
         enum ConnectionType {

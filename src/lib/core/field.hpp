@@ -74,7 +74,11 @@ namespace feather
             MeshArray=27,
             Key=28,
             KeyArray=29,
-            START=30
+            CurvePoint2D=30,
+            CurvePoint3D=31,
+            CurvePoint2DArray=32,
+            CurvePoint3DArray=33,
+            START=34
         };
 
         // TODO
@@ -132,6 +136,10 @@ namespace feather
         template <> bool can_connect<Matrix4x4,Matrix4x4>() { return true; };
         template <> bool can_connect<Key,Key>() { return true; };
         template <> bool can_connect<Key,KeyArray>() { return true; };
+        template <> bool can_connect<CurvePoint2D,CurvePoint2D>() { return true; };
+        template <> bool can_connect<CurvePoint2D,CurvePoint2DArray>() { return true; };
+        template <> bool can_connect<CurvePoint3D,CurvePoint3D>() { return true; };
+        template <> bool can_connect<CurvePoint3D,CurvePoint3DArray>() { return true; };
       
         template <int _Type1, int _Type2>
         struct can_types_connect {
