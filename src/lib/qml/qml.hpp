@@ -181,41 +181,119 @@ class Curve : public QObject
 class KeyValue : public QObject
 {
     Q_OBJECT
-        Q_PROPERTY(double time READ time WRITE setTime NOTIFY timeChanged)
-        Q_PROPERTY(double value READ value WRITE setValue NOTIFY valueChanged)
+        Q_PROPERTY(float time READ time WRITE setTime NOTIFY timeChanged)
+        Q_PROPERTY(float value READ value WRITE setValue NOTIFY valueChanged)
+        Q_PROPERTY(int inCurve READ inCurve WRITE setInCurve NOTIFY inCurveChanged)
+        Q_PROPERTY(float cp1x READ cp1x WRITE setCp1x NOTIFY cp1xChanged)
+        Q_PROPERTY(float cp1y READ cp1y WRITE setCp1y NOTIFY cp1yChanged)
+        Q_PROPERTY(int outCurve READ outCurve WRITE setOutCurve NOTIFY outCurveChanged)
+        Q_PROPERTY(float cp2x READ cp2x WRITE setCp2x NOTIFY cp2xChanged)
+        Q_PROPERTY(float cp2y READ cp2y WRITE setCp2y NOTIFY cp2yChanged)
 
     public:
         KeyValue(QObject* parent=0);
         ~KeyValue();
 
         // time 
-        void setTime(double& v) {
+        void setTime(float& v) {
             if(m_time != v) {
                 m_time = v;
                 emit timeChanged();
             }
         }
 
-        double time() { return m_time; }
+        float time() { return m_time; }
 
         // value 
-        void setValue(double& v) {
+        void setValue(float& v) {
             if(m_value != v) {
                 m_value = v;
                 emit valueChanged();
             }
         }
 
-        double value() { return m_value; }
+        float value() { return m_value; }
+
+        // control point 1
+
+        // in curve 
+        void setInCurve(int& v) {
+            if(m_incurve != v) {
+                m_incurve = v;
+                emit inCurveChanged();
+            }
+        }
+
+        int inCurve() { return m_incurve; }
+
+        void setCp1x(float& v) {
+            if(m_cp1x != v) {
+                m_cp1x = v;
+                emit cp1xChanged();
+            }
+        }
+
+        float cp1x() { return m_cp1x; }
+
+        void setCp1y(float& v) {
+            if(m_cp1y != v) {
+                m_cp1y = v;
+                emit cp1yChanged();
+            }
+        }
+
+        float cp1y() { return m_cp1y; }
+
+
+        // control point 2
+
+        // out curve 
+        void setOutCurve(int& v) {
+            if(m_outcurve != v) {
+                m_outcurve = v;
+                emit outCurveChanged();
+            }
+        }
+
+        int outCurve() { return m_outcurve; }
+
+        void setCp2x(float& v) {
+            if(m_cp2x != v) {
+                m_cp2x = v;
+                emit cp2xChanged();
+            }
+        }
+
+        float cp2x() { return m_cp2x; }
+
+        void setCp2y(float& v) {
+            if(m_cp2y != v) {
+                m_cp2y = v;
+                emit cp2yChanged();
+            }
+        }
+
+        float cp2y() { return m_cp2y; };
 
     signals:
         void timeChanged();
         void valueChanged();
-
+        void inCurveChanged();
+        void outCurveChanged();
+        void cp1xChanged();
+        void cp1yChanged();
+        void cp2xChanged();
+        void cp2yChanged();
 
     private:
-        double m_time;
-        double m_value; 
+        float m_time;
+        float m_value; 
+        int m_incurve; 
+        float m_cp1x;
+        float m_cp1y;
+        int m_outcurve; 
+        float m_cp2x;
+        float m_cp2y;
 };
  
 // FIELD 
@@ -309,14 +387,20 @@ class Field: public QObject
         }
 
         // keyArrayVal
-        Q_INVOKABLE void setKeyArrayValue(int i, double time, double value) {
+        Q_INVOKABLE void setKeyArrayValue(int i, float time, float value, int inCurve, float cp1x, float cp1y, int outCurve, float cp2x, float cp2y) {
             m_keyArrayVal[i]->setTime(time);
             m_keyArrayVal[i]->setValue(value);
+            m_keyArrayVal[i]->setInCurve(inCurve);
+            m_keyArrayVal[i]->setCp1x(cp1x);
+            m_keyArrayVal[i]->setCp1y(cp1y);
+            m_keyArrayVal[i]->setOutCurve(outCurve);
+            m_keyArrayVal[i]->setCp2x(cp2x);
+            m_keyArrayVal[i]->setCp2y(cp2y);
             set_key_array_val();
         }
  
         // keyArrayVal
-        Q_INVOKABLE void setKeyArrayValue(double time, double value) {
+        Q_INVOKABLE void setKeyArrayValue(float time, float value) {
             // set the value of a key at a certain time
             // If the key doesn't exist, make one
             bool found=false;
@@ -349,7 +433,7 @@ class Field: public QObject
         // returned. It's up to the caller to check to see
         // if a null has been returned and then look to
         // the track node to get a value if needed.
-        Q_INVOKABLE KeyValue* getKey(double time) {
+        Q_INVOKABLE KeyValue* getKey(float time) {
             // we'll do some rounding to keep away from
             // keys off by a few msecs
             int ttime = time * 1000;
@@ -363,7 +447,7 @@ class Field: public QObject
 
         // This is like above except it only tells if a keyframe
         // already exist in the array at a specific time
-        Q_INVOKABLE bool keyExist(double time) {
+        Q_INVOKABLE bool keyExist(float time) {
             // we'll do some rounding to keep away from
             // keys off by a few msecs
             int ttime = time * 1000;
@@ -375,7 +459,6 @@ class Field: public QObject
             return false;
         };
 
-        //QList<KeyValue> keyArrayVal();
         QQmlListProperty<KeyValue> keyArrayVal();
 
         // realArrayVal 

@@ -193,16 +193,25 @@ namespace feather
     // Keys
     struct FKey
     {
-        FKey(FReal _value, FReal _time) :
-                value(_value),
-                time(_time),
-                intype(curve::Line),
-                outtype(curve::Line)
+        FKey(
+                FFloat _value,
+                FFloat _time,
+                curve::Type _inCurve=curve::Line,
+                FPoint2D _inCp=FPoint2D(0,0),
+                curve::Type _outCurve=curve::Line,
+                FPoint2D _outCp=FPoint2D(0,0)
+            ) :
+            value(_value),
+            time(_time),
+            incurve(_inCurve),
+            incp(_inCp),
+            outcurve(_outCurve),
+            outcp(_outCp)
         {};
-        FReal value;
-        FReal time;
-        curve::Type intype; // in curve type
-        curve::Type outtype; // out curve type
+        FFloat value;
+        FFloat time;
+        curve::Type incurve; // in curve type
+        curve::Type outcurve; // out curve type
         FPoint2D incp; // in control point
         FPoint2D outcp; // out control point
     };

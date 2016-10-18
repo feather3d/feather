@@ -79,14 +79,15 @@ Rectangle {
             // draw track time lines
             draw_track(context)
 
+            // draw curve
+            draw_curve(context)
+ 
             // draw keys
             if(uid) {
                 for(var i=0; i < curvemodel.count; i++)
                     draw_key(context,curvemodel.get(i))
             }
 
-            // draw curve
-            draw_curve(context)
         }
 
 
@@ -174,12 +175,32 @@ Rectangle {
                             var dVal = dY/ppv
                             if(dVal >= 1 || dVal <= -1){
                                 // set value
-                                key.value += dY/ppv
+                                key.key.value += dY/ppv
+                                key.key.cp1y += dY/ppv
+                                key.key.cp2y += dY/ppv
                                 mouseY = mouse.y
                             }
                             // set time
-                            key.time -= dX/pps
-                            keyframes.setKeyArrayValue(key.index,key.time,key.value)
+                            key.key.time -= dX/pps
+                            if(curvemodel.get(i-1).key.time > key.key.time)
+                                key.key.time = curvemodel.get(i-1).key.time + (1.0/24)
+                            if(curvemodel.count > (i+1) ){
+                                if(curvemodel.get(i+1).key.time < key.key.time)
+                                    key.key.time = curvemodel.get(i+1).key.time - (1.0/24)
+                                if(curvemodel.get(i+1).key.cp1x < key.key.time)
+                                    curvemodel.get(i+1).key.cp1x = key.key.time
+                                if(curvemodel.get(i+1).key.time < key.key.cp2x)
+                                    key.key.cp2x = curvemodel.get(i+1).key.time
+                            } 
+                            if(curvemodel.get(i-1).key.cp2x > key.key.time)
+                                curvemodel.get(i-1).key.cp2x = key.key.time
+                           
+                            key.key.cp1x -= dX/pps
+                            if( i > 0 )
+                                if(curvemodel.get(i-1).key.time > key.key.cp1x)
+                                    key.key.cp1x = curvemodel.get(i-1).key.time
+                            key.key.cp2x -= dX/pps
+                            keyframes.setKeyArrayValue(key.index,key.key.time,key.key.value,key.key.inCurve,key.key.cp1x,key.key.cp1y,key.key.outCurve,key.key.cp2x,key.key.cp2y)
                          }
                         
                     }
@@ -196,41 +217,84 @@ Rectangle {
     }
 
     function draw_key(context,key) {
-        console.log("drawing key time:",key.key.time," value:",key.key.value)
         var ppv = height/(maxVal - minVal)
         var length = (etime - stime)
         var pps = width/length // pixels per second 
-        var keyX = (key.time - stime) * pps
-        var keyY = ppv*(maxVal-key.value)
+        var keyX = (key.key.time - stime) * pps
+        var keyY = ppv*(maxVal-key.key.value)
+
+        // draw the in and out weights if a bezier or quadtratic curve
+        // for testing we'll just make dummys for now
+        
+        // draw control points
+        context.beginPath()
+        context.lineWidth = 1
+        // cp1
+        var cp1X = (key.key.cp1x - stime) * pps
+        var cp1Y = ppv*(maxVal - key.key.cp1y)
+        context.strokeStyle = "#0000ff"
+        context.rect(cp1X-4,cp1Y-4,8,8)
+        // cp2
+        var cp2X = (key.key.cp2x - stime) * pps
+        var cp2Y = ppv*(maxVal - key.key.cp2y)
+        context.strokeStyle = "#0000ff"
+        context.rect(cp2X-4,cp2Y-4,8,8)
+        context.stroke()
+
+
+        // draw lines between control points and key
+        context.beginPath()
+        context.lineWidth = 2
+        context.strokeStyle = "#00ff00"
+        context.moveTo(cp1X,cp1Y)
+        context.lineTo(keyX,keyY)
+        context.lineTo(cp2X,cp2Y)
+        context.stroke()
+ 
         context.beginPath()
         context.lineWidth = 2
 
         // draw the keyframe point
         if(key.hover)
-            context.strokeStyle = "#00ff00"
+            context.fillStyle = "#00ff00"
         else
-            context.strokeStyle = "#fb7e14"
+            context.fillStyle = "#fb7e14"
         if(key.selected)
-            context.strokeStyle = "#ff0000"
+            context.fillStyle = "#ff0000"
 
-        context.rect(keyX-4,keyY-4,8,8)
-        context.stroke()
+        context.ellipse(keyX-5,keyY-5,10,10)
+        context.fill()
         key.x = keyX
         key.y = keyY
 
-        // draw the in and out weights if a bezier or quadtratic curve
-        // for testing we'll just make dummys for now
-        
+       
+
     }
 
     function draw_curve(context) {
-        if(curvemodel.count){
-            context.beginPath()
+        if(curvemodel.count > 1){
+            var ppv = height/(maxVal - minVal)
+            var length = (etime - stime)
+            var pps = width/length // pixels per second 
+ 
+
+            var sx = (curvemodel.get(0).key.time - stime) * pps
+            var sy = ppv*(maxVal - curvemodel.get(0).key.value)
+ 
             context.lineWidth = 2 
             context.strokeStyle = "#054552"
-            context.moveTo(curvemodel.get(0).x,curvemodel.get(0).y)
-            for(var i=1; i < curvemodel.count; i++){
-                context.lineTo(curvemodel.get(i).x,curvemodel.get(i).y)
+            context.beginPath()
+            context.moveTo(sx, sy)
+            //console.log("draw_curve() - sx:",sx," sy:",sy)
+            for(var i=0; i < (curvemodel.count-1); i++){
+                var p1cp2X = (curvemodel.get(i).key.cp2x - stime) * pps
+                var p1cp2Y = ppv*(maxVal - curvemodel.get(i).key.cp2y)
+                var p2cp1X = (curvemodel.get(i+1).key.cp1x - stime) * pps
+                var p2cp1Y = ppv*(maxVal - curvemodel.get(i+1).key.cp1y)
+                var p2X = (curvemodel.get(i+1).key.time - stime) * pps
+                var p2Y = ppv*(maxVal - curvemodel.get(i+1).key.value)
+                context.bezierCurveTo(p1cp2X, p1cp2Y, p2cp1X, p2cp1Y, p2X, p2Y)
+                //console.log("p1 cp2X:",p1cp2X," p1 cp2Y:",p1cp2Y," p2 cp1X:",p2cp1X," p2 cp1Y:",p2cp1Y," p2 X:",p2X," p2 Y:",p2Y)
             }
             context.stroke()
         }
@@ -317,7 +381,7 @@ Rectangle {
                 context.fillText(cv,2,cpv+(ppv/2))
                 context.stroke()
              } else {
-                console.log("draw 0")
+                //console.log("draw 0")
                 context.beginPath()
                 context.strokeStyle = "#ff00ff"
                 context.lineWidth = 1 
@@ -334,21 +398,22 @@ Rectangle {
     // update the track keys
     function load_keys() {
         // get all the key uids
-        console.log("loading keys")
+        //console.log("loading keys")
         curvemodel.clear()
         //keyframes.uid = uid
         keyframes.nid = SceneGraph.node_id(uid)
         // verify that we are looking at a track node
         if ( keyframes.nid != 420 ) {
-            console.log("The keyframes field is not a KeyTrack node")
-            console.log("\tuid:",keyframes.uid," nid:",keyframes.nid," fid:",keyframes.fid)
+            //console.log("The keyframes field is not a KeyTrack node")
+            //console.log("\tuid:",keyframes.uid," nid:",keyframes.nid," fid:",keyframes.fid)
             return
         } 
         var tlist = keyframes.keyArrayVal 
-        console.log("LOADING TRACK NODE uid:",keyframes.uid," nid:",keyframes.nid," fid:",keyframes.fid)
+        //console.log("LOADING TRACK NODE uid:",keyframes.uid," nid:",keyframes.nid," fid:",keyframes.fid)
         for(var i=0; i < tlist.length; i++){
-            console.log("adding key time:",tlist[i].time," value:",tlist[i].value," to list")
-            curvemodel.insert(i,{"key":tlist[i],"index":i,"time":tlist[i].time,"value":tlist[i].value,"x":0,"y":0,"selected":false,"hover":false})
+            //console.log("adding key time:",tlist[i].time," value:",tlist[i].value," to list")
+            //curvemodel.insert(i,{"key":tlist[i],"index":i,"time":tlist[i].time,"value":tlist[i].value,"x":0,"y":0,"selected":false,"hover":false})
+            curvemodel.insert(i,{"key":tlist[i],"index":i,"x":0,"y":0,"selected":false,"hover":false})
         } 
     }
 
@@ -357,7 +422,7 @@ Rectangle {
     }
 
     function update_track() {
-        console.log("UPDATING TRACK")
+        //console.log("UPDATING TRACK")
         load_keys()
         track.requestPaint()
     }
@@ -367,7 +432,7 @@ Rectangle {
     }
 
     function updateTrack(uid,nid,fid) {
-        console.log("update key track uid:",uid," nid:",nid," fid:",fid)
+        //console.log("update key track uid:",uid," nid:",nid," fid:",fid)
         if ( nid == 420 ) {
             frame.uid = uid
         } else {

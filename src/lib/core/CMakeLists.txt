@@ -57,6 +57,7 @@ SET(feather_core_HDRS
     status.hpp
     parameter.hpp
     command.hpp
+    curve.hpp
     field.hpp
     node.hpp
     data.hpp

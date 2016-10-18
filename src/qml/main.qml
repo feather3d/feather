@@ -95,7 +95,7 @@ ApplicationWindow {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: timeEditor.top
-        height: 100 
+        height: 200 
 
         KeyframeEditor {
             id: keyframeEditor

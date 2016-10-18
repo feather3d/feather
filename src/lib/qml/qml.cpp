@@ -357,14 +357,13 @@ void Field::set_key_array_val()
     int i=0;
     for ( auto val : m_keyArrayVal ) {
         std::cout << "setting key time:" << val->time() << " value:" << val->value() << std::endl;
-        value.push_back(FKey(val->value(),val->time()));
+        value.push_back(FKey(val->value(),val->time(),static_cast<curve::Type>(val->inCurve()),FPoint2D(val->cp1x(),val->cp1y()),static_cast<curve::Type>(val->outCurve()),FPoint2D(val->cp2x(),val->cp2y())));
         i++;
     }
     qml::command::set_field_val(m_uid,m_nid,m_fid,value);
 }
 
 QQmlListProperty<KeyValue> Field::keyArrayVal()
-//QList<KeyValue> Field::keyArrayVal()
 {
     m_keyArrayVal.clear();
 
@@ -372,14 +371,33 @@ QQmlListProperty<KeyValue> Field::keyArrayVal()
 
     field::Field<FKeyArray>* array = static_cast<field::Field<FKeyArray>*>(plugin::get_node_field_base(m_uid,m_fid));
 
-    std::cout << "There are " << array->value.size() << " keys in the track\n";
+    //std::cout << "There are " << array->value.size() << " keys in the track\n";
 
     for ( auto val : array->value ) {
         KeyValue* key = new KeyValue();
         key->setTime(val.time);
         key->setValue(val.value);
+        key->setInCurve((int&)val.incurve);
+        key->setOutCurve((int&)val.outcurve);
+        key->setCp1x(val.incp.x);
+        key->setCp1y(val.incp.y);
+        key->setCp2x(val.outcp.x);
+        key->setCp2y(val.outcp.y);
+        /*
         std::cout << "field value - key time:" << val.time << " value:" << val.value << std::endl;
         std::cout << "qml value - key time:" << key->time() << " value:" << key->value() << std::endl;
+
+        std::cout << "Field::keyArrayVal() - time:" << val.time 
+            << " value:" << val.value
+            << " inCurve:" << val.incurve
+            << " cp1x:" << val.incp.x
+            << " cp1y:" << val.incp.y
+            << " outCurve:" << val.outcurve
+            << " cp2x:" << val.outcp.x
+            << " cp2y:" << val.outcp.y
+            << std::endl
+            ;
+        */
         connect(key,SIGNAL(timeChanged()),this,SLOT(updateKeyArray()));
         connect(key,SIGNAL(valueChanged()),this,SLOT(updateKeyArray()));
         m_keyArrayVal.append(key);
