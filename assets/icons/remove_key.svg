@@ -15,7 +15,7 @@
    version="1.1"
    inkscape:version="0.91 r13725"
    viewBox="0 0 64 64"
-   sodipodi:docname="key_actions.svg">
+   sodipodi:docname="remove_key.svg">
   <defs
      id="defs4154" />
   <sodipodi:namedview
@@ -45,7 +45,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -59,7 +59,7 @@
      inkscape:groupmode="layer"
      id="layer3"
      inkscape:label="add"
-     style="display:inline"
+     style="display:none"
      sodipodi:insensitive="true">
     <path
        style="display:inline;fill:none;fill-rule:evenodd;stroke:#00ff00;stroke-width:10;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
@@ -77,7 +77,7 @@
      id="g4207"
      inkscape:groupmode="layer"
      sodipodi:insensitive="true"
-     style="display:none">
+     style="display:inline">
     <path
        inkscape:connector-curvature="0"
        id="path4209"

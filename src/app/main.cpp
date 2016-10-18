@@ -206,6 +206,7 @@ int main(int argc, char **argv)
     qmlRegisterSingletonType<SceneGraph>("feather.scenegraph", 1, 0, "SceneGraph", get_scenegraph);
     qmlRegisterType<TreeModel>("feather.outliner", 1, 0, "OutlinerModel");
     qmlRegisterType<Node>("feather.node", 1, 0, "Node");
+    qmlRegisterType<Curve>("feather.field", 1, 0, "Curve");
     qmlRegisterType<Field>("feather.field", 1, 0, "Field");
     qmlRegisterType<KeyValue>("feather.field", 1, 0, "KeyValue");
     qmlRegisterType<Connection>("feather.field", 1, 0, "Connection");

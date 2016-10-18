@@ -29,8 +29,8 @@ import feather.scenegraph 1.0
 
 ApplicationWindow {
     id: window
-    width: 1200
-    height: 720 
+    width: 1900
+    height: 1020 
     visible: true
     title: "Feather 0.1"
     //flags: Qt.FramelessWindowHint

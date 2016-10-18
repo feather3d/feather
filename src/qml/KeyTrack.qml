@@ -196,16 +196,6 @@ Rectangle {
     }
 
     function draw_key(context,key) {
-        //keyframe.uid = key.uid
-        //keyframe.fid = 4
-        //var keytype = keyframe.intVal
-        //var keyfid = (keytype == Field.Int) ? 2 : 3 
-        //keyframe.fid = keyfid
-        //var val = (keytype == Field.Int) ? keyframe.intVal : keyframe.realVal
-        //keyframe.fid = 1
-        //var val = key.value
-        //var keyTime = keyframe.realVal
-        //var keyTime = key.time
         console.log("drawing key time:",key.key.time," value:",key.key.value)
         var ppv = height/(maxVal - minVal)
         var length = (etime - stime)
@@ -215,6 +205,7 @@ Rectangle {
         context.beginPath()
         context.lineWidth = 2
 
+        // draw the keyframe point
         if(key.hover)
             context.strokeStyle = "#00ff00"
         else
@@ -226,6 +217,10 @@ Rectangle {
         context.stroke()
         key.x = keyX
         key.y = keyY
+
+        // draw the in and out weights if a bezier or quadtratic curve
+        // for testing we'll just make dummys for now
+        
     }
 
     function draw_curve(context) {

@@ -157,18 +157,22 @@ namespace feather
     };
     */
 
-    enum CurveType {
-        CurveTypeLine,
-        CurveTypeBezier,
-        CurveTypeQuadtratic,
-        CurveTypeArc,
-        CurveTypeSvg,
-    };
+    namespace curve {
+
+        enum Type {
+            Line,
+            Bezier,
+            Quadtratic,
+            Arc,
+            Svg
+        };
+
+    }
 
     struct FCurvePoint2D //: public CurveProps
     {
         FCurvePoint2D(){};
-        CurveType type;
+        curve::Type type;
         FPoint2D point;
         FPoint2D c1; // control point 1
         FPoint2D c2; // control point 1
@@ -177,7 +181,7 @@ namespace feather
     struct FCurvePoint3D //: public CurveProps
     {
         FCurvePoint3D(){};
-        CurveType type;
+        curve::Type type;
         FPoint3D point;
         FPoint3D c1; // control point 1
         FPoint3D c2; // control point 1
@@ -189,12 +193,18 @@ namespace feather
     // Keys
     struct FKey
     {
-        FKey(FReal _value, FReal _time) : value(_value),time(_time),type(CurveTypeLine){};
+        FKey(FReal _value, FReal _time) :
+                value(_value),
+                time(_time),
+                intype(curve::Line),
+                outtype(curve::Line)
+        {};
         FReal value;
         FReal time;
-        CurveType type;
-        FPoint2D c1;
-        FPoint2D c2;
+        curve::Type intype; // in curve type
+        curve::Type outtype; // out curve type
+        FPoint2D incp; // in control point
+        FPoint2D outcp; // out control point
     };
 
     typedef std::vector<FKey> FKeyArray;

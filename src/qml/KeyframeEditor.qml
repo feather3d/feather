@@ -45,6 +45,13 @@ Rectangle {
     signal currentTimeChanged(double time)
 
 
+    KeyToolBar {
+        id: toolbar
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.right: parent.right
+    }
+
     ListModel {
         id: trackmodel
 
@@ -62,7 +69,11 @@ Rectangle {
 
     SplitView {
         id: splitview
-        anchors.fill: parent
+        anchors.top: toolbar.bottom
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+ 
         orientation: Qt.Horizontal
 
         Flickable {

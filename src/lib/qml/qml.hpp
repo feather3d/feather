@@ -161,7 +161,24 @@ class SceneGraph : public QObject
 
 };
 
-class KeyValue: public QObject
+class Curve : public QObject
+{
+    Q_OBJECT
+         Q_ENUMS(Type)
+    public:
+        Curve(){};
+        ~Curve(){};
+        enum Type {
+            Line = curve::Line,
+            Bezier = curve::Bezier,
+            Quadrtratic = curve::Quadtratic,
+            Arc = curve::Arc,
+            Svg = curve::Svg
+        };
+    
+};
+
+class KeyValue : public QObject
 {
     Q_OBJECT
         Q_PROPERTY(double time READ time WRITE setTime NOTIFY timeChanged)
