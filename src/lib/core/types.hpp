@@ -113,7 +113,12 @@ namespace feather
 
     //typedef struct{std::vector<FFacePoint> f; } FFace;
     typedef std::vector<FFacePoint> FFace;
-    typedef float FMatrix3x3[3][3];
+
+    struct FMatrix3x3 {
+        FMatrix3x3(){};
+        float value[3][3] = {{1,0,0},{0,1,0},{0,0,0}};
+    };
+
     struct FMatrix4x4 {
         FMatrix4x4(){};
         float value[4][4] = {{1,0,0,0},{0,1,0,0},{0,0,1,0},{0,0,0,1}};
@@ -194,8 +199,8 @@ namespace feather
     struct FKey
     {
         FKey(
-                FFloat _value,
-                FFloat _time,
+                FFloat _value=0.0,
+                FFloat _time=0.0,
                 curve::Type _inCurve=curve::Line,
                 FPoint2D _inCp=FPoint2D(0,0),
                 curve::Type _outCurve=curve::Line,
