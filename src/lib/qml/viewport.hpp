@@ -457,6 +457,7 @@ class Viewport : public Qt3DCore::QEntity
         Q_INVOKABLE void updateChangedNodes();
         Q_INVOKABLE void setCamera(unsigned int uid);
         Q_INVOKABLE void removeItem(unsigned int uid);
+        Q_INVOKABLE void clearDrawItems();
 
     private slots:
         void updateScene();

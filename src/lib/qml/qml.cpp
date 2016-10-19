@@ -47,7 +47,18 @@ SceneGraph::~SceneGraph()
 
 void SceneGraph::clear()
 {
-    qml::command::clear();
+    plugin::clear();
+
+    // we'll add our default nodes that we always need
+    status p;
+    unsigned int time = plugin::add_node(4,"time",p);
+    unsigned int camera = plugin::add_node(2,"camera",p);
+
+    // make connections
+    plugin::connect(0,202,time,201);
+    plugin::connect(0,202,camera,201);
+    
+    plugin::update();
     emit cleared();
 }
 

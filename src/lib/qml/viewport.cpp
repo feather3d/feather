@@ -2351,3 +2351,26 @@ void Viewport::removeItem(unsigned int uid)
         }
     }
 }
+
+void Viewport::clearDrawItems()
+{
+    for(auto item : m_apDrawItems){
+        switch(item->item()->type){
+            case feather::draw::Item::ShadedMesh:
+                m_apDrawItems.removeOne(static_cast<ShadedMesh*>(item));
+                break;
+            case feather::draw::Item::ComponentMesh:
+                m_apDrawItems.removeOne(static_cast<ComponentMesh*>(item));
+                break;
+            case feather::draw::Item::Line:
+                m_apDrawItems.removeOne(static_cast<Line*>(item));
+                break;
+            case feather::draw::Item::PerspCamera:
+                m_apDrawItems.removeOne(static_cast<PerspCamera*>(item));
+                break;
+            default:
+                break;
+        }
+        delete item;
+    }
+}

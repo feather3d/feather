@@ -86,6 +86,10 @@ Rectangle {
         vp.doUpdate()
     }
 
+    function clear() {
+        vp.clearDrawItems();
+    }
+
     Component.onCompleted: {
         SceneGraph.nodeAdded.connect(addNode)
         SceneGraph.nodeAddDrawItems.connect(addDrawItems)
@@ -93,5 +97,6 @@ Rectangle {
         SceneGraph.nodeFieldChanged.connect(updateViewport)
         SceneGraph.updateGraph.connect(graphUpdated)
         SceneGraph.nodeRemoved.connect(removeNode)
+        SceneGraph.cleared.connect(clear)
     }
 }
