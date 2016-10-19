@@ -64,6 +64,21 @@ Rectangle {
         onTriggered: { }
     }
 
+    Action {
+        id: flattenCpAct
+        text: "Flatten Cp"
+        tooltip: "flatten the keyframe's control point's value"
+        onTriggered: { }
+    }
+
+    Action {
+        id: lockCpAct
+        text: "Lock Cp"
+        tooltip: "lock the control point's so one will move with the other"
+        onTriggered: { }
+    }
+
+
 
     RowLayout {
         spacing: 2
@@ -99,5 +114,22 @@ Rectangle {
             iconSource: "icons/bezier_curve.svg"
             action: bezierCurveAct
          }
+
+        ToolButton {
+            id: flattenCpBtn
+            width: 20
+            height: 20
+            iconSource: "icons/bezier_curve_flatten_cp.svg"
+            action: flattenCpAct
+         }
+
+        ToolButton {
+            id: lockCpBtn
+            width: 20
+            height: 20
+            iconSource: "icons/bezier_curve_lock_cp.svg"
+            action: lockCpAct
+         }
+
     }
 } 
