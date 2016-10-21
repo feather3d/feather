@@ -873,6 +873,79 @@ void ComponentMesh::entered()
 }
 
 
+// CurveMesh
+ 
+CurveMesh::CurveMesh(Qt3DRender::QLayer* layer, feather::draw::Item* _item, Qt3DCore::QNode *parent)
+    : DrawItem(_item,DrawItem::CurveMesh,parent),
+    m_pTransform(new Qt3DCore::QTransform()),
+    m_pMaterial(new Qt3DExtras::QPhongMaterial()),
+    m_pMesh(new Qt3DRender::QGeometryRenderer()),
+    //m_pMouseInput(new Qt3D::QMouseInput(this)),
+    m_meshAttribute(new Qt3DRender::QAttribute(this)),
+    m_vertexBuffer(new Qt3DRender::QBuffer(Qt3DRender::QBuffer::VertexBuffer, this))
+{
+    m_aVertex.push_back(feather::FVertex3D(0,0,0));
+    m_aVertex.push_back(feather::FVertex3D(2,2,2));
+    //const int nVerts = 2;
+    const int size = m_aVertex.size() * sizeof(feather::FVertex3D);
+    QByteArray meshBytes;
+    meshBytes.resize(size);
+    memcpy(meshBytes.data(), m_aVertex.data(), size);
+
+    m_vertexBuffer->setData(meshBytes);
+
+    m_meshAttribute->setName(Qt3DRender::QAttribute::defaultPositionAttributeName());
+    m_meshAttribute->setDataType(Qt3DRender::QAttribute::Float);
+    m_meshAttribute->setDataSize(3);
+    m_meshAttribute->setCount(m_aVertex.size());
+    m_meshAttribute->setByteStride(sizeof(feather::FVertex3D));
+    m_meshAttribute->setBuffer(m_vertexBuffer);
+
+    //setVerticesPerPatch(4);
+    m_pMesh->setGeometry(new Qt3DRender::QGeometry(this));
+    m_pMesh->geometry()->addAttribute(m_meshAttribute);
+
+    m_pMesh->setPrimitiveType(Qt3DRender::QGeometryRenderer::Lines);
+    //m_pMesh->setPrimitiveType(Qt3D::QGeometryRenderer::Triangles);
+    //m_pMesh->setGeometry(new QGeometry(this));
+    
+    m_pMaterial->setDiffuse(QColor(Qt::red));
+    m_pMaterial->setAmbient(Qt::red);
+    //m_pMaterial->setSpecular(Qt::black);
+    //m_pMaterial->setShininess(0.0f);
+
+    addComponent(layer); 
+    addComponent(m_pTransform);
+    addComponent(m_pMesh);
+    addComponent(m_pMaterial);
+
+    //connect(m_pMouseInput,SIGNAL(entered()),this,SLOT(mouseClicked()));
+}
+
+CurveMesh::~CurveMesh()
+{
+    for(auto comp : components())
+        removeComponent(comp);
+
+    delete m_pMesh;
+    m_pMesh=0;
+    delete m_pMaterial;
+    m_pMaterial=0;
+    delete m_pTransform;
+    m_pTransform=0;
+
+    delete m_meshAttribute;
+    m_meshAttribute=0;
+    delete m_vertexBuffer;
+    m_vertexBuffer=0;
+}
+
+void CurveMesh::updateItem()
+{
+
+}
+
+
 // LINE
 Line::Line(Qt3DRender::QLayer* layer, feather::draw::Item* _item, Qt3DCore::QNode *parent)
     : DrawItem(_item,DrawItem::Line,parent),

@@ -1,0 +1,105 @@
+#!/bin/python
+
+import pyvulture 
+
+import time
+import sys
+from array import *
+from types import *
+
+
+from PyQt5.QtCore import pyqtSignal, Qt, QDir, QRect, QThread, QTimer
+from PyQt5.QtWidgets import QMainWindow, QAbstractScrollArea, QScrollArea, QSlider, QCheckBox, QMenuBar, QMenu, QAction, QDialog, QGroupBox, QStackedWidget, QStackedLayout, QGridLayout, QComboBox, QListWidget, QTabWidget, QLineEdit, QStatusBar, QFrame, QWidget, QPushButton, QLabel, QHBoxLayout, QVBoxLayout, QDockWidget, QFileDialog, QColorDialog, QApplication
+from PyQt5.QtGui import QImage, QPalette, QIcon, QPainter, QFont, QColor, QPen, QIntValidator, QDoubleValidator
+
+# FILE ACTIONS
+class OpenSceneAction(QAction):
+    updateScene = pyqtSignal()
+
+    def __init__(self,parent):
+        super().__init__("Open Scene",parent)
+        self.triggered.connect(self.doit)
+
+    def doit(self):
+        self.updateScene.emit()
+        filename = QFileDialog.getOpenFileName(None,"Open Feather File",".","Feather Files (*.feather)")
+        if filename == "":
+            return
+        file = open(filename[0],'r')
+        file.close()
+        self.updateScene.emit()
+
+
+       
+class FileExitAction(QAction):
+    updateScene = pyqtSignal()
+
+    def __init__(self,parent):
+        super().__init__("Exit",parent)
+        self.triggered.connect(self.doit)
+
+    def doit(self):
+        app.quit()
+
+
+
+class FileMenu(QMenu):
+    updateScene = pyqtSignal()
+
+    def __init__(self,name,parent):
+        super().__init__(name,parent)
+        openSceneAction = OpenSceneAction(self)
+        fileExitAction = FileExitAction(self)
+        self.addAction(openSceneAction)
+        self.addAction(fileExitAction)
+
+
+        openSceneAction.updateScene.connect(self.update)
+
+    def update(self):
+        self.updateScene.emit()
+
+
+class MainMenu(QMenuBar):
+    updateScene = pyqtSignal()
+
+    def __init__(self):
+        super().__init__()
+        fileMenu = FileMenu("File",self)
+        self.addMenu(fileMenu)
+        fileMenu.updateScene.connect(self.update)
+
+    def update(self):
+        self.updateScene.emit()
+
+
+class MainWindow(QMainWindow):
+    
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("TEST")
+        self.menu = MainMenu()
+        self.setMenuBar(self.menu)
+        #frame = pyvulture.QVulkanView()
+        frame = QFrame()
+        frame.setFixedWidth(800)
+        frame.setFixedHeight(600)
+        self.setCentralWidget(frame)
+
+        window = pyvulture.QVulkanView()
+        widgetwindow = QWidget.createWindowContainer(window)
+        #window.setWindowId(widgetwindow.wId())
+        vbox = QVBoxLayout()
+        vbox.addWidget(widgetwindow)
+        frame.setLayout(vbox)
+
+        self.show()
+
+if __name__ == '__main__':
+    
+    app = QApplication(sys.argv)
+    ex = MainWindow()
+    #window = pyvulture.QVulkanView()
+    sys.exit(app.exec_())
+    #window = pyvulture.Window()
+    #window = pyvulture.QVulkanView()

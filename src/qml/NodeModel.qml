@@ -52,8 +52,8 @@ ListModel {
     ListElement { text: "Mesh"; nid: 324; type: Node.Polygon }
 
     // ANIMATION PLUGIN
-    ListElement { text: "Key"; nid: 420; type: Node.Animation }
-    ListElement { text: "Track"; nid: 425; type: Node.Animation }
+    ListElement { text: "Track"; nid: 420; type: Node.Animation }
+    ListElement { text: "Bone"; nid: 421; type: Node.Animation }
     ListElement { text: "Morph"; nid: 426; type: Node.Animation }
 
     // DEFORMER PLUGIN

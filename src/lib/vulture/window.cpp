@@ -30,7 +30,17 @@
 
 using namespace feather::vulkan;
 
-Window::Window(std::string _title, unsigned int _width, unsigned int _height, float _zoom, bool _validation) :
+
+struct uniformData {
+    VkBuffer buffer;
+    VkDeviceMemory memory;
+    VkDescriptorBufferInfo descriptor;
+} m_uniformDataVS, m_uniformDataGS;
+
+
+Window::Window(xcb_window_t window, xcb_connection_t* connection, std::string _title, unsigned int _width, unsigned int _height, float _zoom, bool _validation) :
+m_window(window),
+m_pConnection(connection),
 m_title(_title),
 m_width(_width),
 m_height(_height),
@@ -139,7 +149,7 @@ void Window::initConnection()
     int scr;
 
     // get connection
-    m_pConnection = xcb_connect(NULL, &scr);
+    //m_pConnection = xcb_connect(NULL, &scr);
     if (m_pConnection == NULL) {
         printf("Could not find a compatible Vulkan ICD!\n");
         fflush(stdout);
@@ -254,7 +264,7 @@ xcb_window_t Window::setupWindow()
 {
     uint32_t value_mask, value_list[32];
 
-    m_window = xcb_generate_id(m_pConnection);
+    //m_window = xcb_generate_id(m_pConnection);
 
     value_mask = XCB_CW_BACK_PIXEL | XCB_CW_EVENT_MASK;
     value_list[0] = m_pScreen->black_pixel;

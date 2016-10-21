@@ -35,6 +35,7 @@ class DrawItem : public Qt3DCore::QEntity
         enum Type{
             None,
             Line,
+            CurveMesh,
             ShadedMesh,
             ComponentMesh,
             PerspCamera
@@ -97,7 +98,9 @@ class WireEffect : public Qt3D::QEffect
 };
 */
 
+
 // GEOMETRY 
+
 
 // Shaded Mesh
 class MeshGeometry : public Qt3DRender::QGeometry
@@ -225,6 +228,28 @@ class ComponentMesh : public DrawItem
         Qt3DRender::QObjectPicker *m_pObjectPicker;
 };
 
+
+// CURVE 
+
+class CurveMesh : public DrawItem 
+{
+    Q_OBJECT
+    
+    public:
+        CurveMesh(Qt3DRender::QLayer* layer, feather::draw::Item* _item, Qt3DCore::QNode *parent=0);
+        ~CurveMesh();
+        void updateItem();
+
+    private:
+        void build();
+        Qt3DCore::QTransform *m_pTransform;
+        Qt3DExtras::QPhongMaterial *m_pMaterial;
+        Qt3DRender::QGeometryRenderer *m_pMesh;
+        //Qt3D::QMouseInput *m_pMouseInput;
+        std::vector<feather::FVertex3D> m_aVertex;
+        Qt3DRender::QAttribute *m_meshAttribute;
+        Qt3DRender::QBuffer *m_vertexBuffer;
+};
 
 
 

@@ -70,6 +70,8 @@ class VulkanSwapChain
         PFN_vkAcquireNextImageKHR fpAcquireNextImageKHR;
         PFN_vkQueuePresentKHR fpQueuePresentKHR;
     public:
+        VkSurfaceKHR& get_surface() { return surface; };
+
         VkFormat colorFormat;
         VkColorSpaceKHR colorSpace;
 

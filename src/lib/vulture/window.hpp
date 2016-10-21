@@ -44,6 +44,58 @@ namespace feather
 
     namespace vulkan
     {
+        struct {
+            bool left = false;
+            bool right = false;
+        } m_mouseButtons;
+
+        // Synchronization semaphores
+        struct {
+            VkSemaphore presentComplete;
+            VkSemaphore renderComplete;
+        } m_semaphores;
+
+        struct 
+        {
+            VkImage image;
+            VkDeviceMemory mem;
+            VkImageView view;
+        } m_depthStencil;
+
+        // buf and mem are in the Node
+        struct {
+            VkPipelineVertexInputStateCreateInfo vi;
+            std::vector<VkVertexInputBindingDescription> bindingDescriptions;
+            std::vector<VkVertexInputAttributeDescription> attributeDescriptions;
+        } m_vertices;
+
+        /*
+        struct uniformData {
+            VkBuffer buffer;
+            VkDeviceMemory memory;
+            VkDescriptorBufferInfo descriptor;
+        } m_uniformDataVS, m_uniformDataGS;
+        */
+
+        struct {
+            glm::mat4 projection;
+            glm::mat4 model;
+            int mode;
+            // current selected components
+            int p1;
+            int p2;
+            int p3;
+            int object;
+        } m_uboVS, m_uboGS;
+
+        // selection testing
+        struct 
+        {
+            VkImage image;
+            VkDeviceMemory mem;
+            VkImageView view;
+        } m_selection;
+
 
         class Window
         {
@@ -51,11 +103,14 @@ namespace feather
             public:
                 enum Mode { POINT=0x0001, WIREFRAME=0x0002, SHADED=0x0004, POINT_NORMALS=0x0008, FACE_NORMALS=0x0010 };
  
-                Window(std::string _title="", unsigned int _width=1280, unsigned int _height=720, float _zoom=-2.0, bool _validation=false);
+                Window(xcb_window_t window=0, xcb_connection_t* connection=nullptr, std::string _title="", unsigned int _width=1280, unsigned int _height=720, float _zoom=-2.0, bool _validation=false);
                 ~Window();
                 std::vector<unsigned int> cameras();
                 unsigned int current_camera();
                 void set_camera(unsigned int uid);
+                xcb_window_t window() { return m_window; };
+                VkInstance& instance() { return m_instance; };
+                VkSurfaceKHR& surface() { return m_swapChain.get_surface(); };
 
             private:
                 std::string m_title;
@@ -78,10 +133,12 @@ namespace feather
                 xcb_intern_atom_reply_t* m_pAtomDeleteWindow;
                 void handleEvent(const xcb_generic_event_t *event);
 
+                /*
                 struct {
                     bool left = false;
                     bool right = false;
                 } m_mouseButtons;
+                */
 
                 void initConnection();
                 void initVulkan(bool validation);
@@ -160,7 +217,12 @@ namespace feather
                 //std::vector<VkShaderModule> m_shaderModules;
                 VkClearColorValue m_defaultClearColor;
 
+                VkResult createInstance(bool enabled);
+                VkResult createDevice(VkDeviceQueueCreateInfo requestedQueues, bool validation);
+                VkBool32 getMemoryType(uint32_t typeBits, VkFlags properties, uint32_t *typeIndex);
 
+
+                /*
                 // Synchronization semaphores
                 struct {
                     VkSemaphore presentComplete;
@@ -174,10 +236,6 @@ namespace feather
                     VkImageView view;
                 } m_depthStencil;
 
-                VkResult createInstance(bool enabled);
-                VkResult createDevice(VkDeviceQueueCreateInfo requestedQueues, bool validation);
-                VkBool32 getMemoryType(uint32_t typeBits, VkFlags properties, uint32_t *typeIndex);
-                
                 // buf and mem are in the Node
                 struct {
                     VkPipelineVertexInputStateCreateInfo vi;
@@ -201,11 +259,13 @@ namespace feather
                     int p3;
                     int object;
                 } m_uboVS, m_uboGS;
+                */
 
                 Pipelines* m_pPipelines;
 
                 std::vector<Node*> m_aNodes;
 
+                /*
                 // selection testing
                 struct 
                 {
@@ -213,6 +273,7 @@ namespace feather
                     VkDeviceMemory mem;
                     VkImageView view;
                 } m_selection;
+                */
 
                 void* m_selectionData;
 

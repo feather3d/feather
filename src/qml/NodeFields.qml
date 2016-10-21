@@ -128,6 +128,7 @@ FieldModel {
         addFieldName("mesh",324,2)
 
         // ANIMATION PLUGIN
+
         // Key Track 
         // In
         addFieldName("time",420,1)
@@ -135,6 +136,9 @@ FieldModel {
         addFieldName("type",420,3)
         // Out 
         addFieldName("value",420,4)
+
+        // Bone
+        // current bone (421) has no fields
 
         // Morph 
         // In
