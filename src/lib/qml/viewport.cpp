@@ -296,6 +296,9 @@ void MeshGeometry::build()
     // The index type will set limits on how many vertex can be loaded.
     // If the model has more vertex then what the index buffer can store, holes will show up in the model.
     // uint has a limit of 4.3G which should be enough for what I'm doing.
+
+    // OLD METHOD
+    /*
     std::vector<uint> indexBuffer;
     icount = 0;
     vcount = 0;
@@ -328,16 +331,52 @@ void MeshGeometry::build()
                 vertexBuffer.push_back(mesh.vn.at(fp.vn).y);
                 vertexBuffer.push_back(mesh.vn.at(fp.vn).z);
                 // COLOR
-                /* 
-                vertexBuffer.push_back(1.0);
-                vertexBuffer.push_back(1.0); 
-                vertexBuffer.push_back(1.0);
-                */
+                //vertexBuffer.push_back(1.0);
+                //vertexBuffer.push_back(1.0); 
+                //vertexBuffer.push_back(1.0);
                 vcount++; 
             }
             id=0;
     });
+    */
 
+    // NEW METHOD
+
+    int i=0;
+
+    for ( auto v : mesh.v ) {
+        // V
+        vertexBuffer.push_back(v.x);
+        vertexBuffer.push_back(v.y);
+        vertexBuffer.push_back(v.z);
+        // VN
+        vertexBuffer.push_back(mesh.vn.at(i).x);
+        vertexBuffer.push_back(mesh.vn.at(i).y);
+        vertexBuffer.push_back(mesh.vn.at(i).z);
+        // COLOR
+        i++;
+    }
+
+    std::vector<uint> indexBuffer;
+ 
+    std::for_each(mesh.f.begin(), mesh.f.end(), [this,&mesh,&indexBuffer](feather::FFace _face){
+            if(_face.size()==3){
+                indexBuffer.push_back(_face.at(0).v);
+                indexBuffer.push_back(_face.at(1).v);
+                indexBuffer.push_back(_face.at(2).v);
+            }
+            else if(_face.size()==4){
+                indexBuffer.push_back(_face.at(0).v);
+                indexBuffer.push_back(_face.at(1).v);
+                indexBuffer.push_back(_face.at(2).v);
+                indexBuffer.push_back(_face.at(0).v);
+                indexBuffer.push_back(_face.at(2).v);
+                indexBuffer.push_back(_face.at(3).v);
+            }
+    });
+
+
+    // ORIG STUFF
     const int vsize = vertexBuffer.size() * sizeof(float);
     QByteArray meshVBytes;
     meshVBytes.resize(vsize);
@@ -615,6 +654,8 @@ void ShadedMesh::updateItem()
     // TODO - I don't like the fact I have to delete the whole mesh and build it from scratch
     // for every update. I should be able to find a way of changing the vertex in the buffer.
 
+    std::cout << "UPDATING SHADED MESH\n";
+
     removeComponent(m_pMesh);
     static_cast<MeshGeometry*>(m_pMesh->geometry())->updateBuffers();
 
@@ -787,6 +828,8 @@ void ComponentMesh::updateItem()
 {
     // TODO - I don't like the fact I have to delete the whole mesh and build it from scratch
     // for every update. I should be able to find a way of changing the vertex in the buffer.
+
+    std::cout << "UPDATING COMPONENT MESH\n";
 
     removeComponent(m_pMeshPoints);
     static_cast<MeshPointGeometry*>(m_pMeshPoints->geometry())->updateBuffers();

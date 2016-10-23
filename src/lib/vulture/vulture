@@ -86,20 +86,21 @@ class MainWindow(QMainWindow):
         frame.setFixedHeight(600)
         self.setCentralWidget(frame)
 
-        window = pyvulture.QVulkanView()
-        widgetwindow = QWidget.createWindowContainer(window)
+        #window = pyvulture.QVulkanView()
+        #widgetwindow = QWidget.createWindowContainer(window)
         #window.setWindowId(widgetwindow.wId())
         vbox = QVBoxLayout()
-        vbox.addWidget(widgetwindow)
+        #vbox.addWidget(widgetwindow)
         frame.setLayout(vbox)
 
         self.show()
 
 if __name__ == '__main__':
-    
-    app = QApplication(sys.argv)
-    ex = MainWindow()
+    pass 
+    #app = QApplication(sys.argv)
+    #ex = MainWindow()
     #window = pyvulture.QVulkanView()
-    sys.exit(app.exec_())
+    #window = pyvulture.Window()
+    #sys.exit(app.exec_())
     #window = pyvulture.Window()
     #window = pyvulture.QVulkanView()

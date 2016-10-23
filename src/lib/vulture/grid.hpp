@@ -26,7 +26,7 @@
 
 #include "deps.hpp"
 #include "vulkan_deps.hpp"
-#include "node.hpp"
+#include "basenode.hpp"
 
 namespace feather
 {

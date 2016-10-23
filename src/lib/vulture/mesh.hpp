@@ -25,8 +25,10 @@
 #define MESH_HPP
 
 #include "deps.hpp"
+#include "types.hpp"
+
 #include "vulkan_deps.hpp"
-#include "node.hpp"
+#include "basenode.hpp"
 
 namespace feather
 {
@@ -37,11 +39,13 @@ namespace feather
         class Mesh : public Node
         {
             public:
-                Mesh(uint32_t _id);
+                Mesh(uint32_t _id, FMesh* mesh);
                 ~Mesh();
                 void prepareVertices(VkDevice device, VkPhysicalDeviceMemoryProperties deviceMemoryProperties);
                 void updateVertices(VkDevice device, VkPhysicalDeviceMemoryProperties deviceMemoryProperties, float step=1.0);
                 void build();
+            private:
+                FMesh* m_pMesh;
         };
 
     } // namespace vulkan

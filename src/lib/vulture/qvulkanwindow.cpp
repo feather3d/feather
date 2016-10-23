@@ -12,8 +12,8 @@
 
 QVulkanView::QVulkanView(QWindow *parent) : QWindow(parent)
 {
-    //setWidth(400);
-    //setHeight(200);
+    setWidth(1200);
+    setHeight(800);
 
     QPlatformNativeInterface *native =  QGuiApplication::platformNativeInterface();
     

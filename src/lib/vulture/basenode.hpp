@@ -1,6 +1,6 @@
 /***********************************************************************
  *
- * Filename: node.hpp
+ * Filename: basenode.hpp
  *
  * Description: vulkan base node.
  *
@@ -21,8 +21,8 @@
  *
  ***********************************************************************/
 
-#ifndef NODE_HPP
-#define NODE_HPP
+#ifndef BASENODE_HPP
+#define BASENODE_HPP
 
 #include "deps.hpp"
 #include "vulkan_deps.hpp"

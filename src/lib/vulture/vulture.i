@@ -2,7 +2,7 @@
  %{
  /*  Includes the header in the wrapper code */
  #include "window.hpp"
- #include "qvulkanwindow.hpp"
+ //#include "qvulkanwindow.hpp"
  %}
  
  /*  Parse the header file to generate wrappers */
@@ -22,10 +22,11 @@
 
  };
 
+/*
 class QVulkanView {
     public:
         QVulkanView();
         ~QVulkanView();
 };
-
+*/
 

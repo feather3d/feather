@@ -360,13 +360,13 @@ namespace feather
 
     struct FNode
     {
-        FNode(node::Type t=node::Empty) : type(t) {};
+        FNode(feather::node::Type t=feather::node::Empty) : type(t) {};
         int uid; // unique id number
         int node; // node type enum
         field::Fields fields; // this holds the field data
         draw::DrawItems items; // holds descriptions of how to draw the node
         std::string name;
-        node::Type type; // this is the node group type
+        feather::node::Type type; // this is the node group type
         int layer; // what layer is the node stored in
         //DataObject* parent; // ??still used??
         //FAttributeArray* attrs; // ??still used??

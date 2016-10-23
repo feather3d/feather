@@ -3004,11 +3004,10 @@ SWIG_Python_NonDynamicSetAttr(PyObject *obj, PyObject *name, PyObject *value) {
 
 /* -------- TYPES TABLE (BEGIN) -------- */
 
-#define SWIGTYPE_p_QVulkanView swig_types[0]
-#define SWIGTYPE_p_char swig_types[1]
-#define SWIGTYPE_p_feather__vulkan__Window swig_types[2]
-static swig_type_info *swig_types[4];
-static swig_module_info swig_module = {swig_types, 3, 0, 0, 0, 0};
+#define SWIGTYPE_p_char swig_types[0]
+#define SWIGTYPE_p_feather__vulkan__Window swig_types[1]
+static swig_type_info *swig_types[3];
+static swig_module_info swig_module = {swig_types, 2, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -3115,7 +3114,7 @@ namespace swig {
 
  /*  Includes the header in the wrapper code */
  #include "window.hpp"
- #include "qvulkanwindow.hpp"
+ //#include "qvulkanwindow.hpp"
  
 #ifdef __cplusplus
 extern "C" {
@@ -3161,77 +3160,29 @@ SWIGINTERN PyObject *Window_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObjec
   return SWIG_Py_Void();
 }
 
-SWIGINTERN PyObject *_wrap_new_QVulkanView(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  QVulkanView *result = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)":new_QVulkanView")) SWIG_fail;
-  result = (QVulkanView *)new QVulkanView();
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_QVulkanView, SWIG_POINTER_NEW |  0 );
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_delete_QVulkanView(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  QVulkanView *arg1 = (QVulkanView *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject * obj0 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"O:delete_QVulkanView",&obj0)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_QVulkanView, SWIG_POINTER_DISOWN |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_QVulkanView" "', argument " "1"" of type '" "QVulkanView *""'"); 
-  }
-  arg1 = reinterpret_cast< QVulkanView * >(argp1);
-  delete arg1;
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *QVulkanView_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *obj;
-  if (!PyArg_ParseTuple(args,(char*)"O:swigregister", &obj)) return NULL;
-  SWIG_TypeNewClientData(SWIGTYPE_p_QVulkanView, SWIG_NewClientData(obj));
-  return SWIG_Py_Void();
-}
-
 static PyMethodDef SwigMethods[] = {
 	 { (char *)"SWIG_PyInstanceMethod_New", (PyCFunction)SWIG_PyInstanceMethod_New, METH_O, NULL},
 	 { (char *)"new_Window", _wrap_new_Window, METH_VARARGS, NULL},
 	 { (char *)"delete_Window", _wrap_delete_Window, METH_VARARGS, NULL},
 	 { (char *)"Window_swigregister", Window_swigregister, METH_VARARGS, NULL},
-	 { (char *)"new_QVulkanView", _wrap_new_QVulkanView, METH_VARARGS, NULL},
-	 { (char *)"delete_QVulkanView", _wrap_delete_QVulkanView, METH_VARARGS, NULL},
-	 { (char *)"QVulkanView_swigregister", QVulkanView_swigregister, METH_VARARGS, NULL},
 	 { NULL, NULL, 0, NULL }
 };
 
 
 /* -------- TYPE CONVERSION AND EQUIVALENCE RULES (BEGIN) -------- */
 
-static swig_type_info _swigt__p_QVulkanView = {"_p_QVulkanView", "QVulkanView *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_char = {"_p_char", "char *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_feather__vulkan__Window = {"_p_feather__vulkan__Window", "feather::vulkan::Window *", 0, 0, (void*)0, 0};
 
 static swig_type_info *swig_type_initial[] = {
-  &_swigt__p_QVulkanView,
   &_swigt__p_char,
   &_swigt__p_feather__vulkan__Window,
 };
 
-static swig_cast_info _swigc__p_QVulkanView[] = {  {&_swigt__p_QVulkanView, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_char[] = {  {&_swigt__p_char, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_feather__vulkan__Window[] = {  {&_swigt__p_feather__vulkan__Window, 0, 0, 0},{0, 0, 0, 0}};
 
 static swig_cast_info *swig_cast_initial[] = {
-  _swigc__p_QVulkanView,
   _swigc__p_char,
   _swigc__p_feather__vulkan__Window,
 };

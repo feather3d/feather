@@ -24,12 +24,21 @@
 #include "window.hpp"
 #include "debug.hpp"
 
+// feather
+#include "plugin.hpp"
+#include "scenegraph.hpp"
+//#include "pluginmanager.hpp"
+#include "parameter.hpp"
+#include "field.hpp"
+
 // KEYCODES
 #define KEY_c 0x36
 #define KEY_space 0x41
 
+using namespace feather;
 using namespace feather::vulkan;
 
+//static PluginManager plugins;
 
 struct uniformData {
     VkBuffer buffer;
@@ -38,9 +47,10 @@ struct uniformData {
 } m_uniformDataVS, m_uniformDataGS;
 
 
-Window::Window(xcb_window_t window, xcb_connection_t* connection, std::string _title, unsigned int _width, unsigned int _height, float _zoom, bool _validation) :
-m_window(window),
-m_pConnection(connection),
+Window::Window(std::string _title, unsigned int _width, unsigned int _height, float _zoom, bool _validation) :
+//Window::Window(xcb_window_t window, xcb_connection_t* connection, std::string _title, unsigned int _width, unsigned int _height, float _zoom, bool _validation) :
+//m_window(window),
+//m_pConnection(connection),
 m_title(_title),
 m_width(_width),
 m_height(_height),
@@ -59,13 +69,62 @@ m_colorFormat(VK_FORMAT_R8G8B8A8_UNORM),
 //m_colorFormat(VK_FORMAT_R32G32B32A32_SFLOAT),
 m_defaultClearColor({ { 0.325f, 0.325f, 0.325f, 1.0f } })
 {
+    // feather
+    // load plugins
+    scenegraph::load_plugins();
+    //plugins.load_plugins();
+
+
+    // setup
+    cstate.sgState.minUid=0;
+    cstate.sgState.maxUid=0;
+
+    status p;
+
+    // nodes
+    int root = plugin::add_node(1,"root",p);
+    int time = plugin::add_node(4,"time",p);
+    int camera = plugin::add_node(2,"camera",p);
+
+    // connections
+    plugin::connect(root,202,time,201);
+    plugin::connect(root,202,camera,201);
+
+    // load the mesh
+    feather::parameter::ParameterList params;
+    params.addBoolParameter("selection",false);
+    params.addStringParameter("filename","/home/richard/feather3d/tests/obj/subdiv_benchmark.obj");
+    plugins.run_command("import_obj",params); 
+
+    // add subdiv
+    int subdiv = plugin::add_node(323,"subdiv",p);
+
+    // subdiv connections
+    plugin::connect(root,202,subdiv,201);
+    plugin::connect(subdiv,5,4,1);
+    plugin::connect(3,2,subdiv,1);
+
+    // get the mesh data
+    typedef field::Field<FInt>* IntField;
+    typedef field::Field<FMesh>* MeshField;
+    IntField level = static_cast<IntField>(plugin::get_node_field_base(subdiv,2));
+    MeshField mesh = static_cast<MeshField>(plugin::get_node_field_base(4,1));
+
+    level->value = 3;
+
+    plugin::update();
+    scenegraph::nodes_updated();
+
+    std::cout << "set level to " << level->value << std::endl;
+    std::cout << "mesh v count " << mesh->value.v.size() << std::endl;
+
     // set the view mode
     m_mode = POINT | WIREFRAME | SHADED;
  
     // add the nodes
     m_aNodes.push_back(new Axis(0));
     m_aNodes.push_back(new Grid(1));
-    m_aNodes.push_back(new Mesh(2));
+    m_aNodes.push_back(new Mesh(2,&mesh->value));
     m_aNodes.push_back(new PointLight(3));
 
     // setup    
@@ -149,7 +208,7 @@ void Window::initConnection()
     int scr;
 
     // get connection
-    //m_pConnection = xcb_connect(NULL, &scr);
+    m_pConnection = xcb_connect(NULL, &scr);
     if (m_pConnection == NULL) {
         printf("Could not find a compatible Vulkan ICD!\n");
         fflush(stdout);
@@ -264,7 +323,7 @@ xcb_window_t Window::setupWindow()
 {
     uint32_t value_mask, value_list[32];
 
-    //m_window = xcb_generate_id(m_pConnection);
+    m_window = xcb_generate_id(m_pConnection);
 
     value_mask = XCB_CW_BACK_PIXEL | XCB_CW_EVENT_MASK;
     value_list[0] = m_pScreen->black_pixel;

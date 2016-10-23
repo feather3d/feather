@@ -25,7 +25,7 @@
 
 using namespace feather::vulkan;
 
-Mesh::Mesh(uint32_t _id) : Node(Node::Mesh,_id)
+Mesh::Mesh(uint32_t _id,FMesh* mesh) : m_pMesh(mesh), Node(Node::Mesh,_id)
 {
 
 }
@@ -61,6 +61,8 @@ void Mesh::build()
     // if the mouse is over a face, all the numbers are valid. [5,6,7,120]
     // These values are set in the geometry shader and will pass on if the object is selected to the fragment shader.
 
+    // POINTS
+    /*
     // front
     m_vertexBuffer.push_back({{1.0f,2.0f,0.0f},{0.0f,0.0f,1.0f},{0.0f,0.0f},{1.0f,1.0f,1.0f},{1,0,0,m_id}});
     m_vertexBuffer.push_back({{-1.0f,2.0f,0.0f},{0.0f,0.0f,1.0f},{0.0f,0.0f},{1.0f,1.0f,1.0f},{2,0,0,m_id}});
@@ -72,11 +74,14 @@ void Mesh::build()
     m_vertexBuffer.push_back({{-1.0f,2.0f,-2.0f},{0.0f,0.0f,-1.0f},{0.0f,0.0f},{1.0f,1.0f,1.0f},{6,0,0,m_id}});
     m_vertexBuffer.push_back({{-1.0f,0.0f,-2.0f},{0.0f,0.0f,-1.0f},{0.0f,0.0f},{1.0f,1.0f,1.0f},{7,0,0,m_id}});
     m_vertexBuffer.push_back({{1.0f,0.0f,-2.0f},{0.0f,0.0f,-1.0f},{0.0f,0.0f},{1.0f,1.0f,1.0f},{8,0,0,m_id}});
-
+    */
 
     // We can get the face id by using the returned point value matched up with the index value.
     // The mouse will return the point value of the first index in it's list.
     // As long as we make sure that none of the 
+
+    // FACE INDICS
+    /*
     m_indexBuffer = {
         // front face
         //{0},{1},{2},
@@ -97,15 +102,21 @@ void Mesh::build()
         {6},{7},{3},
         {6},{3},{2}
     };
+    */
 
     // You need to added a selected face at the beginning
     // of else the selected face will appear transparent
+    // SHOULD WORK BUT CURRENTLY NOT USING
+    /*
     m_faceSelectBuffer = {
         // front face
         {0},{1},{2},
         {0},{2},{3}
     };
+    */
 
+    // EDGES
+    /*
     m_edgeBuffer = {
         // front edges 
         {0},{1},
@@ -124,7 +135,10 @@ void Mesh::build()
         {1},{5},
         {2},{6}
     };
+    */
 
+    // FACE IDS
+    /*
     m_faceIds = {
         // front face
         {0},{1},{2},{1},
@@ -145,8 +159,130 @@ void Mesh::build()
         {6},{7},{3},{6},
         {6},{3},{2},{6}
     };
+    */
+
+    // NEW CODE
+
+    /*
+    // POINTS
+    int i = 0;
+    for ( auto v : m_pMesh->v ) {
+        //m_vertexBuffer.push_back({{1.0f,2.0f,0.0f},{0.0f,0.0f,1.0f},{0.0f,0.0f},{1.0f,1.0f,1.0f},{1,0,0,m_id}});
+        m_vertexBuffer.push_back({{v.x,v.y,v.z},{m_pMesh->vn[i].x,m_pMesh->vn[i].y,m_pMesh->vn[i].z},{0.0f,0.0f},{1.0f,1.0f,1.0f},{1,0,0,m_id}});
+        i++;
+    }
+
+    // Trianglate and make Face Indics
+    int i = 0;
+    for ( auto face : m_pMesh->f ) {
+
+    }
+    */
+
+    //std::for_each(m_pMesh->f.begin(), m_pMesh->f.end(), [this,&vertexBuffer,&indexBuffer,&mesh,&id](FFace _face){
+             
+    // THIS WAS THE ORIGINAL SHAPE BUILD METHOD
+    /*
+    int id=0;
+    int vcount=0;
+
+    std::for_each(m_pMesh->f.begin(), m_pMesh->f.end(), [this,&vcount,&id](FFace _face){
+             
+            uint startid = vcount;
+            uint stepid = startid;
+            // Now we need to layout the index's
+            while(id+2 <= _face.size()) {
+                m_indexBuffer.push_back(stepid);
+                m_indexBuffer.push_back(stepid+1);
+                if(id+2 < _face.size()) {
+                    m_indexBuffer.push_back(stepid+2); 
+                } else {
+                    m_indexBuffer.push_back(startid); 
+                }
+                id+=2;
+                stepid+=2;
+            }
+
+            // Load up each point of the vertex
+            for(auto fp : _face){
+                m_vertexBuffer.push_back({
+                // V
+                { m_pMesh->v.at(fp.v).x, m_pMesh->v.at(fp.v).y, m_pMesh->v.at(fp.v).z },
+                // VN 
+                { m_pMesh->vn.at(fp.vn).x, m_pMesh->vn.at(fp.vn).y, m_pMesh->vn.at(fp.vn).z },
+                // UV
+                {0.0f,0.0f},
+                // COLOR
+                {1.0f,1.0f,1.0f},
+                // ID
+                {1,0,0,m_id}
+                });
+
+                vcount++; 
+            }
+            id=0;
+    });
+    */
+
+    // THIS IS THE NEW METHOD
+
+    int i=0;
+
+    for ( auto v : m_pMesh->v ) {
+        m_vertexBuffer.push_back({
+                // V
+                { v.x, v.y, v.z },
+                // VN 
+                { m_pMesh->vn.at(i).x, m_pMesh->vn.at(i).y, m_pMesh->vn.at(i).z },
+                // UV
+                {0.0f,0.0f},
+                // COLOR
+                {1.0f,1.0f,1.0f},
+                // ID
+                {1,0,0,m_id}
+                });
+        i++;
+
+    }
+
+    std::for_each(m_pMesh->f.begin(), m_pMesh->f.end(), [this](FFace _face){
+            
+            if(_face.size()==3){
+                m_indexBuffer.push_back(_face.at(0).v);
+                m_indexBuffer.push_back(_face.at(1).v);
+                m_indexBuffer.push_back(_face.at(2).v);
+            }
+            else if(_face.size()==4){
+                m_indexBuffer.push_back(_face.at(0).v);
+                m_indexBuffer.push_back(_face.at(1).v);
+                m_indexBuffer.push_back(_face.at(2).v);
+                m_indexBuffer.push_back(_face.at(0).v);
+                m_indexBuffer.push_back(_face.at(2).v);
+                m_indexBuffer.push_back(_face.at(3).v);
+            }
 
 
+            /*  
+            uint startid = vcount;
+            uint stepid = startid;
+            // Now we need to layout the index's
+            while(id+2 <= _face.size()) {
+                m_indexBuffer.push_back(stepid);
+                m_indexBuffer.push_back(stepid+1);
+                if(id+2 < _face.size()) {
+                    m_indexBuffer.push_back(stepid+2); 
+                } else {
+                    m_indexBuffer.push_back(startid); 
+                }
+                id+=2;
+                stepid+=2;
+            }
+
+            id=0;
+            */
+    });
+ 
+    std::cout << "final vcount for vulkan vertex buffer is " << m_vertexBuffer.size() << std::endl;
 }
 
 void Mesh::prepareVertices(VkDevice device, VkPhysicalDeviceMemoryProperties deviceMemoryProperties)

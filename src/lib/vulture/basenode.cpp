@@ -1,6 +1,6 @@
 /***********************************************************************
  *
- * Filename: node.cpp
+ * Filename: basenode.cpp
  *
  * Description: vulkan base node.
  *
@@ -21,7 +21,7 @@
  *
  ***********************************************************************/
 
-#include "node.hpp"
+#include "basenode.hpp"
 
 using namespace feather::vulkan;
 

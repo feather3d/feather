@@ -39,6 +39,13 @@
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 
+// feather
+#include "types.hpp"
+#include "status.hpp"
+
+//#include "parameter.hpp"
+//#include "field.hpp"
+
 namespace feather
 {
 
@@ -103,14 +110,15 @@ namespace feather
             public:
                 enum Mode { POINT=0x0001, WIREFRAME=0x0002, SHADED=0x0004, POINT_NORMALS=0x0008, FACE_NORMALS=0x0010 };
  
-                Window(xcb_window_t window=0, xcb_connection_t* connection=nullptr, std::string _title="", unsigned int _width=1280, unsigned int _height=720, float _zoom=-2.0, bool _validation=false);
+                //Window(xcb_window_t window=0, xcb_connection_t* connection=nullptr, std::string _title="", unsigned int _width=1280, unsigned int _height=720, float _zoom=-2.0, bool _validation=false);
+                Window(std::string _title="", unsigned int _width=1280, unsigned int _height=720, float _zoom=-2.0, bool _validation=false);
                 ~Window();
                 std::vector<unsigned int> cameras();
                 unsigned int current_camera();
                 void set_camera(unsigned int uid);
-                xcb_window_t window() { return m_window; };
-                VkInstance& instance() { return m_instance; };
-                VkSurfaceKHR& surface() { return m_swapChain.get_surface(); };
+                //xcb_window_t window() { return m_window; };
+                //VkInstance& instance() { return m_instance; };
+                //VkSurfaceKHR& surface() { return m_swapChain.get_surface(); };
 
             private:
                 std::string m_title;

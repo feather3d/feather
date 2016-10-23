@@ -76,7 +76,7 @@ void plugin::get_node_by_name(std::string name, unsigned int& uid)
     api::get_node_by_name(name,uid);
 }
 
-void plugin::get_nodes_by_type(node::Type type, std::vector<unsigned int>& uids)
+void plugin::get_nodes_by_type(feather::node::Type type, std::vector<unsigned int>& uids)
 {
     api::get_nodes_by_type(type,uids);
 }

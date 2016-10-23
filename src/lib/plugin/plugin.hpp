@@ -64,7 +64,7 @@ namespace feather
 
         // get all nodes of a certain type
         // types = node::Type (polygon, animation, etc)
-        void get_nodes_by_type(node::Type type, std::vector<unsigned int>& uids);
+        void get_nodes_by_type(feather::node::Type type, std::vector<unsigned int>& uids);
 
         // get all nodes of a certain id
         // id = the node's number in the type (polycube, polysphere, etc) 

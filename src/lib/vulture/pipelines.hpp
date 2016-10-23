@@ -26,7 +26,7 @@
 
 #include "deps.hpp"
 #include "vulkan_deps.hpp"
-#include "node.hpp"
+#include "basenode.hpp"
 #include "axis.hpp"
 #include "grid.hpp"
 #include "mesh.hpp"
