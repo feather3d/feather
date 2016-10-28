@@ -278,11 +278,11 @@ MeshGeometry::~MeshGeometry()
     m_pVAttribute=0;
     delete m_pVnAttribute;
     m_pVnAttribute=0;
-    delete m_pVnAttribute;
     /*
     m_pColorAttribute=0;
     delete m_pVnAttribute;
     */
+    delete m_pIndexAttribute;
     m_pIndexAttribute=0;
 }
 
@@ -344,7 +344,10 @@ void MeshGeometry::build()
 
     int i=0;
 
+    //std::cout << "building mesh uid:" << uid << " fid:" << fid << std::endl;
+    //std::cout << "\tv size:" << mesh.v.size() << " vn size:" << mesh.vn.size() << std::endl;
     for ( auto v : mesh.v ) {
+        //std::cout << "add point v:" << v.x << "," << v.y << "," << v.z << " vn:" << mesh.vn.at(i).x << "," << mesh.vn.at(i).y << "," << mesh.vn.at(i).z << std::endl;
         // V
         vertexBuffer.push_back(v.x);
         vertexBuffer.push_back(v.y);
@@ -353,6 +356,9 @@ void MeshGeometry::build()
         vertexBuffer.push_back(mesh.vn.at(i).x);
         vertexBuffer.push_back(mesh.vn.at(i).y);
         vertexBuffer.push_back(mesh.vn.at(i).z);
+        //vertexBuffer.push_back(0.0f);
+        //vertexBuffer.push_back(0.0f);
+        //vertexBuffer.push_back(0.0f);
         // COLOR
         i++;
     }
@@ -361,11 +367,26 @@ void MeshGeometry::build()
  
     std::for_each(mesh.f.begin(), mesh.f.end(), [this,&mesh,&indexBuffer](feather::FFace _face){
             if(_face.size()==3){
+                /*
+                std::cout << "3 point face - v1:" << _face.at(0).v
+                    << " v2:" << _face.at(1).v
+                    << " v3:" << _face.at(2).v
+                    << std::endl
+                    ;
+                */
                 indexBuffer.push_back(_face.at(0).v);
                 indexBuffer.push_back(_face.at(1).v);
                 indexBuffer.push_back(_face.at(2).v);
             }
             else if(_face.size()==4){
+                /* 
+                std::cout << "4 point face - v1:" << _face.at(0).v
+                    << " v2:" << _face.at(1).v
+                    << " v3:" << _face.at(2).v
+                    << " v4:" << _face.at(3).v
+                    << std::endl;
+                    ;
+                */
                 indexBuffer.push_back(_face.at(0).v);
                 indexBuffer.push_back(_face.at(1).v);
                 indexBuffer.push_back(_face.at(2).v);
@@ -391,6 +412,7 @@ void MeshGeometry::build()
     memcpy(meshIBytes.data(), indexBuffer.data(), isize);
     m_pIndexBuffer->setData(meshIBytes);
 
+    std::cout << "finished building mesh\n";
 }
 
 void MeshGeometry::updateBuffers()
