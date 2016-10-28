@@ -44,6 +44,7 @@ class DrawItem : public Qt3DCore::QEntity
         ~DrawItem();
         inline void setType(Type t) { m_type=t; };
         inline Type type() { return m_type; };
+        virtual void updateTransform(){};
         virtual void updateItem(){};
         inline bool update() { return m_update; };
         inline void setUpdate(bool state) { m_update=state; };
@@ -185,6 +186,7 @@ class ShadedMesh : public DrawItem
     public:
         ShadedMesh(Qt3DRender::QLayer* layer, feather::draw::Item* _item, Qt3DCore::QNode *parent=0);
         ~ShadedMesh();
+        void updateTransform();
         void updateItem();
         void test();
 

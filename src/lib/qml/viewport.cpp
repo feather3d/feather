@@ -616,6 +616,14 @@ ShadedMesh::ShadedMesh(Qt3DRender::QLayer* layer, feather::draw::Item* _item, QN
     // GONE
     //addComponent(static_cast<Viewport2*>(parent)->frameGraph());
 
+    // Transform
+    //m_pTransform->setTranslation(QVector3D(tx,ty,tz));
+    //m_pTransform->setRotationX(rx);
+    //m_pTransform->setRotationY(ry);
+    //m_pTransform->setRotationZ(rz);
+    //m_pTransform->setScale3D(QVector3D(sx,sy,sz));
+
+
     m_pObjectPicker->setHoverEnabled(true);
     connect(m_pObjectPicker,SIGNAL(clicked(Qt3DRender::QPickEvent*)),this,SLOT(clicked(Qt3DRender::QPickEvent*)));
     connect(m_pObjectPicker,SIGNAL(pressed(Qt3DRender::QPickEvent*)),this,SLOT(pressed(Qt3DRender::QPickEvent*)));
@@ -647,6 +655,41 @@ ShadedMesh::~ShadedMesh()
     m_pMaterial=0;
     delete m_pTransform;
     m_pTransform=0;
+}
+
+void ShadedMesh::updateTransform()
+{
+    // currently only using the local matrix
+    feather::FMatrix4x4* matrix = &static_cast<feather::field::Field<feather::FMatrix4x4>*>(feather::plugin::get_field_base(item()->uid,item()->nid,212))->value;
+
+    std::cout << "SETTING MESH MATRIX TO:\n"
+        << matrix->value[0][0] << " " << matrix->value[0][1] << " " << matrix->value[0][2] << " " << matrix->value[0][3] << std::endl
+        << matrix->value[1][0] << " " << matrix->value[1][1] << " " << matrix->value[1][2] << " " << matrix->value[1][3] << std::endl
+        << matrix->value[2][0] << " " << matrix->value[2][1] << " " << matrix->value[2][2] << " " << matrix->value[2][3] << std::endl
+        << matrix->value[3][0] << " " << matrix->value[3][1] << " " << matrix->value[3][2] << " " << matrix->value[3][3] << std::endl
+        ; 
+
+    m_pTransform->setMatrix(
+        QMatrix4x4 (
+             matrix->value[0][0],
+             matrix->value[0][1],
+             matrix->value[0][2],
+             matrix->value[0][3],
+             matrix->value[1][0],
+             matrix->value[1][1],
+             matrix->value[1][2],
+             matrix->value[1][3],
+             matrix->value[2][0],
+             matrix->value[2][1],
+             matrix->value[2][2],
+             matrix->value[2][3],
+             matrix->value[3][0],
+             matrix->value[3][1],
+             matrix->value[3][2],
+             matrix->value[3][3]
+            )
+        );
+    std::cout << "MESH SET\n";
 }
 
 void ShadedMesh::updateItem()
@@ -2211,10 +2254,26 @@ void Viewport::updateScene()
     //}
 
     for(auto item : m_apDrawItems) {
+        unsigned int fid = static_cast<feather::draw::ShadedMesh*>(item->item())->fid;
+        bool updateItem = feather::plugin::field_updated(item->item()->uid,fid);
+        bool updateTransform = false;
+
+        if(feather::plugin::field_updated(item->item()->uid,212) ||
+                feather::plugin::field_updated(item->item()->uid,213)
+          ){
+            updateTransform = true;
+        } 
+
         switch(item->item()->type){
             case feather::draw::Item::ShadedMesh:
                 std::cout << "updating ShadedMesh draw item\n";
-                static_cast<ShadedMesh*>(item)->updateItem();
+                if(updateItem)
+                {
+                    std::cout << "updating ShadedMesh draw item\n";
+                    static_cast<ShadedMesh*>(item)->updateItem();
+                }
+                if(updateTransform)
+                    static_cast<ShadedMesh*>(item)->updateTransform();
                 break;
             case feather::draw::Item::ComponentMesh:
                 std::cout << "updating ComponentMesh draw item\n";
@@ -2404,17 +2463,24 @@ void Viewport::addItems(unsigned int uid)
 void Viewport::updateItems(unsigned int uid)
 {
     for(auto item : m_apDrawItems) {
+        unsigned int fid = static_cast<feather::draw::ShadedMesh*>(item->item())->fid;
+        bool updateItem = feather::plugin::field_updated(item->item()->uid,fid);
+        bool updateTransform = false;
+        if(feather::plugin::field_updated(item->item()->uid,212) ||
+                feather::plugin::field_updated(item->item()->uid,213)
+          ){
+            updateTransform = true;
+        } 
         if(item->item()->uid == uid){
             switch(item->item()->type){
                 case feather::draw::Item::ShadedMesh:
-                    if (
-                            feather::plugin::get_field_base(item->uid(),static_cast<feather::draw::ShadedMesh*>(item->item())->fid)->update ||
-                            item->update()
-                      )
+                    if(updateItem)
                     {
                         std::cout << "updating ShadedMesh draw item\n";
                         static_cast<ShadedMesh*>(item)->updateItem();
                     }
+                    if(updateTransform)
+                        static_cast<ShadedMesh*>(item)->updateTransform();
                     break;
                 case feather::draw::Item::ComponentMesh:
                     if (

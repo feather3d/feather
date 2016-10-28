@@ -72,9 +72,36 @@ namespace feather
     static FSceneGraph sg;
     static PluginManager plugins;
     static std::vector<FNodeDescriptor> node_selection;
+    static std::vector<unsigned int> call_stack; // this is used during sg updates and represents the order of node updates
 
     namespace scenegraph
     {
+
+        // UPDATE QUEUE FUNCTIONS
+
+        void clear_update_queue()
+        {
+            cstate.update_queue.clear();
+        } 
+
+        bool field_updated(unsigned int uid, unsigned int fid)
+        {
+            for(auto queueinfo : cstate.update_queue){
+                if(queueinfo.uid == uid && queueinfo.fid == fid)
+                    return true;
+            }
+            return false; 
+        }
+
+        unsigned int update_queue_count()
+        {
+            return cstate.update_queue.size();
+        }
+
+        void add_node_to_update_queue(unsigned int uid, unsigned int fid)
+        {
+            cstate.update_queue.push_back(state::UpdateQueueInfo(uid,fid));
+        }
 
         /* clear the scenegraph */
         void clear() {
@@ -657,9 +684,6 @@ class node_visitor : public boost::default_bfs_visitor
             void discover_vertex(Vertex u, const Graph & g) const
             {
                 std::cout << "discover vertex(uid):" << u << " nid:" << sg[u].node << std::endl;
-                status p = plugins.update_properties(sg[u].node,sg[u].fields);
-                cstate.add_uid_to_update(u);
-                p = plugins.do_it(sg[u].node,sg[u].fields);
             }
 
         // Finish Vertex
@@ -686,6 +710,11 @@ class node_visitor : public boost::default_bfs_visitor
                     << " uid2:" << sg[u].n2
                     << " fid2:" << sg[u].f2
                     << std::endl;
+
+                // remove all instances of the uid from the stack
+                // and then push into it
+                call_stack.erase(std::remove(call_stack.begin(),call_stack.end(),sg[u].n2),call_stack.end());
+                call_stack.push_back(sg[u].n2);
             }
 
 
@@ -735,8 +764,39 @@ namespace scenegraph
  
         node_visitor vis;
         //node_d_visitor vis;
+
         std::cout << "\n*****GRAPH UPDATE*****\n";
+
+        // clear out the update queue first
+        clear_update_queue();
+        // clear the call stack
+        call_stack.clear();
+
+        // walk the scenegraph
         breadth_first_search(sg, vertex(0, sg), visitor(vis));
+
+        // update the nodes based on the uid order in the call_stack
+        for(auto uid : call_stack) {
+                status p = plugins.update_properties(sg[uid].node,sg[uid].fields);
+                cstate.add_uid_to_update(uid);
+                p = plugins.do_it(sg[uid].node,sg[uid].fields);
+        }
+
+        // add the all updated fields to the update queue and clear out
+        // the field update flag
+        std::vector<unsigned int> uids;
+        get_nodes(uids);
+        for(auto uid : uids) {
+            std::cout << "update queue for uid:" << uid << std::endl;
+            for(auto field : sg[uid].fields) {
+                if(field->update){
+                    add_node_to_update_queue(uid,field->id);
+                    field->update=false;
+                    std::cout << "uid:" << uid << " fid:" << field->id << " has been added to update queue\n";
+                }
+            }
+        }
+
         //FNodeDescriptor s = vertex(0, scenegraph);
            
            //dijkstra_shortest_paths(scenegraph, s,
@@ -909,7 +969,7 @@ namespace scenegraph
     FTime get_time() { return time; };
  
     void set_time(FTime t) { time=t; };
- 
+
     } // namespace scenegraph
 
     #define GET_NODE_DATA(nodedata)\

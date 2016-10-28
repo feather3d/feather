@@ -250,3 +250,9 @@ status api::connections(unsigned int uid, unsigned int fid, std::vector<field::C
 
     return status();
 }
+
+bool api::field_updated(unsigned int uid, unsigned int fid)
+{
+    return scenegraph::field_updated(uid,fid);
+}
+

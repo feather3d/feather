@@ -67,7 +67,7 @@ namespace feather
 
 } // namespace feather
 
-
+// TODO - once things get stable, add a check for this so that it's not updating every scenegraph update
 #define DO_IT(__node_enum)\
     template <> status node_update_properties<__node_enum>(field::Fields& fields)\
     {\

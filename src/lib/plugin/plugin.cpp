@@ -229,3 +229,8 @@ status plugin::connections(unsigned int uid, unsigned int fid, std::vector<field
 {
     return api::connections(uid,fid,connections);
 }
+
+bool plugin::field_updated(unsigned int uid, unsigned int fid)
+{
+    return api::field_updated(uid,fid);
+}

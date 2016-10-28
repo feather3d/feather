@@ -160,6 +160,10 @@ namespace feather
 
         status connections(unsigned int uid, unsigned int fid, std::vector<field::Connection> &connections);
 
+        // UPDATE QUEUE
+
+        bool field_updated(unsigned int uid, unsigned int fid);
+
     }
 
 }

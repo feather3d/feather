@@ -34,6 +34,12 @@ namespace feather
     {
 
         enum SGMode { None, DoIt, DrawGL, DrawSelection };
+
+        struct UpdateQueueInfo {
+            UpdateQueueInfo(unsigned int _uid, unsigned int _fid) : uid(_uid), fid(_fid) {};
+            unsigned int uid;
+            unsigned int fid;
+        };
         
         struct FSgState {
             int minUid;
@@ -47,6 +53,12 @@ namespace feather
             std::vector<unsigned int> uid_update;
             void clear_uid_update() { uid_update.clear(); };
             void add_uid_to_update(unsigned int uid) { uid_update.push_back(uid); };
+            /* The update queue is a way for interfaces to know what nodes were
+             * updated during a scenegraph update.
+             * This is needed since the scenegraph clears the field's update attribute after
+             * the graph is finished updating.
+             */
+            std::vector<UpdateQueueInfo> update_queue;
         };
 
     } // namespace state
