@@ -297,8 +297,8 @@ void MeshGeometry::build()
     // If the model has more vertex then what the index buffer can store, holes will show up in the model.
     // uint has a limit of 4.3G which should be enough for what I'm doing.
 
-    // OLD METHOD
-    /*
+    // METHOD #1
+    // This method produces heavy data but can display both hard and smooth edges correctly
     std::vector<uint> indexBuffer;
     icount = 0;
     vcount = 0;
@@ -338,10 +338,10 @@ void MeshGeometry::build()
             }
             id=0;
     });
-    */
 
-    // NEW METHOD
-
+    // METHOD #2
+    // This method is lighter but can not be used for vertex with more than one normal, like hard edges
+    /* 
     int i=0;
 
     //std::cout << "building mesh uid:" << uid << " fid:" << fid << std::endl;
@@ -367,26 +367,11 @@ void MeshGeometry::build()
  
     std::for_each(mesh.f.begin(), mesh.f.end(), [this,&mesh,&indexBuffer](feather::FFace _face){
             if(_face.size()==3){
-                /*
-                std::cout << "3 point face - v1:" << _face.at(0).v
-                    << " v2:" << _face.at(1).v
-                    << " v3:" << _face.at(2).v
-                    << std::endl
-                    ;
-                */
                 indexBuffer.push_back(_face.at(0).v);
                 indexBuffer.push_back(_face.at(1).v);
                 indexBuffer.push_back(_face.at(2).v);
             }
             else if(_face.size()==4){
-                /* 
-                std::cout << "4 point face - v1:" << _face.at(0).v
-                    << " v2:" << _face.at(1).v
-                    << " v3:" << _face.at(2).v
-                    << " v4:" << _face.at(3).v
-                    << std::endl;
-                    ;
-                */
                 indexBuffer.push_back(_face.at(0).v);
                 indexBuffer.push_back(_face.at(1).v);
                 indexBuffer.push_back(_face.at(2).v);
@@ -395,7 +380,7 @@ void MeshGeometry::build()
                 indexBuffer.push_back(_face.at(3).v);
             }
     });
-
+    */
 
     // ORIG STUFF
     const int vsize = vertexBuffer.size() * sizeof(float);
