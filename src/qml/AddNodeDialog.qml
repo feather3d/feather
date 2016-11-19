@@ -27,7 +27,7 @@ import feather.scenegraph 1.0
 import feather.node 1.0
 import QtQuick.Controls 1.4
 import QtQuick.Controls.Styles 1.4
-import "node_models"
+//import "node_models"
 
 Window {
     id: dialog
