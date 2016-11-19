@@ -31,7 +31,17 @@ void tools::build_matrix(float tx, float ty, float tz, float rx, float ry, float
     matrix.value[1][1] = sy;
     matrix.value[2][2] = sz;
     // rotation
-    // TODO
+    /*
+    matrix.value[0][0] = matrix.value[0][0] * std::cos(-ry) * std::cos(-rz);
+    matrix.value[0][1] = matrix.value[0][1] * std::cos(-ry) * -std::sin(-rz);
+    matrix.value[0][2] = matrix.value[0][2] * std::sin(-ry);
+    matrix.value[1][0] = matrix.value[1][0] * std::sin(-rz);
+    matrix.value[1][1] = matrix.value[1][1] * std::cos(-rx) * std::cos(-rz);
+    matrix.value[1][2] = matrix.value[1][2] * -std::sin(-rx);
+    matrix.value[2][0] = matrix.value[2][0] * -std::sin(-ry);
+    matrix.value[2][1] = matrix.value[2][1] * std::sin(-rx);
+    matrix.value[2][2] = matrix.value[2][2] * std::cos(-rx) * std::cos(-ry);
+    */
     // translation
     matrix.value[0][3] = tx;
     matrix.value[1][3] = ty;

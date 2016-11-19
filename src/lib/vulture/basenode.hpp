@@ -93,7 +93,6 @@ namespace feather
                 std::vector<uint32_t> m_faceSelectBuffer;
                 std::vector<uint32_t> m_edgeBuffer;
                 std::vector<uint32_t> m_faceIds; 
-                
          };
 
     } // namespace vulkan

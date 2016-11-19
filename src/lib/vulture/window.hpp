@@ -128,6 +128,7 @@ namespace feather
                 bool m_validation;
                 bool m_prepared;
                 bool m_quit;
+                bool m_updateRender;
                 feather::vulkan::tools::VulkanTextureLoader* m_pTextureLoader;
                 glm::vec3 m_rotation;
                 glm::vec2 m_mousePos;

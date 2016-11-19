@@ -10,7 +10,7 @@ FIND_PACKAGE(Boost COMPONENTS filesystem system REQUIRED)
 #FIND_PACKAGE(Qt5Core REQUIRED)
 
 SET(CMAKE_CXX_LINK_FLAGS "-lvulkan")
-SET(CMAKE_CXX_LINK_FLAGS "-lassimp")
+#SET(CMAKE_CXX_LINK_FLAGS "-lassimp")
 SET(CMAKE_CXX_LINK_FLAGS "-lxcb")
 
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
@@ -58,11 +58,11 @@ SET_SOURCE_FILES_PROPERTIES(${pyvulture_SRCS}
 )
 
 INCLUDE_DIRECTORIES(${feather_core_SOURCE_DIR}
-${feather_plugin_SOURCE_DIR}
-${PYTHON_INCLUDE_DIRS}
-#${Qt5Gui_INCLUDE_DIRS}
-#${Qt5Core_INCLUDE_DIRS}
-#${Qt5Widgets_INCLUDE_DIRS}
+ ${feather_plugin_SOURCE_DIR}
+ ${PYTHON_INCLUDE_DIRS}
+ #${Qt5Gui_INCLUDE_DIRS}
+ #${Qt5Core_INCLUDE_DIRS}
+ #${Qt5Widgets_INCLUDE_DIRS}
 )
  
 LINK_DIRECTORIES(${feather_core_BINARY_DIR}
@@ -70,7 +70,6 @@ LINK_DIRECTORIES(${feather_core_BINARY_DIR}
 )
 
 SET(pyvulture_LIBS
-    #${BOOST_LIBRARIES}
     ${Boost_FILESYSTEM_LIBRARY}
     ${Boost_SYSTEM_LIBRARY}
     #${Qt5Widgets_LIBRARIES}
@@ -84,7 +83,7 @@ SET(pyvulture_LIBS
 LINK_LIBRARIES(feather_core feather_plugin)
 
 ADD_LIBRARY(feather_vulture SHARED ${feather_vulture_SRCS})
-TARGET_LINK_LIBRARIES(feather_vulture "-lvulkan" ${PTHREAD} ${pyvulture_LIBS})
+TARGET_LINK_LIBRARIES(feather_vulture "-lvulkan" "-lboost_system" ${PTHREAD} ${pyvulture_LIBS})
 #TARGET_LINK_LIBRARIES(pyvulture "-lvulkan" ${PTHREAD} ${PYTHON_LIBRARIES} feather_vulture)
 
 

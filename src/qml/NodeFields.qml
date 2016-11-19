@@ -39,20 +39,22 @@ FieldModel {
         addFieldName("sx",0,209)
         addFieldName("sy",0,210)
         addFieldName("sz",0,211)
+        addFieldName("centerpoint",0,212)
  
         // out
         addFieldName("child",0,202)
-        addFieldName("local",0,212)
-        addFieldName("world",0,213)
-        addFieldName("tx",0,214)
-        addFieldName("ty",0,215)
-        addFieldName("tz",0,216)
-        addFieldName("rx",0,217)
-        addFieldName("ry",0,218)
-        addFieldName("rz",0,219)
-        addFieldName("sx",0,220)
-        addFieldName("sy",0,221)
-        addFieldName("sz",0,222)
+        addFieldName("local",0,213)
+        addFieldName("world",0,214)
+        addFieldName("rotation",0,215)
+        addFieldName("tx",0,216)
+        addFieldName("ty",0,217)
+        addFieldName("tz",0,218)
+        addFieldName("rx",0,219)
+        addFieldName("ry",0,220)
+        addFieldName("rz",0,221)
+        addFieldName("sx",0,222)
+        addFieldName("sy",0,223)
+        addFieldName("sz",0,224)
  
         // Empty
         // no fields

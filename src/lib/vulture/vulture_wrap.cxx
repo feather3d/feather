@@ -3114,6 +3114,8 @@ namespace swig {
 
  /*  Includes the header in the wrapper code */
  #include "window.hpp"
+ #include <boost/system/error_code.hpp>
+ #include <boost/filesystem.hpp>
  //#include "qvulkanwindow.hpp"
  
 #ifdef __cplusplus

@@ -197,7 +197,8 @@ class ShadedMesh : public DrawItem
 
     private:
         void build();
-        Qt3DCore::QTransform *m_pTransform;
+        Qt3DCore::QTransform *m_pLocalTransform;
+        Qt3DCore::QTransform *m_pWorldTransform;
         Qt3DExtras::QPhongMaterial *m_pMaterial;
         Qt3DRender::QGeometryRenderer *m_pMesh;
         Qt3DRender::QPointLight *m_pLight;

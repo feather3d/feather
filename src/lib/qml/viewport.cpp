@@ -105,17 +105,17 @@ void PerspCamera::updateItem()
 void PerspCamera::updateCameraPosition()
 {
     // translation
-    feather::FReal tx = static_cast<feather::field::Field<feather::FReal>*>(feather::plugin::get_field_base(m_item->uid,m_item->nid,214))->value;
-    feather::FReal ty = static_cast<feather::field::Field<feather::FReal>*>(feather::plugin::get_field_base(m_item->uid,m_item->nid,215))->value;
-    feather::FReal tz = static_cast<feather::field::Field<feather::FReal>*>(feather::plugin::get_field_base(m_item->uid,m_item->nid,216))->value;
+    feather::FReal tx = static_cast<feather::field::Field<feather::FReal>*>(feather::plugin::get_field_base(m_item->uid,m_item->nid,216))->value;
+    feather::FReal ty = static_cast<feather::field::Field<feather::FReal>*>(feather::plugin::get_field_base(m_item->uid,m_item->nid,217))->value;
+    feather::FReal tz = static_cast<feather::field::Field<feather::FReal>*>(feather::plugin::get_field_base(m_item->uid,m_item->nid,218))->value;
     // rotation 
-    feather::FReal rx = static_cast<feather::field::Field<feather::FReal>*>(feather::plugin::get_field_base(m_item->uid,m_item->nid,217))->value;
-    feather::FReal ry = static_cast<feather::field::Field<feather::FReal>*>(feather::plugin::get_field_base(m_item->uid,m_item->nid,218))->value;
-    feather::FReal rz = static_cast<feather::field::Field<feather::FReal>*>(feather::plugin::get_field_base(m_item->uid,m_item->nid,219))->value;
+    feather::FReal rx = static_cast<feather::field::Field<feather::FReal>*>(feather::plugin::get_field_base(m_item->uid,m_item->nid,219))->value;
+    feather::FReal ry = static_cast<feather::field::Field<feather::FReal>*>(feather::plugin::get_field_base(m_item->uid,m_item->nid,220))->value;
+    feather::FReal rz = static_cast<feather::field::Field<feather::FReal>*>(feather::plugin::get_field_base(m_item->uid,m_item->nid,221))->value;
     // scale 
-    feather::FReal sx = static_cast<feather::field::Field<feather::FReal>*>(feather::plugin::get_field_base(m_item->uid,m_item->nid,220))->value;
-    feather::FReal sy = static_cast<feather::field::Field<feather::FReal>*>(feather::plugin::get_field_base(m_item->uid,m_item->nid,221))->value;
-    feather::FReal sz = static_cast<feather::field::Field<feather::FReal>*>(feather::plugin::get_field_base(m_item->uid,m_item->nid,222))->value;
+    feather::FReal sx = static_cast<feather::field::Field<feather::FReal>*>(feather::plugin::get_field_base(m_item->uid,m_item->nid,222))->value;
+    feather::FReal sy = static_cast<feather::field::Field<feather::FReal>*>(feather::plugin::get_field_base(m_item->uid,m_item->nid,223))->value;
+    feather::FReal sz = static_cast<feather::field::Field<feather::FReal>*>(feather::plugin::get_field_base(m_item->uid,m_item->nid,224))->value;
 
     //m_pCamera->setPosition(QVector3D(tx,ty,tz));
 
@@ -589,7 +589,8 @@ void MeshEdgeGeometry::updateBuffers()
 
 ShadedMesh::ShadedMesh(Qt3DRender::QLayer* layer, feather::draw::Item* _item, QNode *parent)
     : DrawItem(_item,DrawItem::ShadedMesh,parent),
-    m_pTransform(new Qt3DCore::QTransform()),
+    m_pLocalTransform(new Qt3DCore::QTransform()),
+    m_pWorldTransform(new Qt3DCore::QTransform()),
     m_pMaterial(new Qt3DExtras::QPhongMaterial()),
     m_pMesh(new Qt3DRender::QGeometryRenderer()),
     m_pLight(new Qt3DRender::QPointLight()),
@@ -637,7 +638,8 @@ ShadedMesh::ShadedMesh(Qt3DRender::QLayer* layer, feather::draw::Item* _item, QN
     connect(m_pObjectPicker,SIGNAL(entered()),this,SLOT(entered()));
 
     addComponent(layer);
-    addComponent(m_pTransform);
+    //addComponent(m_pLocalTransform);
+    //addComponent(m_pWorldTransform);
     addComponent(m_pMaterial);
     addComponent(m_pMesh);
     addComponent(m_pObjectPicker);
@@ -660,40 +662,77 @@ ShadedMesh::~ShadedMesh()
     m_pMesh=0;
     delete m_pMaterial;
     m_pMaterial=0;
-    delete m_pTransform;
-    m_pTransform=0;
+    delete m_pLocalTransform;
+    m_pLocalTransform=0;
+    delete m_pWorldTransform;
+    m_pWorldTransform=0;
 }
 
 void ShadedMesh::updateTransform()
 {
-    // currently only using the local matrix
-    feather::FMatrix4x4* matrix = &static_cast<feather::field::Field<feather::FMatrix4x4>*>(feather::plugin::get_field_base(item()->uid,item()->nid,212))->value;
+    feather::FMatrix4x4* localmatrix = &static_cast<feather::field::Field<feather::FMatrix4x4>*>(feather::plugin::get_field_base(item()->uid,item()->nid,214))->value;
+    // get parent uid
+    /*
+    std::vector<unsigned int> uids;
+    feather::plugin::get_node_connected_uids(item()->uid,201,uids);
+    if(uids.size()){
+        feather::FMatrix4x4* worldmatrix = &static_cast<feather::field::Field<feather::FMatrix4x4>*>(feather::plugin::get_field_base(uids.at(0),214))->value;
 
-    std::cout << "SETTING MESH MATRIX TO:\n"
-        << matrix->value[0][0] << " " << matrix->value[0][1] << " " << matrix->value[0][2] << " " << matrix->value[0][3] << std::endl
-        << matrix->value[1][0] << " " << matrix->value[1][1] << " " << matrix->value[1][2] << " " << matrix->value[1][3] << std::endl
-        << matrix->value[2][0] << " " << matrix->value[2][1] << " " << matrix->value[2][2] << " " << matrix->value[2][3] << std::endl
-        << matrix->value[3][0] << " " << matrix->value[3][1] << " " << matrix->value[3][2] << " " << matrix->value[3][3] << std::endl
+        std::cout << "SETTING WORLD MESH MATRIX TO:\n"
+            << worldmatrix->value[0][0] << " " << worldmatrix->value[0][1] << " " << worldmatrix->value[0][2] << " " << worldmatrix->value[0][3] << std::endl
+            << worldmatrix->value[1][0] << " " << worldmatrix->value[1][1] << " " << worldmatrix->value[1][2] << " " << worldmatrix->value[1][3] << std::endl
+            << worldmatrix->value[2][0] << " " << worldmatrix->value[2][1] << " " << worldmatrix->value[2][2] << " " << worldmatrix->value[2][3] << std::endl
+            << worldmatrix->value[3][0] << " " << worldmatrix->value[3][1] << " " << worldmatrix->value[3][2] << " " << worldmatrix->value[3][3] << std::endl
+            ; 
+
+        m_pWorldTransform->setMatrix(
+                QMatrix4x4 (
+                    worldmatrix->value[0][0],
+                    worldmatrix->value[0][1],
+                    worldmatrix->value[0][2],
+                    worldmatrix->value[0][3],
+                    worldmatrix->value[1][0],
+                    worldmatrix->value[1][1],
+                    worldmatrix->value[1][2],
+                    worldmatrix->value[1][3],
+                    worldmatrix->value[2][0],
+                    worldmatrix->value[2][1],
+                    worldmatrix->value[2][2],
+                    worldmatrix->value[2][3],
+                    worldmatrix->value[3][0],
+                    worldmatrix->value[3][1],
+                    worldmatrix->value[3][2],
+                    worldmatrix->value[3][3]
+                    )
+                );
+    }
+    */
+
+    std::cout << "SETTING LOCAL MESH MATRIX TO:\n"
+        << localmatrix->value[0][0] << " " << localmatrix->value[0][1] << " " << localmatrix->value[0][2] << " " << localmatrix->value[0][3] << std::endl
+        << localmatrix->value[1][0] << " " << localmatrix->value[1][1] << " " << localmatrix->value[1][2] << " " << localmatrix->value[1][3] << std::endl
+        << localmatrix->value[2][0] << " " << localmatrix->value[2][1] << " " << localmatrix->value[2][2] << " " << localmatrix->value[2][3] << std::endl
+        << localmatrix->value[3][0] << " " << localmatrix->value[3][1] << " " << localmatrix->value[3][2] << " " << localmatrix->value[3][3] << std::endl
         ; 
 
-    m_pTransform->setMatrix(
+    m_pLocalTransform->setMatrix(
         QMatrix4x4 (
-             matrix->value[0][0],
-             matrix->value[0][1],
-             matrix->value[0][2],
-             matrix->value[0][3],
-             matrix->value[1][0],
-             matrix->value[1][1],
-             matrix->value[1][2],
-             matrix->value[1][3],
-             matrix->value[2][0],
-             matrix->value[2][1],
-             matrix->value[2][2],
-             matrix->value[2][3],
-             matrix->value[3][0],
-             matrix->value[3][1],
-             matrix->value[3][2],
-             matrix->value[3][3]
+             localmatrix->value[0][0],
+             localmatrix->value[0][1],
+             localmatrix->value[0][2],
+             localmatrix->value[0][3],
+             localmatrix->value[1][0],
+             localmatrix->value[1][1],
+             localmatrix->value[1][2],
+             localmatrix->value[1][3],
+             localmatrix->value[2][0],
+             localmatrix->value[2][1],
+             localmatrix->value[2][2],
+             localmatrix->value[2][3],
+             localmatrix->value[3][0],
+             localmatrix->value[3][1],
+             localmatrix->value[3][2],
+             localmatrix->value[3][3]
             )
         );
     std::cout << "MESH SET\n";
@@ -2263,13 +2302,15 @@ void Viewport::updateScene()
     for(auto item : m_apDrawItems) {
         unsigned int fid = static_cast<feather::draw::ShadedMesh*>(item->item())->fid;
         bool updateItem = feather::plugin::field_updated(item->item()->uid,fid);
+        /*
         bool updateTransform = false;
 
-        if(feather::plugin::field_updated(item->item()->uid,212) ||
-                feather::plugin::field_updated(item->item()->uid,213)
+        if(feather::plugin::field_updated(item->item()->uid,213) ||
+                feather::plugin::field_updated(item->item()->uid,214)
           ){
             updateTransform = true;
         } 
+        */
 
         switch(item->item()->type){
             case feather::draw::Item::ShadedMesh:
@@ -2279,8 +2320,10 @@ void Viewport::updateScene()
                     std::cout << "updating ShadedMesh draw item\n";
                     static_cast<ShadedMesh*>(item)->updateItem();
                 }
+                /*
                 if(updateTransform)
                     static_cast<ShadedMesh*>(item)->updateTransform();
+                */
                 break;
             case feather::draw::Item::ComponentMesh:
                 std::cout << "updating ComponentMesh draw item\n";
@@ -2472,12 +2515,15 @@ void Viewport::updateItems(unsigned int uid)
     for(auto item : m_apDrawItems) {
         unsigned int fid = static_cast<feather::draw::ShadedMesh*>(item->item())->fid;
         bool updateItem = feather::plugin::field_updated(item->item()->uid,fid);
+        /*
         bool updateTransform = false;
-        if(feather::plugin::field_updated(item->item()->uid,212) ||
-                feather::plugin::field_updated(item->item()->uid,213)
+        if(feather::plugin::field_updated(item->item()->uid,213) ||
+                feather::plugin::field_updated(item->item()->uid,214)
           ){
             updateTransform = true;
-        } 
+        }
+        */
+ 
         if(item->item()->uid == uid){
             switch(item->item()->type){
                 case feather::draw::Item::ShadedMesh:
@@ -2486,8 +2532,10 @@ void Viewport::updateItems(unsigned int uid)
                         std::cout << "updating ShadedMesh draw item\n";
                         static_cast<ShadedMesh*>(item)->updateItem();
                     }
+                    /*
                     if(updateTransform)
                         static_cast<ShadedMesh*>(item)->updateTransform();
+                    */
                     break;
                 case feather::draw::Item::ComponentMesh:
                     if (

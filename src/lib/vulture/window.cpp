@@ -21,6 +21,8 @@
  *
  ***********************************************************************/
 
+#include <thread>
+
 #include "window.hpp"
 #include "debug.hpp"
 
@@ -57,6 +59,8 @@ m_height(_height),
 m_zoom(_zoom),
 m_validation(_validation),
 m_prepared(false),
+m_quit(false),
+m_updateRender(true),
 m_pTextureLoader(nullptr),
 m_rotation(glm::vec3()),
 m_currentBuffer(0),
@@ -1180,7 +1184,8 @@ void Window::updateUniformBuffers()
     uint32_t b = (color >> 16) & 0x000000ff;
     uint32_t a = (color >> 24) & 0x000000ff;
     */
-    std::cout << " r=" << r << " g=" << g << " b=" << b << " a=" << a << std::endl;
+    // print out the current XY values
+    //std::cout << " r=" << r << " g=" << g << " b=" << b << " a=" << a << std::endl;
     vkUnmapMemory(m_device, m_selection.mem);
 
     // Geometry shader
@@ -1486,17 +1491,21 @@ void Window::buildCommandBuffers()
 void Window::renderLoop()
 {
     xcb_flush(m_pConnection);
-    while (!m_quit)
+    xcb_generic_event_t *event;
+    while (!m_quit && (event=xcb_wait_for_event(m_pConnection)))
     {
-        auto tStart = std::chrono::high_resolution_clock::now();
-        xcb_generic_event_t *event;
-        event = xcb_poll_for_event(m_pConnection);
-        if (event) 
+        vkDeviceWaitIdle(m_device);
+         auto tStart = std::chrono::high_resolution_clock::now();
+        //event = xcb_poll_for_event(m_pConnection);
+        if (event && !m_updateRender) 
         {
             handleEvent(event);
             free(event);
         }
-        render();
+        if (m_updateRender){
+            render();
+            m_updateRender=false;
+        }
         auto tEnd = std::chrono::high_resolution_clock::now();
         auto tDiff = std::chrono::duration<double, std::milli>(tEnd - tStart).count();
         m_frameTimer = tDiff / 1000.0f;
@@ -1511,10 +1520,9 @@ void Window::render()
     if (!m_prepared)
         return;
 
-    vkDeviceWaitIdle(m_device);
+    //vkDeviceWaitIdle(m_device);
     draw();
-    vkDeviceWaitIdle(m_device);
-
+    //vkDeviceWaitIdle(m_device);
     updateUniformBuffers();
 }
 
@@ -1608,7 +1616,6 @@ void Window::draw()
 
     err = vkQueueWaitIdle(m_queue);
     assert(!err);
-
 }
 
 void Window::handleEvent(const xcb_generic_event_t *event)
@@ -1621,18 +1628,27 @@ void Window::handleEvent(const xcb_generic_event_t *event)
                 m_quit = true;
             }
             break;
+        case XCB_EXPOSE:
+            // this is called when the window is first created
+            std::cout << "event expose\n";
+            break;
         case XCB_MOTION_NOTIFY:
             {
+                std::cout << "event motion notified\n";
                 xcb_motion_notify_event_t *motion = (xcb_motion_notify_event_t *)event;
                 if (m_mouseButtons.left)
                 {
+                    std::cout << "event mouse button left\n";
                     m_rotation.x += (m_mousePos.y - (float)motion->event_y) * 1.25f;
                     m_rotation.y -= (m_mousePos.x - (float)motion->event_x) * 1.25f;
+                    m_updateRender=true;
                     viewChanged();
                 }
                 if (m_mouseButtons.right)
                 {
+                    std::cout << "event mouse button right\n";
                     m_zoom += (m_mousePos.y - (float)motion->event_y) * .005f;
+                    m_updateRender=true;
                     viewChanged();
                 }
                 m_mousePos = glm::vec2((float)motion->event_x, (float)motion->event_y);
@@ -1640,6 +1656,7 @@ void Window::handleEvent(const xcb_generic_event_t *event)
             break;
         case XCB_BUTTON_PRESS:
             {
+                std::cout << "event button press\n";
                 xcb_button_press_event_t *press = (xcb_button_press_event_t *)event;
                 m_mouseButtons.left = (press->detail & XCB_BUTTON_INDEX_1);
                 m_mouseButtons.right = (press->detail & XCB_BUTTON_INDEX_3);
@@ -1660,6 +1677,7 @@ void Window::handleEvent(const xcb_generic_event_t *event)
                 if (keyEvent->detail == 0x9)
                     m_quit = true;
                 keyPressed(keyEvent->detail);
+                m_updateRender=true;
             }
             break;
         case XCB_DESTROY_NOTIFY:
@@ -1677,12 +1695,12 @@ void Window::keyPressed(uint32_t keyCode)
     switch(keyCode){
         case KEY_c:
             std::cout << "c pressed\n";
-            step += 0.2;
+            step += 0.001;
             nodeChanged();
             break;
         case KEY_space:
             std::cout << "space pressed\n";
-            step -= 0.2;
+            step -= 0.001;
             nodeChanged();
             break;
         default:
@@ -1717,8 +1735,8 @@ void Window::set_selection()
 void Window::nodeChanged()
 {
     // update the vertex buffer
-    for (int32_t i = 0; i < m_drawCommandBuffers.size(); ++i)
-    {
+    //for (int32_t i = 0; i < m_drawCommandBuffers.size(); ++i)
+    //{
         for(auto node : m_aNodes){
             //std::cout << "binding node, i count=" << meshBuffer.indexCount << std::endl;
             // Bind triangle vertices
@@ -1727,25 +1745,33 @@ void Window::nodeChanged()
             {
                 case Node::Axis:
                     static_cast<Axis*>(node)->updateVertices(m_device,m_deviceMemoryProperties,step);
-                    vkCmdBindVertexBuffers(m_drawCommandBuffers[i], VERTEX_BUFFER_BIND_ID, 1, &static_cast<Axis*>(node)->buffer()->vertices.buf, offsets);
+                    //vkCmdBindVertexBuffers(m_drawCommandBuffers[i], VERTEX_BUFFER_BIND_ID, 1, &static_cast<Axis*>(node)->buffer()->vertices.buf, offsets);
+                    vkCmdBindVertexBuffers(m_drawCommandBuffers[node->id()], VERTEX_BUFFER_BIND_ID, 1, &static_cast<Axis*>(node)->buffer()->vertices.buf, offsets);
+
+
                 break;
                 case Node::Grid:
-                static_cast<Grid*>(node)->updateVertices(m_device,m_deviceMemoryProperties,step);
-                vkCmdBindVertexBuffers(m_drawCommandBuffers[i], VERTEX_BUFFER_BIND_ID, 1, &static_cast<Grid*>(node)->buffer()->vertices.buf, offsets);
+                    static_cast<Grid*>(node)->updateVertices(m_device,m_deviceMemoryProperties,step);
+                    //vkCmdBindVertexBuffers(m_drawCommandBuffers[i], VERTEX_BUFFER_BIND_ID, 1, &static_cast<Grid*>(node)->buffer()->vertices.buf, offsets);
+                    vkCmdBindVertexBuffers(m_drawCommandBuffers[node->id()], VERTEX_BUFFER_BIND_ID, 1, &static_cast<Grid*>(node)->buffer()->vertices.buf, offsets);
                 break;
                 case Node::Mesh:
                     static_cast<Mesh*>(node)->updateVertices(m_device,m_deviceMemoryProperties,step);
-                    vkCmdBindVertexBuffers(m_drawCommandBuffers[i], VERTEX_BUFFER_BIND_ID, 1, &static_cast<Mesh*>(node)->buffer()->vertices.buf, offsets);
+                    //vkCmdBindVertexBuffers(m_drawCommandBuffers[i], VERTEX_BUFFER_BIND_ID, 1, &static_cast<Mesh*>(node)->buffer()->vertices.buf, offsets);
+                    vkCmdBindVertexBuffers(m_drawCommandBuffers[node->id()], VERTEX_BUFFER_BIND_ID, 1, &static_cast<Mesh*>(node)->buffer()->vertices.buf, offsets);
                    break;
                 case Node::Light:
                     static_cast<PointLight*>(node)->updateVertices(m_device,m_deviceMemoryProperties);
-                    vkCmdBindVertexBuffers(m_drawCommandBuffers[i], VERTEX_BUFFER_BIND_ID, 1, &static_cast<PointLight*>(node)->buffer()->vertices.buf, offsets);
+                    //vkCmdBindVertexBuffers(m_drawCommandBuffers[i], VERTEX_BUFFER_BIND_ID, 1, &static_cast<PointLight*>(node)->buffer()->vertices.buf, offsets);
+                    vkCmdBindVertexBuffers(m_drawCommandBuffers[node->id()], VERTEX_BUFFER_BIND_ID, 1, &static_cast<PointLight*>(node)->buffer()->vertices.buf, offsets);
                 break;
+                default:
+                    break;
             }
 
             // vkCmdBindVertexBuffers(m_drawCommandBuffers[i], VERTEX_BUFFER_BIND_ID, 1, &meshBuffer.vertices.buf, offsets);
         }
-    }
+    //}
 
     viewChanged();
 }

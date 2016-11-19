@@ -122,6 +122,98 @@ namespace feather
     struct FMatrix4x4 {
         FMatrix4x4(){};
         float value[4][4] = {{1,0,0,0},{0,1,0,0},{0,0,1,0},{0,0,0,1}};
+
+        const FMatrix4x4 operator*(const FMatrix4x4& matrix) {
+            FMatrix4x4 out = *this;
+            this->value[0][0] = matrix.value[0][0] * this->value[0][0];
+            this->value[0][1] = matrix.value[0][1] * this->value[0][1];
+            this->value[0][2] = matrix.value[0][2] * this->value[0][2];
+            this->value[0][3] = matrix.value[0][3] * this->value[0][3];
+            this->value[1][0] = matrix.value[1][0] * this->value[1][0];
+            this->value[1][1] = matrix.value[1][1] * this->value[1][1];
+            this->value[1][2] = matrix.value[1][2] * this->value[1][2];
+            this->value[1][3] = matrix.value[1][3] * this->value[1][3];
+            this->value[2][0] = matrix.value[2][0] * this->value[2][0];
+            this->value[2][1] = matrix.value[2][1] * this->value[2][1];
+            this->value[2][2] = matrix.value[2][2] * this->value[2][2];
+            this->value[2][3] = matrix.value[2][3] * this->value[2][3];
+            this->value[3][0] = matrix.value[3][0] * this->value[3][0];
+            this->value[3][1] = matrix.value[3][1] * this->value[3][1];
+            this->value[3][2] = matrix.value[3][2] * this->value[3][2];
+            this->value[3][3] = matrix.value[3][3] * this->value[3][3];
+            return out;
+        }
+
+        const FMatrix4x4 operator+=(const FMatrix4x4& matrix) {
+            FMatrix4x4 out = *this;
+            this->value[0][0] = matrix.value[0][0] + this->value[0][0];
+            this->value[0][1] = matrix.value[0][1] + this->value[0][1];
+            this->value[0][2] = matrix.value[0][2] + this->value[0][2];
+            this->value[0][3] = matrix.value[0][3] + this->value[0][3];
+            this->value[1][0] = matrix.value[1][0] + this->value[1][0];
+            this->value[1][1] = matrix.value[1][1] + this->value[1][1];
+            this->value[1][2] = matrix.value[1][2] + this->value[1][2];
+            this->value[1][3] = matrix.value[1][3] + this->value[1][3];
+            this->value[2][0] = matrix.value[2][0] + this->value[2][0];
+            this->value[2][1] = matrix.value[2][1] + this->value[2][1];
+            this->value[2][2] = matrix.value[2][2] + this->value[2][2];
+            this->value[2][3] = matrix.value[2][3] + this->value[2][3];
+            this->value[3][0] = matrix.value[3][0] + this->value[3][0];
+            this->value[3][1] = matrix.value[3][1] + this->value[3][1];
+            this->value[3][2] = matrix.value[3][2] + this->value[3][2];
+            this->value[3][3] = matrix.value[3][3] + this->value[3][3];
+            return out;
+        }
+
+        friend FMatrix4x4 operator+(FMatrix4x4 lhs, const FMatrix4x4& rhs) {
+            lhs.value[0][0] *= rhs.value[0][0];
+            lhs.value[0][1] *= rhs.value[0][1];
+            lhs.value[0][2] *= rhs.value[0][2];
+            lhs.value[0][3] += rhs.value[0][3];
+            lhs.value[1][0] *= rhs.value[1][0];
+            lhs.value[1][1] *= rhs.value[1][1];
+            lhs.value[1][2] *= rhs.value[1][2];
+            lhs.value[1][3] += rhs.value[1][3];
+            lhs.value[2][0] *= rhs.value[2][0];
+            lhs.value[2][1] *= rhs.value[2][1];
+            lhs.value[2][2] *= rhs.value[2][2];
+            lhs.value[2][3] += rhs.value[2][3];
+            lhs.value[3][0] *= rhs.value[3][0];
+            lhs.value[3][1] *= rhs.value[3][1];
+            lhs.value[3][2] *= rhs.value[3][2];
+            lhs.value[3][3] += rhs.value[3][3];
+            return lhs;
+        }
+
+        const void print() {
+            std::cout << value[0][0] << " " << value[0][1] << " " << value[0][2] << " " << value[0][3] << std::endl;
+            std::cout << value[1][0] << " " << value[1][1] << " " << value[1][2] << " " << value[1][3] << std::endl;
+            std::cout << value[2][0] << " " << value[2][1] << " " << value[2][2] << " " << value[2][3] << std::endl;
+            std::cout << value[3][0] << " " << value[3][1] << " " << value[3][2] << " " << value[3][3] << std::endl;
+        }
+
+        /*
+        const FMatrix4x4 operator=(const FMatrix4x4& matrix) {
+            FMatrix4x4 out = *this;
+            this->value[0][0] = matrix.value[0][0];
+            this->value[0][1] = matrix.value[0][1];
+            this->value[0][2] = matrix.value[0][2];
+            this->value[0][3] = matrix.value[0][3];
+            this->value[1][0] = matrix.value[1][0];
+            this->value[1][1] = matrix.value[1][1];
+            this->value[1][2] = matrix.value[1][2];
+            this->value[1][3] = matrix.value[1][3];
+            this->value[2][0] = matrix.value[2][0];
+            this->value[2][1] = matrix.value[2][1];
+            this->value[2][2] = matrix.value[2][2];
+            this->value[2][3] = matrix.value[2][3];
+            this->value[3][0] = matrix.value[3][0];
+            this->value[3][1] = matrix.value[3][1];
+            this->value[3][2] = matrix.value[3][2];
+            this->value[3][3] = matrix.value[3][3];
+            return out;
+        }
+        */
     };
 
     struct FVertexIndiceWeight {
@@ -278,6 +370,25 @@ namespace feather
         FTextureCoordArray st;
         FVertex3DArray vn;
         FFaceArray f;
+
+        inline void print() {
+            for(auto vertex : v){
+                std::cout << "x:" << vertex.x << " y:" << vertex.y << " z:" << vertex.z << std::endl;
+            }
+        }
+
+        inline void apply_matrix(const FMatrix4x4& matrix){
+            for(unsigned int i=0; i < v.size(); i++){
+                // scale
+                v[i].x = v[i].x * matrix.value[0][0];
+                v[i].y = v[i].y * matrix.value[1][1];
+                v[i].z = v[i].z * matrix.value[2][2];
+                // transform
+                v[i].x += matrix.value[0][3];
+                v[i].y += matrix.value[1][3];
+                v[i].z += matrix.value[2][3];
+            }
+        }
 
         inline void add_face(const FFace face) { f.push_back(face); };
         inline std::vector<int> verts_per_face() { std::vector<int> fc; for(auto face : f){ fc.push_back(face.size()); } return fc; }; 

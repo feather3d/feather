@@ -303,7 +303,33 @@ void Mesh::updateVertices(VkDevice device, VkPhysicalDeviceMemoryProperties devi
 
     //build();
 
-    m_vertexBuffer.at(0)={{1.0f*step,2.0f*step,0.0f},{0.0f,0.0f,1.0f},{0.0f,0.0f},{1.0f,1.0f,1.0f},{1,0,0,m_id}};
+    //m_vertexBuffer.at(0)={{1.0f*step,2.0f*step,0.0f},{0.0f,0.0f,1.0f},{0.0f,0.0f},{1.0f,1.0f,1.0f},{1,0,0,m_id}};
+    for (uint32_t i=0; i < m_vertexBuffer.size(); i++){
+        m_vertexBuffer.at(i) = {
+            {
+                m_vertexBuffer.at(i).pos[0]*step,
+                m_vertexBuffer.at(i).pos[1]*step,
+                m_vertexBuffer.at(i).pos[2]*step
+            },{
+                m_vertexBuffer.at(i).norm[0],
+                m_vertexBuffer.at(i).norm[1],
+                m_vertexBuffer.at(i).norm[2]
+            },{
+                m_vertexBuffer.at(i).uv[0],
+                m_vertexBuffer.at(i).uv[1]
+            },{
+                m_vertexBuffer.at(i).col[0],
+                m_vertexBuffer.at(i).col[1],
+                m_vertexBuffer.at(i).col[2]
+            },{
+                m_vertexBuffer.at(i).id[0],
+                m_vertexBuffer.at(i).id[1],
+                m_vertexBuffer.at(i).id[2],
+                m_vertexBuffer.at(i).id[3]
+            }
+        };
+    }
+
     buildVertex(device, deviceMemoryProperties);
 }
 
