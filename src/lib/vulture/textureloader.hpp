@@ -83,11 +83,11 @@ namespace feather
                     // Load a 2D texture
                     void loadTexture(const char* filename, VkFormat format, VulkanTexture *texture, bool forceLinear)
                     {
-                        gli::texture2D tex2D(gli::load(filename));
+                        gli::texture2d tex2D(gli::load(filename));
                         assert(!tex2D.empty());
 
-                        texture->width = (uint32_t)tex2D[0].dimensions().x;
-                        texture->height = (uint32_t)tex2D[0].dimensions().y;
+                        texture->width = (uint32_t)tex2D[0].extent().x;
+                        texture->height = (uint32_t)tex2D[0].extent().y;
                         texture->mipLevels = tex2D.levels();
 
                         VkResult err;
@@ -136,8 +136,8 @@ namespace feather
                             // Copy mip levels
                             for (uint32_t level = 0; level < texture->mipLevels; ++level)
                             {
-                                imageCreateInfo.extent.width = tex2D[level].dimensions().x;
-                                imageCreateInfo.extent.height = tex2D[level].dimensions().y;
+                                imageCreateInfo.extent.width = tex2D[level].extent().x;
+                                imageCreateInfo.extent.height = tex2D[level].extent().y;
                                 imageCreateInfo.extent.depth = 1;
 
                                 err = vkCreateImage(device, &imageCreateInfo, nullptr, &mipLevels[level].image);
@@ -221,8 +221,8 @@ namespace feather
                                 copyRegion.dstSubresource.layerCount = 1;
                                 copyRegion.dstOffset = { 0, 0, 0 };
 
-                                copyRegion.extent.width = tex2D[level].dimensions().x;
-                                copyRegion.extent.height = tex2D[level].dimensions().y;
+                                copyRegion.extent.width = tex2D[level].extent().x;
+                                copyRegion.extent.height = tex2D[level].extent().y;
                                 copyRegion.extent.depth = 1;
 
                                 // Put image copy into command buffer
@@ -440,11 +440,11 @@ namespace feather
                         VkFormatProperties formatProperties;
                         VkResult err;
 
-                        gli::textureCube texCube(gli::load(filename));
+                        gli::texture_cube texCube(gli::load(filename));
                         assert(!texCube.empty());
 
-                        texture->width = (uint32_t)texCube[0].dimensions().x;
-                        texture->height = (uint32_t)texCube[0].dimensions().y;
+                        texture->width = (uint32_t)texCube[0].extent().x;
+                        texture->height = (uint32_t)texCube[0].extent().y;
 
                         // Get device properites for the requested texture format
                         vkGetPhysicalDeviceFormatProperties(physicalDevice, format, &formatProperties);
@@ -641,11 +641,11 @@ namespace feather
                         VkFormatProperties formatProperties;
                         VkResult err;
 
-                        gli::texture2DArray tex2DArray(gli::load(filename));
+                        gli::texture2d_array tex2DArray(gli::load(filename));
                         assert(!tex2DArray.empty());
 
-                        texture->width = tex2DArray.dimensions().x;
-                        texture->height = tex2DArray.dimensions().y;
+                        texture->width = tex2DArray.extent().x;
+                        texture->height = tex2DArray.extent().y;
                         texture->layerCount = tex2DArray.layers();
 
                         // Get device properites for the requested texture format
