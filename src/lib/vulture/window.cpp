@@ -97,7 +97,7 @@ m_defaultClearColor({ { 0.325f, 0.325f, 0.325f, 1.0f } })
     // load the mesh
     feather::parameter::ParameterList params;
     params.addBoolParameter("selection",false);
-    params.addStringParameter("filename","/home/richard/feather3d/tests/obj/subdiv_benchmark.obj");
+    params.addStringParameter("filename","/home/richard/feather3d/tests/cube.obj");
     plugins.run_command("import_obj",params); 
 
     // add subdiv
@@ -620,6 +620,49 @@ void Window::setupDepthStencil()
 }
 
 
+void Window::getErrorCode(VkResult code)
+{
+    std::cout << "ErrorCode: ";
+    if(code && VkResult::VK_SUCCESS)
+        std::cout << "SUCCESS, ";
+    if(code && VkResult::VK_NOT_READY)
+        std::cout << "NOT READY, ";
+    if(code && VkResult::VK_TIMEOUT)
+        std::cout << "TIMEOUT, ";
+    if(code && VkResult::VK_EVENT_SET)
+        std::cout << "EVENT SET, ";
+    if(code && VkResult::VK_EVENT_RESET)
+        std::cout << "EVENT RESET, ";
+    if(code && VkResult::VK_INCOMPLETE)
+        std::cout << "INCOMPLETE, ";
+    if(code && VkResult::VK_ERROR_OUT_OF_HOST_MEMORY)
+        std::cout << "ERROR - OUT OF HOST MEMORY, ";
+    if(code && VkResult::VK_ERROR_OUT_OF_DEVICE_MEMORY)
+        std::cout << "ERROR - OUT OF DEVICE MEMORY, ";
+    if(code && VkResult::VK_ERROR_INITIALIZATION_FAILED)
+        std::cout << "ERROR - INITIALIZATION FAILED, ";
+    if(code && VkResult::VK_ERROR_DEVICE_LOST)
+        std::cout << "ERROR - DEVICE LOST, ";
+    if(code && VkResult::VK_ERROR_MEMORY_MAP_FAILED)
+        std::cout << "ERROR - MEMORY MAP FAILED, ";
+    if(code && VkResult::VK_ERROR_LAYER_NOT_PRESENT)
+        std::cout << "ERROR - LAYER NOT PRESENT, ";
+    if(code && VkResult::VK_ERROR_EXTENSION_NOT_PRESENT)
+        std::cout << "ERROR - EXTENSION NOT PRESENT, ";
+    if(code && VkResult::VK_ERROR_FEATURE_NOT_PRESENT)
+        std::cout << "ERROR - FEATURE NOT PRESENT, ";
+    if(code && VkResult::VK_ERROR_INCOMPATIBLE_DRIVER)
+        std::cout << "ERROR - INCOMPATIBLE DRIVER, ";
+    if(code && VkResult::VK_ERROR_TOO_MANY_OBJECTS)
+        std::cout << "ERROR - TOO MANY OBJECTS, ";
+    if(code && VkResult::VK_ERROR_FORMAT_NOT_SUPPORTED)
+        std::cout << "ERROR - FORMAT NOT SUPPORTED, ";
+    if(code && VkResult::VK_ERROR_FRAGMENTED_POOL)
+        std::cout << "ERROR - FRAGMENTED POOL, ";
+
+    std::cout << std::endl;
+}
+
 void Window::setupSelection()
 {
 
@@ -640,12 +683,16 @@ void Window::setupSelection()
             1,
             VK_SAMPLE_COUNT_1_BIT,
             VK_IMAGE_TILING_LINEAR,//VK_IMAGE_TILING_OPTIMAL should be used but does not make a full image, have to look into this more.
+            //VK_IMAGE_TILING_OPTIMAL,//VK_IMAGE_TILING_OPTIMAL should be used but does not make a full image, have to look into this more.
             VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT,
             VK_SHARING_MODE_EXCLUSIVE,
             1,
-            &m_queueCount//&m_swapChain.queueNodeIndex//&m_queueCount//&queueFamily
+            &m_queueCount, //&m_swapChain.queueNodeIndex//&m_queueCount//&queueFamily
+            VK_IMAGE_LAYOUT_UNDEFINED //VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
     };
     VkResult errorCode = vkCreateImage( m_device, &isci, nullptr, &m_selection.image);
+    std::cout << "selection errorcode: " << errorCode << "\n";
+    //getErrorCode(errorCode);
     //RESULT_HANDLER( errorCode, "vkCreateImage" );
     assert(!errorCode);
 

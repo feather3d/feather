@@ -156,6 +156,8 @@ namespace feather
                 void prepare();
                 void renderLoop();
 
+                void getErrorCode(VkResult code);
+
                 // Prepare - setup vulkan 
                 void createCommandPool();
                 void createSetupCommandBuffer();
