@@ -261,7 +261,6 @@ void Mesh::build()
                 m_indexBuffer.push_back(_face.at(3).v);
             }
 
-
             /*  
             uint startid = vcount;
             uint stepid = startid;

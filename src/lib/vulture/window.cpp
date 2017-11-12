@@ -665,7 +665,7 @@ void Window::getErrorCode(VkResult code)
 
 void Window::setupSelection()
 {
-
+    /*
     VkImageCreateInfo isci{
         VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
             nullptr,
@@ -688,7 +688,6 @@ void Window::setupSelection()
             VK_SHARING_MODE_EXCLUSIVE,
             1,
             &m_queueCount, //&m_swapChain.queueNodeIndex//&m_queueCount//&queueFamily
-            VK_IMAGE_LAYOUT_UNDEFINED //VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
     };
     VkResult errorCode = vkCreateImage( m_device, &isci, nullptr, &m_selection.image);
     std::cout << "selection errorcode: " << errorCode << "\n";
@@ -750,7 +749,7 @@ void Window::setupSelection()
     errorCode = vkCreateImageView( m_device, &isvci, nullptr, &m_selection.view);
     //RESULT_HANDLER( errorCode, "vkCreateImageView" );
     assert(!errorCode);
-
+    */
 
     /*
     VkFramebuffer framebufferSource;
@@ -771,7 +770,6 @@ void Window::setupSelection()
     */
 
 
-    /*
     VkImageCreateInfo image = {};
     image.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
     image.pNext = NULL;
@@ -823,7 +821,6 @@ void Window::setupSelection()
     depthStencilView.image = m_depthStencil.image;
     err = vkCreateImageView(m_device, &depthStencilView, nullptr, &m_depthStencil.view);
     assert(!err);
-    */
 }
 
 
@@ -1440,8 +1437,10 @@ void Window::buildCommandBuffers()
 
     VkResult err;
 
+    std::cout << "buildCommandBuffers\n";
     for (int32_t i = 0; i < m_drawCommandBuffers.size(); ++i)
     {
+        std::cout << "Draw Command Buffer\n";
         // Set target frame buffer
         renderPassBeginInfo.framebuffer = m_aFrameBuffers[i];
 
