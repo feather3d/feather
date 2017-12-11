@@ -39,7 +39,7 @@ Item {
         tooltip: "show the axis"
         checkable: true
         checked: true
-        onTriggered: { (checked) ? viewport.showAxis=true : viewport.showAxis=false }
+        //onTriggered: { (checked) ? viewport.showAxis=true : viewport.showAxis=false }
     }
 
     Action {
@@ -48,7 +48,7 @@ Item {
         tooltip: "show the grid"
         checkable: true
         checked: true
-        onTriggered: { (checked) ? viewport.showGrid=true : viewport.showGrid=false }
+        //onTriggered: { (checked) ? viewport.showGrid=true : viewport.showGrid=false }
     }
 
 
@@ -62,7 +62,7 @@ Item {
         tooltip: "show the grid"
         checkable: true
         checked: true
-        onTriggered: { (checked) ? viewport.showShaded=true : viewport.showShaded=false }
+        //onTriggered: { (checked) ? viewport.showShaded=true : viewport.showShaded=false }
     }
 
     Action {
@@ -71,7 +71,7 @@ Item {
         tooltip: "show the grid"
         checkable: true
         checked: false 
-        onTriggered: { (checked) ? viewport.showWireframe=true : viewport.showWireframe=false }
+        //onTriggered: { (checked) ? viewport.showWireframe=true : viewport.showWireframe=false }
     }
 
     Action {
@@ -80,7 +80,7 @@ Item {
         tooltip: "show the grid"
         checkable: true
         checked: false 
-        onTriggered: { (checked) ? viewport.showPoints=true : viewport.showPoints=false }
+        //onTriggered: { (checked) ? viewport.showPoints=true : viewport.showPoints=false }
     }
 
     */
@@ -216,6 +216,7 @@ Item {
 
     } 
 
+    /*
     Viewport3D { 
         id: viewport
         anchors.top: toolBar.bottom
@@ -223,6 +224,7 @@ Item {
         anchors.right: parent.right
         anchors.bottom: parent.bottom
     }
+    */
 
     Component.onCompleted: { 
         //editor.update(); updateGL()
