@@ -153,7 +153,7 @@ Item {
                         id: vertexSelectBtn
                         width: 32; height: 32
                         checkable: true
-                        iconSource: "/usr/local/feather/ui/icons/point_select.png"
+                        iconSource: "/usr/share/feather/ui/icons/point_select.png"
                         action: vertexSelectAction 
                     }
             
@@ -161,7 +161,7 @@ Item {
                         id: edgeSelectBtn
                         width: 32; height: 32
                         checkable: true
-                        iconSource: "/usr/local/feather/ui/icons/edge_select.png"
+                        iconSource: "/usr/share/feather/ui/icons/edge_select.png"
                         action: edgeSelectAction 
                     }
             
@@ -169,7 +169,7 @@ Item {
                         id: faceSelectBtn
                         width: 32; height: 32
                         checkable: true
-                        iconSource: "/usr/local/feather/ui/icons/face_select.png"
+                        iconSource: "/usr/share/feather/ui/icons/face_select.png"
                         action: faceSelectAction 
                     }
 
@@ -177,7 +177,7 @@ Item {
                         id: objectSelectBtn
                         width: 32; height: 32
                         checkable: true
-                        iconSource: "/usr/local/feather/ui/icons/object_select.png"
+                        iconSource: "/usr/share/feather/ui/icons/object_select.png"
                         action: objectSelectAction 
                     }
                 }
@@ -198,7 +198,7 @@ Item {
                         id: showAxisBtn
                         width: 32; height: 32
                         checkable: true
-                        iconSource: "/usr/local/feather/ui/icons/axis.png"
+                        iconSource: "/usr/share/feather/ui/icons/axis.png"
                         action: showAxisAction 
                     }
             
@@ -206,7 +206,7 @@ Item {
                         id: showGridBtn
                         width: 32; height: 32
                         checkable: true
-                        iconSource: "/usr/local/feather/ui/icons/grid.png"
+                        iconSource: "/usr/share/feather/ui/icons/grid.png"
                         action: showGridAction 
                     }
                 }

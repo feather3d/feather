@@ -109,28 +109,28 @@ Rectangle {
             ToolButton {
                 id: addNodeButton
                 width: 32; height: 32
-                iconSource: "/usr/local/feather/ui/icons/add_node.png"
+                iconSource: "/usr/share/feather/ui/icons/add_node.png"
                 action: addNode 
             }
 
             ToolButton {
                 id: deleteNodeButton
                 width: 32; height: 32
-                iconSource: "/usr/local/feather/ui/icons/delete_node.png"
+                iconSource: "/usr/share/feather/ui/icons/delete_node.png"
                 action: deleteNode 
             }
 
             ToolButton {
                 id: addConnectionButton
                 width: 32; height: 32
-                iconSource: "/usr/local/feather/ui/icons/add_connection.png"
+                iconSource: "/usr/share/feather/ui/icons/add_connection.png"
                 action: addConnection 
             }
 
             ToolButton {
                 id: deleteConnectionButton
                 width: 32; height: 32
-                iconSource: "/usr/local/feather/ui/icons/delete_connection.png"
+                iconSource: "/usr/share/feather/ui/icons/delete_connection.png"
                 action: deleteConnection 
             }
 

@@ -60,7 +60,7 @@ Item {
 
             ToolButton {
                 width: 32; height: 32
-                //iconSource: "/usr/local/feather/ui/icons/layer_add.svg"
+                //iconSource: "/usr/share/feather/ui/icons/layer_add.svg"
                 iconName: "test"
                 action: testAction 
             }

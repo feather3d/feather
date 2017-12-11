@@ -54,7 +54,7 @@ PerspCamera::PerspCamera(Qt3DRender::QLayer* layer, feather::draw::Item* _item, 
     m_pCamera(new Qt3DRender::QCamera())
 {
     m_pMesh->setPrimitiveType(Qt3DRender::QGeometryRenderer::Triangles);
-    m_pMesh->setSource(QUrl("file:/usr/local/feather/ui/models/digital_movie_camera.obj"));
+    m_pMesh->setSource(QUrl("file:/usr/share/feather/ui/models/digital_movie_camera.obj"));
 
     m_pMaterial->setDiffuse(QColor(Qt::red));
     m_pMaterial->setAmbient(Qt::black);
@@ -166,19 +166,19 @@ WireEffect::WireEffect(QNode* parent)
      
     Qt3D::QShaderProgram *gl3Shader = new Qt3D::QShaderProgram();
     // Vert Shader
-    QFile* gl3VertFile = new QFile("/usr/local/feather/shaders/vert/robustwireframe.vert");
+    QFile* gl3VertFile = new QFile("/usr/share/feather/shaders/vert/robustwireframe.vert");
     gl3VertFile->open(QIODevice::ReadOnly);
     gl3Shader->setVertexShaderCode(gl3VertFile->readAll());
     gl3VertFile->flush();
     gl3VertFile->close();
     // Frag Shader
-    QFile* gl3FragFile = new QFile("/usr/local/feather/shaders/frag/robustwireframe.frag");
+    QFile* gl3FragFile = new QFile("/usr/share/feather/shaders/frag/robustwireframe.frag");
     gl3FragFile->open(QIODevice::ReadOnly);
     gl3Shader->setFragmentShaderCode(gl3FragFile->readAll());
     gl3FragFile->flush();
     gl3FragFile->close();
     // Geom Shader
-    QFile* gl3GeomFile = new QFile("/usr/local/feather/shaders/geom/robustwireframe.geom");
+    QFile* gl3GeomFile = new QFile("/usr/share/feather/shaders/geom/robustwireframe.geom");
     gl3GeomFile->open(QIODevice::ReadOnly);
     gl3Shader->setGeometryShaderCode(gl3GeomFile->readAll());
     gl3GeomFile->flush();

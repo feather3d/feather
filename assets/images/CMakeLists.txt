@@ -4,4 +4,4 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 FILE(GLOB IMAGE_FILES "*")
 
-INSTALL(FILES ${IMAGE_FILES} DESTINATION /usr/local/feather/ui/images)
+INSTALL(FILES ${IMAGE_FILES} DESTINATION /usr/share/feather/ui/images)

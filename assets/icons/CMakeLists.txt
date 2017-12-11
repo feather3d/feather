@@ -5,5 +5,5 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 FILE(GLOB ICON_PNG_FILES "*.png")
 FILE(GLOB ICON_SVG_FILES "*.svg")
 
-INSTALL(FILES ${ICON_PNG_FILES} DESTINATION /usr/local/feather/ui/icons)
-INSTALL(FILES ${ICON_SVG_FILES} DESTINATION /usr/local/feather/ui/icons)
+INSTALL(FILES ${ICON_PNG_FILES} DESTINATION /usr/share/feather/ui/icons)
+INSTALL(FILES ${ICON_SVG_FILES} DESTINATION /usr/share/feather/ui/icons)

@@ -90,8 +90,8 @@ QT5_USE_MODULES(feather Widgets Core Gui Qml Quick)
 
 # Config file
 FILE(GLOB CONFIG_FILES "feather.rc")
-INSTALL(FILES ${CONFIG_FILES} DESTINATION /usr/local/feather)
+INSTALL(FILES ${CONFIG_FILES} DESTINATION /usr/share/feather)
 
 # INSTALL
 INSTALL( TARGETS feather
-    RUNTIME DESTINATION /usr/local/feather)
+    RUNTIME DESTINATION /usr/share/feather)

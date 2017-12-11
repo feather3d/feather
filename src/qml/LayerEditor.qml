@@ -102,35 +102,35 @@ Item {
 
             ToolButton {
                 width: 32; height: 32
-                iconSource: "/usr/local/feather/ui/icons/layer_add.svg"
+                iconSource: "/usr/share/feather/ui/icons/layer_add.svg"
                 iconName: "add layer"
                 action: addLayerAction 
             }
 
             ToolButton {
                 width: 32; height: 32
-                iconSource: "/usr/local/feather/ui/icons/layer_remove.svg"
+                iconSource: "/usr/share/feather/ui/icons/layer_remove.svg"
                 iconName: "remove layer"
                 action: removeLayerAction 
             }
 
             ToolButton {
                 width: 32; height: 32
-                iconSource: "/usr/local/feather/ui/icons/layer_move_up.svg"
+                iconSource: "/usr/share/feather/ui/icons/layer_move_up.svg"
                 iconName: "move layer up"
                 action: moveLayerUpAction 
             }
 
             ToolButton {
                 width: 32; height: 32
-                iconSource: "/usr/local/feather/ui/icons/layer_move_down.svg"
+                iconSource: "/usr/share/feather/ui/icons/layer_move_down.svg"
                 iconName: "move layer down"
                 action: moveLayerDownAction 
             }
 
             ToolButton {
                 width: 32; height: 32
-                iconSource: "/usr/local/feather/ui/icons/layer_add_node.svg"
+                iconSource: "/usr/share/feather/ui/icons/layer_add_node.svg"
                 iconName: "add node to layer"
                 action: addNodeToLayerAction 
             }

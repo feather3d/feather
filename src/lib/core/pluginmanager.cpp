@@ -39,7 +39,7 @@ PluginManager::~PluginManager()
 
 status PluginManager::load_plugins()
 {
-    boost::filesystem::path plugin_path("/usr/local/feather/plugins");
+    boost::filesystem::path plugin_path("/usr/share/feather/plugins");
     typedef std::vector<boost::filesystem::path> files;
     files plugin_paths;
 
