@@ -1,10 +1,10 @@
 /***********************************************************************
  *
- * Filename: main.qml 
+ * Filename: FSplitView.qml 
  *
- * Description: Entry point for the qml main window. 
+ * Description: Feather custom split view widget. 
  *
- * Copyright (C) 2015 Richard Layman, rlayman2000@yahoo.com 
+ * Copyright (C) 2017 Richard Layman, rlayman2000@yahoo.com 
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,39 +24,24 @@
 import QtQuick 2.7
 import QtQuick.Controls 1.4
 import QtQuick.Layouts 1.1
-import QtQuick.Window 2.2
 import QtQuick.Controls.Styles 1.4
-import QtQuick.Dialogs 1.2
-import feather.scenegraph 1.0
-import "common"
 
-ApplicationWindow {
-    id: mainwindow
-    width: 1900
-    height: 1020 
-    visible: true
-    title: "Feather 0.2"
-    color: theme.windowBorderNormalColor 
-
+SplitView {
+    id: view
+    anchors.fill: parent
+    orientation: Qt.Horizontal
+    resizing: true
 
     FTheme { id: theme }
 
-
-    menuBar: MenuBar {
-        id: mainMenu
-
-        style: FMenuBarStyle {} 
-
-        FileMenu { id: fileMenu }
-    } 
-
-
-    FSplitView {
-        id: view
-        anchors.fill: parent
-
-        TestWindow { id: window1 }
-        TestWindow { id: window2 }
+    handleDelegate: Rectangle {
+        height: theme.splitViewHandleWidth
+        width: theme.splitViewHandleWidth
+        color: (styleData.hovered) ? ((styleData.pressed) ? theme.splitViewHandleBackgroundActiveColor :  theme.splitViewHandleBackgroundPressedColor) : theme.splitViewHandleBackgroundNormalColor
+        border.color: theme.splitViewHandleBorderColor
+        border.width: theme.splitViewHandleBorderWidth
+        radius: theme.splitViewHandleBorderRadius
     }
-
 }
+
+

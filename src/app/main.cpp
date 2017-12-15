@@ -198,7 +198,7 @@ static QObject *get_scenegraph(QQmlEngine *engine, QJSEngine *scriptEngine)
 
 int main(int argc, char **argv)
 {
-    QApplication app(argc, argv);
+    QGuiApplication app(argc, argv);
     qmlRegisterType<Status>("feather.scenegraph", 1, 0, "Status");
     qmlRegisterType<BezierCurve>("feather.ui.curves", 1, 0, "BezierCurve");
     qmlRegisterType<Viewport>("feather.viewport", 1, 0, "Viewport3D2");
@@ -225,9 +225,16 @@ int main(int argc, char **argv)
     config cnfg;
     bool p = load_config(cnfg);
 
-    QQmlApplicationEngine view(cnfg.mainpath.c_str());
+    QQmlApplicationEngine view(QUrl(cnfg.mainpath.c_str()));
+    //execReturn = app.exec();
 
-    execReturn = app.exec();
+    /*
+    QQuickView view;
+    // add this for translation
+    //view.rootContext()->setContextProperty("rootItem",(QObject*)&translate);
+    view.setSource(QUrl(cnfg.mainpath.c_str()));
+    view.show();
+    */
 
-    return execReturn;
+    return app.exec();
 };
