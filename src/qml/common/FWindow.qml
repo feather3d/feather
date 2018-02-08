@@ -101,7 +101,7 @@ Item {
             Rectangle {
                 id: container
                 width: row.width
-                height: row.height - 20 //mainMenu.height - toolbar.height
+                height: row.height
                 color: theme.windowContainerBackgroundNormalColor 
                 border.width: 1
                 border.color: '#606060'

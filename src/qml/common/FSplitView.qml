@@ -37,7 +37,8 @@ SplitView {
     handleDelegate: Rectangle {
         height: theme.splitViewHandleWidth
         width: theme.splitViewHandleWidth
-        color: (styleData.hovered) ? ((styleData.pressed) ? theme.splitViewHandleBackgroundActiveColor :  theme.splitViewHandleBackgroundPressedColor) : theme.splitViewHandleBackgroundNormalColor
+        //color: (styleData.hovered) ? ((styleData.pressed) ? theme.splitViewHandleBackgroundActiveColor :  theme.splitViewHandleBackgroundPressedColor) : theme.splitViewHandleBackgroundNormalColor
+        color: (styleData.pressed) ? theme.splitViewHandleBackgroundActiveColor :  theme.splitViewHandleBackgroundNormalColor
         border.color: theme.splitViewHandleBorderColor
         border.width: theme.splitViewHandleBorderWidth
         radius: theme.splitViewHandleBorderRadius
