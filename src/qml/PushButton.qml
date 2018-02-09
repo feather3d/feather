@@ -1,8 +1,8 @@
 /***********************************************************************
  *
- * Filename: main.qml 
+ * Filename: PushButton.qml 
  *
- * Description: Entry point for the qml main window. 
+ * Description: A standard button used for dialog boxes and other misc items.
  *
  * Copyright (C) 2015 Richard Layman, rlayman2000@yahoo.com 
  *
@@ -21,47 +21,25 @@
  *
  ***********************************************************************/
 
-import QtQuick 2.7
+import QtQuick 2.3
 import QtQuick.Controls 1.4
-import QtQuick.Layouts 1.1
-import QtQuick.Window 2.2
 import QtQuick.Controls.Styles 1.4
-import QtQuick.Dialogs 1.2
-import feather.scenegraph 1.0
-import "common"
-
-ApplicationWindow {
-    id: mainwindow
-    width: 1900
-    height: 1020 
-    visible: true
-    title: "Feather 0.2"
-    color: theme.windowBorderNormalColor 
 
 
-    FTheme { id: theme }
-
-
-    menuBar: MenuBar {
-        id: mainMenu
-
-        style: FMenuBarStyle {} 
-
-        FileMenu { id: fileMenu }
-    } 
-
-    SceneGraphEditor {
-        id: sgEditor
-        anchors.fill: parent
+Button {
+    id: button
+    width: 100
+    height: 20
+    property Properties properties: Null
+ 
+    style: ButtonStyle { 
+        Rectangle {
+            id: styleFrame
+            implicitWidth: 100
+            implicitHeight: 20
+            border.width: 1
+            color: properties.getColor("buttonEnabledBg") 
+            radius: 2
+        }
     }
-
-    /*
-    FSplitView {
-        id: view
-        anchors.fill: parent
-
-        TestWindow { id: window1 }
-        TestWindow { id: window2 }
-    }
-    */
 }

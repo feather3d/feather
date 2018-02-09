@@ -56,21 +56,46 @@ Menu {
 
     // ACTIONS
 
-    // Open
+    // Load 
     Action {
-        id: openAction
-        text: "Open"
-        tooltip: "Open scene"
+        id: loadAction
+        text: "Load"
+        tooltip: "Load feather file"
         onTriggered: { /*openDialog.visible = true*/ }
     }
 
+    // Save 
+    Action {
+        id: saveAction
+        text: "Save"
+        tooltip: "Save feather file"
+        onTriggered: { /*openDialog.visible = true*/ }
+    }
+
+    // Save As 
+    Action {
+        id: saveAsAction
+        text: "Save As"
+        tooltip: "Save feather file"
+        onTriggered: { /*openDialog.visible = true*/ }
+    }
 
     // MENU
 
 
-    // Open 
+    // Load 
     MenuItem {
-        action: openAction
+        action: loadAction
+    }
+
+    // Save 
+    MenuItem {
+        action: saveAction
+    }
+
+    // Save As 
+    MenuItem {
+        action: saveAsAction
     }
 
     MenuSeparator {}

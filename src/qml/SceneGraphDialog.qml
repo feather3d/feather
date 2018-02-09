@@ -1,8 +1,8 @@
 /***********************************************************************
  *
- * Filename: main.qml 
+ * Filename: SceneGraphDialog.qml 
  *
- * Description: Entry point for the qml main window. 
+ * Description: Main window for the scenegraph editor 
  *
  * Copyright (C) 2015 Richard Layman, rlayman2000@yahoo.com 
  *
@@ -21,47 +21,24 @@
  *
  ***********************************************************************/
 
-import QtQuick 2.7
-import QtQuick.Controls 1.4
-import QtQuick.Layouts 1.1
+import QtQuick 2.3
 import QtQuick.Window 2.2
-import QtQuick.Controls.Styles 1.4
-import QtQuick.Dialogs 1.2
 import feather.scenegraph 1.0
-import "common"
 
-ApplicationWindow {
-    id: mainwindow
-    width: 1900
-    height: 1020 
+Window {
+    id: sgEditor 
+    title: "SceneGraph Editor"
     visible: true
-    title: "Feather 0.2"
-    color: theme.windowBorderNormalColor 
+    flags: Qt.Tool
+    width: 400
+    height: 500
 
-
-    FTheme { id: theme }
-
-
-    menuBar: MenuBar {
-        id: mainMenu
-
-        style: FMenuBarStyle {} 
-
-        FileMenu { id: fileMenu }
-    } 
+    property Properties properties: Null
 
     SceneGraphEditor {
-        id: sgEditor
+        id: sg
         anchors.fill: parent
+        scenegraph: SceneGraph
+        properties: sgEditor.properties
     }
-
-    /*
-    FSplitView {
-        id: view
-        anchors.fill: parent
-
-        TestWindow { id: window1 }
-        TestWindow { id: window2 }
-    }
-    */
 }

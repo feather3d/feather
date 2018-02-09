@@ -1,8 +1,8 @@
 /***********************************************************************
  *
- * Filename: main.qml 
+ * Filename: ToolBarStyle.qml 
  *
- * Description: Entry point for the qml main window. 
+ * Description: Style for the application toolbars. 
  *
  * Copyright (C) 2015 Richard Layman, rlayman2000@yahoo.com 
  *
@@ -21,47 +21,15 @@
  *
  ***********************************************************************/
 
-import QtQuick 2.7
-import QtQuick.Controls 1.4
-import QtQuick.Layouts 1.1
-import QtQuick.Window 2.2
+import QtQuick 2.1
 import QtQuick.Controls.Styles 1.4
-import QtQuick.Dialogs 1.2
-import feather.scenegraph 1.0
-import "common"
 
-ApplicationWindow {
-    id: mainwindow
-    width: 1900
-    height: 1020 
-    visible: true
-    title: "Feather 0.2"
-    color: theme.windowBorderNormalColor 
-
-
-    FTheme { id: theme }
-
-
-    menuBar: MenuBar {
-        id: mainMenu
-
-        style: FMenuBarStyle {} 
-
-        FileMenu { id: fileMenu }
-    } 
-
-    SceneGraphEditor {
-        id: sgEditor
-        anchors.fill: parent
+ToolBarStyle {
+    background: Rectangle {
+        color: "darkgrey"
+        border.color: "black"
+        border.width: 1
+        //radius: 4
     }
 
-    /*
-    FSplitView {
-        id: view
-        anchors.fill: parent
-
-        TestWindow { id: window1 }
-        TestWindow { id: window2 }
-    }
-    */
 }
