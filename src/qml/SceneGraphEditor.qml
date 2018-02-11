@@ -158,6 +158,13 @@ Rectangle {
         connMenu.visible = true
     }
 
+    function closeConnectionMenu() {
+        console.log("connection closed")
+        connectionDialog.visible = false
+        connectionDialog.x = 0 
+        connectionDialog.y = 0 
+    }
+
     function nodeSelection(type,uid,nid) {
         // This is needed to emit to the nodeSelected signal to the other widgets so they can update 
         SceneGraph.select_node(type,uid,nid);
@@ -219,6 +226,7 @@ Rectangle {
 
     Component.onCompleted: {
         sg_editor.openConnMenu.connect(openConnectionMenu)
+        sg_editor.closeConnMenu.connect(closeConnectionMenu)
         sg_editor.nodeSelection.connect(nodeSelection)
         //connMenu.connectionButtonPressed.connect(connectionButtonPressed)
         //connMenu.connectionButtonReleased.connect(connectionButtonReleased)

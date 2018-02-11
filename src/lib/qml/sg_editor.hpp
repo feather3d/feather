@@ -218,6 +218,7 @@ class SceneGraphEditor : public QQuickPaintedItem
     signals:
         void sgUpdated();
         void openConnMenu();
+        void closeConnMenu();
         void connectionChanged();
         void nodeSelection(int type, int uid, int nid);
         void updateSelection();

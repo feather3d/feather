@@ -79,4 +79,5 @@ Rectangle {
         //popup.visible=false
         //connectionButtonClicked(button,uid,nid,fid)
     }
+
 }

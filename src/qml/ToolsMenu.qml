@@ -1,8 +1,8 @@
 /***********************************************************************
  *
- * Filename: main.qml 
+ * Filename: ToolsMenu.qml 
  *
- * Description: Entry point for the qml main window. 
+ * Description: Hold menu items for various commands. 
  *
  * Copyright (C) 2015 Richard Layman, rlayman2000@yahoo.com 
  *
@@ -21,49 +21,40 @@
  *
  ***********************************************************************/
 
-import QtQuick 2.7
-import QtQuick.Controls 1.4
-import QtQuick.Layouts 1.1
-import QtQuick.Window 2.2
-import QtQuick.Controls.Styles 1.4
-import QtQuick.Dialogs 1.2
+import QtQuick 2.3
+import QtQuick.Controls 1.2
 import feather.scenegraph 1.0
-import "common"
 
-ApplicationWindow {
-    id: mainwindow
-    width: 1900
-    height: 1020 
+Menu {
+    id: toolsMenu 
+    title: "Tools"
     visible: true
-    title: "Feather 0.2"
-    color: theme.windowBorderNormalColor 
+
+    property Properties properties: Null
+
+    style: MenuStyle { properties: toolsMenu.properties }
 
 
-    FTheme { id: theme }
+    // ACTIONS
 
-    Properties { id: prop }
 
-    menuBar: MenuBar {
-        id: mainMenu
-
-        style: FMenuBarStyle {} 
-
-        FileMenu { id: fileMenu; properties: prop }
-    } 
-
-    SceneGraphEditor {
-        id: sgEditor
-        anchors.fill: parent
-        properties: prop
+    // Undo 
+    Action {
+        id: centerAction
+        text: "Center"
+        tooltip: "Center the object at [0,0,0]"
+        onTriggered: {}
     }
 
-    /*
-    FSplitView {
-        id: view
-        anchors.fill: parent
 
-        TestWindow { id: window1 }
-        TestWindow { id: window2 }
+    // MENU
+
+
+    // Center 
+    MenuItem {
+        action: centerAction
     }
-    */
+
+    MenuSeparator {}
+
 }

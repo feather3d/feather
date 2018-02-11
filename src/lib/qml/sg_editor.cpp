@@ -675,7 +675,12 @@ void SceneGraphEditor::updateLinks(int uid)
     }
 }
 
-void SceneGraphEditor::mousePressEvent(QMouseEvent* event){ std::cout << "mouse press\n"; };
+void SceneGraphEditor::mousePressEvent(QMouseEvent* event){
+    std::cout << "mouse press\n";
+    // close and connection dialogs if the are open
+    emit closeConnMenu();
+};
+
 void SceneGraphEditor::mouseReleaseEvent(QMouseEvent* event){ std::cout << "mouse release\n"; };
 void SceneGraphEditor::hoverEnterEvent(QHoverEvent* event){ std::cout << "hover enter\n"; };
 void SceneGraphEditor::hoverLeaveEvent(QHoverEvent* event){ std::cout << "hover leave\n"; };
