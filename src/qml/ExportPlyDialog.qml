@@ -28,6 +28,7 @@ import QtQuick.Controls.Styles 1.4
 import feather.scenegraph 1.0
 import feather.command 1.0
 import feather.tools 1.0
+import "common"
 
 Dialog {
     id: dialog

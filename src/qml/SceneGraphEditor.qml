@@ -28,6 +28,7 @@ import QtQuick.Layouts 1.1
 import feather.editors 1.0
 import feather.scenegraph 1.0
 import feather.field 1.0
+import "common"
 
 Rectangle {
     id: sgWindow
@@ -85,7 +86,6 @@ Rectangle {
         }
     }
 
-
     ToolBar {
         id: toolBar
         anchors.top: parent.top
@@ -99,13 +99,26 @@ Rectangle {
                 border.width: 1
             }
         }
-
+        
 
         RowLayout {
             spacing: 6
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.left: parent.left
-             
+            //anchors.verticalCenter: parent.verticalCenter
+            //anchors.left: parent.left
+
+            Button {
+                id: nodeButton
+                //width: 32
+                //height: 32
+                text: "Node"
+ 
+                menu: NodeMenu {
+                    id: fileMenu
+                    properties: sgWindow.properties
+                }
+            }
+
+            /*
             ToolButton {
                 id: addNodeButton
                 width: 32; height: 32
@@ -133,7 +146,7 @@ Rectangle {
                 iconSource: "/usr/share/feather/ui/icons/delete_connection.png"
                 action: deleteConnection 
             }
-
+            */
         }
 
     } 

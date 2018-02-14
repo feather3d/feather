@@ -23,17 +23,17 @@
 
 import QtQuick 2.3
 import QtQuick.Window 2.2
+//import QtQuick.Dialogs 1.3
 import feather.scenegraph 1.0
 import feather.node 1.0
-import QtQuick.Controls 1.4
-import QtQuick.Controls.Styles 1.4
-//import "node_models"
+import QtQuick.Controls 2.2
+import "common"
 
 Window {
     id: dialog
     title: "Add Node"
-    width: 300
-    height: 140
+    width: column.implicitWidth
+    height: column.implicitHeight
     modality: Qt.WindowModal
     flags: Qt.Dialog
     visible: false
@@ -45,8 +45,6 @@ Window {
     property int nid: 0
     property int type: 0
 
-    color: properties.getColor("windowBg")
-
     signal addNode(string name, int nid)
 
     NodeTypeModel { id: typeModel }
@@ -56,24 +54,40 @@ Window {
     // Nodes
     //NodeCommonModel { id: commonModel }
     //NodePolygonModel { id: polygonModel }
-    
+
+    //contentItem: 
+    /*
+     Rectangle {
+        id: container
+        color: properties.getColor("windowBg")
+        anchors.fill: parent
+        //width: 600 //contents + 8
+        //height: 400 //contents + 8
+    */
     Column {
+        id: column
         spacing: 4
         anchors.fill: parent
-        anchors.margins: 4 
+        //anchors.top: parent.top
+        //anchors.left: parent.left
+        anchors.topMargin: 4
+        anchors.leftMargin: 4
+        //width: 600
+        //height: 400 
+
         // Name 
         Row {
             spacing: 4
-            width: parent.width
+            //width: parent.width
              
             Text {
                 id: nameLabel
                 width: 70
-                height: 30
+                height: 20
                 visible: true
                 horizontalAlignment: Text.AlignRight
                 verticalAlignment: Text.AlignVCenter
-                font.pixelSize: 14
+                font.pixelSize: 12
                 font.bold: false
                 text: "Name" 
             }
@@ -85,17 +99,27 @@ Window {
                 horizontalAlignment: TextInput.AlignHCenter
                 verticalAlignment: TextInput.AlignVCenter
                 readOnly: false
+                focusReason: Qt.MouseFocusReason || Qt.TabFocusReason
                 placeholderText: "Enter Node Name"
-                style: TextFieldStyle {
-                    background: Rectangle {
+                hoverEnabled: true
+                background: Rectangle {
                         color: properties.getColor("textBg")
                         border.color: "black"
                         border.width: 1
                         radius: 2
                     }
 
-                    textColor: properties.getColor("text")
+                    //textColor: properties.getColor("text")
+                /*
+                MouseArea {
+                    anchors.fill: parent
+                    
+                    onClicked: {
+                        //nameEdit.forceFocus = true 
+                    }
+
                 }
+                */
             }
         }
 
@@ -107,11 +131,11 @@ Window {
             Text {
                 id: typeLabel
                 width: 70
-                height: 30
+                height: 20
                 visible: true
                 horizontalAlignment: Text.AlignRight
                 verticalAlignment: Text.AlignVCenter
-                font.pixelSize: 14
+                font.pixelSize: 12
                 font.bold: false
                 text: "Type" 
             }
@@ -119,7 +143,7 @@ Window {
             OptionBox {
                 id: typeOption
                 width: 200
-                height: 30
+                height: 20
                 model: typeModel
                 properties: dialog.properties 
              }
@@ -133,11 +157,11 @@ Window {
             Text {
                 id: nidLabel
                 width: 70
-                height: 30
+                height: 20
                 visible: true 
                 horizontalAlignment: Text.AlignRight
                 verticalAlignment: Text.AlignVCenter
-                font.pixelSize: 14
+                font.pixelSize: 12
                 font.bold: false
                 text: "Id" 
             }
@@ -145,7 +169,7 @@ Window {
             OptionBox {
                 id: nodeOption
                 width: 200
-                height: 30
+                height: 20
                 model: nodeModel
                 properties: dialog.properties 
              }
@@ -158,7 +182,7 @@ Window {
             PushButton {
                 id: cancelButton
                 width: 100 
-                height: 30
+                height: 20
                 text: "Cancel"
                 properties: dialog.properties 
             }
@@ -166,12 +190,14 @@ Window {
             PushButton {
                 id: acceptButton
                 width: 100 
-                height: 30
+                height: 20
                 text: "Accept"
                 properties: dialog.properties 
             }
         }
     }
+
+    //}
 
     function hide(){
         dialog.visible = false

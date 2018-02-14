@@ -25,6 +25,7 @@ import QtQuick 2.5
 import QtQuick.Window 2.2
 import feather.scenegraph 1.0
 import feather.field 1.0
+import "common"
 
 Window {
     id: editor

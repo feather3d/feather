@@ -70,6 +70,8 @@ Item {
     property string menuBorderColor: "#000000"
     property int menuBorderWidth: 1 
     property int menuBorderRadius: 2 
+    property int menuFontPixelSize: 12 
+    property string menuFontColor: "#000000" 
     // background
     property string menuBackgroundColor: "#707070"
     // text

@@ -3,23 +3,30 @@ import QtQuick.Window 2.2
 import QtQml.Models 2.3
 import QtQuick.Controls 1.4
 import QtQuick.Controls.Styles 1.4
+import feather.command 1.0
+import feather.scenegraph 1.0
+import feather.node 1.0
+import feather.tools 1.0
 
-Component {
-    id: menuStyle
+MenuStyle {
 
+    FTheme { id: theme }
 
-    MenuStyle {
+    property Properties properties: Null
 
-        FTheme { id: theme }
-
-        frame: Rectangle {
-            color: theme.menuBackgroundColor
-            border.color: theme.menuBorderColor
-            border.width: theme.menuBorderWidth
-            radius: theme.menuBorderRadius
-        }
+    frame: Rectangle {
+        color: theme.menuBackgroundColor
+        border.color: theme.menuBorderColor
+        border.width: theme.menuBorderWidth
+        radius: theme.menuBorderRadius
     }
+    
+    font.pixelSize: theme.menuFontPixelSize
 
+    itemDelegate.label: Text {
+        text: styleData.text 
+        font.pixelSize: theme.menuFontPixelSize 
+        color: theme.menuFontColor
+    }
 }
-
 
