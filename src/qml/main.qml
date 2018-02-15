@@ -53,8 +53,18 @@ ApplicationWindow {
 
     SceneGraphEditor {
         id: sgEditor
-        anchors.fill: parent
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: timeEditor.top
         properties: prop
+    }
+
+    TimeEditor {
+        id: timeEditor
+        anchors.bottom: parent.bottom
+        anchors.left: parent.left
+        anchors.right: parent.right
     }
 
     /*
