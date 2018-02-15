@@ -28,6 +28,7 @@ import QtQuick.Window 2.2
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Dialogs 1.2
 import feather.scenegraph 1.0
+import feather.field 1.0
 import "common"
 
 ApplicationWindow {
@@ -55,9 +56,18 @@ ApplicationWindow {
         id: sgEditor
         anchors.top: parent.top
         anchors.left: parent.left
+        anchors.right: fieldEditor.left 
+        anchors.bottom: timeEditor.top
+        properties: prop
+    }
+
+    FieldEditor {
+        id: fieldEditor
+        anchors.top: parent.top
         anchors.right: parent.right
         anchors.bottom: timeEditor.top
         properties: prop
+        fieldModel: FieldModel{} 
     }
 
     TimeEditor {
