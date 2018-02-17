@@ -47,6 +47,7 @@ SET(feather_qml_SRCS
     layer_model.cpp
     tree_model.cpp
     sg_editor.cpp
+    render_image.cpp
     qml.cpp
 )
 

@@ -52,13 +52,16 @@ ApplicationWindow {
         FileMenu { id: fileMenu; properties: prop }
     } 
 
-    SceneGraphEditor {
-        id: sgEditor
+    FSplitView {
+        id: centralWidget
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: fieldEditor.left 
         anchors.bottom: timeEditor.top
-        properties: prop
+ 
+        SceneGraphEditor { id: sgEditor; width: parent.width/2; properties: prop }
+        RenderWindow { id: renderWindow; properties: prop }
+ 
     }
 
     FieldEditor {

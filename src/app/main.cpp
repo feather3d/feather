@@ -25,6 +25,7 @@
 #include "curves.hpp"
 #include "viewport.hpp"
 #include "sg_editor.hpp"
+#include "render_image.hpp"
 #include "field_model.hpp"
 #include "layer_model.hpp"
 #include "tree_model.hpp"
@@ -203,6 +204,7 @@ int main(int argc, char **argv)
     qmlRegisterType<BezierCurve>("feather.ui.curves", 1, 0, "BezierCurve");
     qmlRegisterType<Viewport>("feather.viewport", 1, 0, "Viewport3D2");
     qmlRegisterType<SceneGraphEditor>("feather.editors", 1, 0, "SceneGraphEditor");
+    qmlRegisterType<RenderImage>("feather.editors", 1, 0, "RenderImage");
     qmlRegisterSingletonType<SceneGraph>("feather.scenegraph", 1, 0, "SceneGraph", get_scenegraph);
     qmlRegisterType<TreeModel>("feather.outliner", 1, 0, "OutlinerModel");
     qmlRegisterType<Node>("feather.node", 1, 0, "Node");
