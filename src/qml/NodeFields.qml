@@ -159,5 +159,21 @@ FieldModel {
         addFieldName("weights",440,3)
         // Out
         addFieldName("mesh",440,4)
+
+        // LUXRENDER PLUGIN
+
+        // Matte
+        // In 
+        addFieldName("color",511,1)
+ 
+        // Matte
+        // In 
+        addFieldName("color",512,1)
+ 
+        // Matte
+        // In 
+        addFieldName("fov",561,1)
+ 
+
     }
 }

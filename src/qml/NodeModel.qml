@@ -59,4 +59,12 @@ ListModel {
     // DEFORMER PLUGIN
     ListElement { text: "Cluster"; nid: 440; type: Node.Deformer}
 
+    // LUX PLUGIN
+    ListElement { text: "LuxMatte"; nid: 511; type: Node.Shader }
+    ListElement { text: "LuxEmission"; nid: 512; type: Node.Shader }
+    ListElement { text: "LuxCamera"; nid: 561; type: Node.Camera }
+
+
+
+
 }
