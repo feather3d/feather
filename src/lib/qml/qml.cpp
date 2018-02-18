@@ -664,3 +664,6 @@ void Plugins::load()
         m_items.append(new PluginObject(QString(list[i].name.c_str()), QString(list[i].description.c_str()), QString(list[i].author.c_str())));
 }
 
+void Render::render_buffer(int id) {
+    qml::command::render_buffer(id);  
+}

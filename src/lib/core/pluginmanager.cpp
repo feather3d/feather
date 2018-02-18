@@ -134,6 +134,10 @@ status PluginManager::load_node(PluginData &node)
     node.create_fields = (status(*)(int,field::Fields&))dlsym(node.handle,"create_fields");
     //node.get_field = (field::FieldBase*(*)(int,int,field::Fields&))dlsym(node.handle, "get_field");
     node.get_fid_list = (status(*)(int,field::connection::Type,field::Fields&,std::vector<field::FieldBase*>&))dlsym(node.handle, "get_fid_list");
+    node.render_properties = (status(*)(int,render::RenderProperties&))dlsym(node.handle, "render_properties");
+    node.render_exist = (bool(*)(int))dlsym(node.handle, "render_exist");
+    node.render_buffer = (status(*)(int))dlsym(node.handle, "render_buffer");
+    node.render_buffer_exist = (bool(*)(int))dlsym(node.handle, "render_buffer_exist");
     node.command_exist = (bool(*)(std::string))dlsym(node.handle, "command_exist");
     node.command = (status(*)(std::string,parameter::ParameterList))dlsym(node.handle, "command");
     node.parameter_name = (status(*)(std::string,int,std::string&))dlsym(node.handle, "parameter_name");
@@ -387,3 +391,14 @@ bool PluginManager::add_parameter_to_list(std::string cmd, int key, std::string 
 
     return false;
 }
+
+
+// RENDER
+
+status PluginManager::render_buffer(int render_id)
+{
+    std::cout << "calling render buffer " << render_id << std::endl;
+    std::for_each(m_plugins.begin(),m_plugins.end(), call_render_buffer(render_id) );
+    return status();
+}
+

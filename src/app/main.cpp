@@ -205,6 +205,7 @@ int main(int argc, char **argv)
     qmlRegisterType<Viewport>("feather.viewport", 1, 0, "Viewport3D2");
     qmlRegisterType<SceneGraphEditor>("feather.editors", 1, 0, "SceneGraphEditor");
     qmlRegisterType<RenderImage>("feather.editors", 1, 0, "RenderImage");
+    qmlRegisterType<Render>("feather.render", 1, 0, "Render");
     qmlRegisterSingletonType<SceneGraph>("feather.scenegraph", 1, 0, "SceneGraph", get_scenegraph);
     qmlRegisterType<TreeModel>("feather.outliner", 1, 0, "OutlinerModel");
     qmlRegisterType<Node>("feather.node", 1, 0, "Node");

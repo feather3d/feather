@@ -27,6 +27,7 @@ import QtQuick.Layouts 1.2
 import QtQuick.Controls.Styles 1.4
 import "common"
 import feather.editors 1.0
+import feather.render 1.0
 
 Rectangle {
     id: renderWindow
@@ -51,6 +52,14 @@ Rectangle {
         RowLayout {
             spacing: 6
 
+            PushButton {
+                id: renderButton
+                //width: 32
+                //height: 32
+                text: "Render"
+                properties: renderWindow.properties 
+            }
+
         }
 
     }
@@ -60,6 +69,18 @@ Rectangle {
         anchors.centerIn: parent
         width: 400
         height: 200
+    }
+
+    Render {
+        id: render
+    }
+
+    function render_buffer() {
+        render.render_buffer(1);
+    }
+
+    Component.onCompleted: {
+        renderButton.clicked.connect(render_buffer)
     }
 }
 

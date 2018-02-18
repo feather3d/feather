@@ -563,3 +563,8 @@ void qml::command::clear_selection()
     scenegraph::clear_selection();
 }
 
+void qml::command::render_buffer(int id) {
+    plugins.render_buffer(id);
+};
+
+

@@ -138,7 +138,13 @@ namespace feather
 
             status get_selected_nodes(std::vector<unsigned int>& uids);
             void clear_selection();
-   
+
+
+            // RENDER
+
+            void render_buffer(int id);
+
+  
         } // namespace command
 
     } // namespace qml

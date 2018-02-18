@@ -789,6 +789,7 @@ class Plugins : public QAbstractListModel
         QList<PluginObject*> m_items;
 };
 
+
 class Tools : public QObject
 {
     Q_OBJECT
@@ -798,5 +799,17 @@ class Tools : public QObject
         ~Tools(){};
         Q_INVOKABLE QString urlToString(QUrl url) { return url.path(); };
 };
+
+
+class Render: public QObject
+{
+    Q_OBJECT
+
+    public:
+        Render(QObject* parent=0){};
+        ~Render(){};
+        Q_INVOKABLE void render_buffer(int id);
+};
+
 
 #endif
