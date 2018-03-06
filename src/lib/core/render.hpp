@@ -36,9 +36,28 @@ namespace feather
     namespace render 
     {
 
+        enum BufferLayout {
+            RGB888,
+            RGB161616,
+            RGB323232,
+            GRAYSCALE8,
+            GRAYSCALE16,
+            GRAYSCALE32
+        };
+
+
         struct RenderProperties {
             int id;
             std::string name;
+        };
+
+
+        struct RenderBuffer {
+            RenderBuffer():layout(RGB888),width(400),height(200),data(nullptr){};
+            BufferLayout layout;
+            uint16_t width;
+            uint16_t height;
+            char* data;
         };
 
         // THIS IS NOT USED AT THIS POINT
@@ -54,12 +73,38 @@ namespace feather
 
 }
 
+#define RENDER_START(__render_enum)\
+    template <> status render_start<__render_enum>(render::RenderProperties& props)
+ 
+#define RENDER_STOP(__render_enum)\
+   template <> status render_stop<__render_enum>(render::RenderProperties& props)
+ 
 #define RENDER_BUFFER(__render_enum)\
-    template <> status render_buffer<__render_enum>()
+    template <> status render_buffer<__render_enum>(render::RenderBuffer& buffer)
 
 #define RENDER_INIT(__render_enum, __name)\
     namespace feather {\
-        template <> status render_properties<__render_enum>(render::RenderProperties& props)\
+        template <> struct call_render_starts<__render_enum> {\
+            static status exec(int id, render::RenderProperties& props) {\
+                if(id==__render_enum){\
+                    return render_start<__render_enum>(props);\
+                } else {\
+                    return call_render_starts<__render_enum-1>::exec(id,props);\
+                }\
+            };\
+        };\
+        \
+        template <> struct call_render_stops<__render_enum> {\
+            static status exec(int id, render::RenderProperties& props) {\
+                if(id==__render_enum){\
+                    return render_stop<__render_enum>(props);\
+                } else {\
+                    return call_render_stops<__render_enum-1>::exec(id,props);\
+                }\
+            };\
+        };\
+        \
+       template <> status render_properties<__render_enum>(render::RenderProperties& props)\
         {\
             props.id = __render_enum;\
             props.name = __name;\
@@ -94,11 +139,11 @@ namespace feather
         };\
         \
         template <> struct call_render_buffers<__render_enum> {\
-            static status exec(int id) {\
+            static status exec(int id, render::RenderBuffer& buffer) {\
                 if(id==__render_enum)\
-                return render_buffer<__render_enum>();\
+                return render_buffer<__render_enum>(buffer);\
                 else\
-                call_render_buffers<__render_enum-1>::exec(id);\
+                call_render_buffers<__render_enum-1>::exec(id,buffer);\
             };\
         };\
         \

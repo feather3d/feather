@@ -33,6 +33,7 @@
 #include "node.hpp"
 #include "object.hpp"
 #include "field.hpp"
+#include "render_image.hpp"
 #include "qml_status.hpp"
 #include <QtQuick/QQuickPaintedItem>
 
@@ -804,11 +805,29 @@ class Tools : public QObject
 class Render: public QObject
 {
     Q_OBJECT
-
+    Q_PROPERTY(RenderImage* image READ image WRITE setImage NOTIFY imageChanged)
+ 
     public:
-        Render(QObject* parent=0){};
+        Render(QObject* parent=0): m_pImage(nullptr) {};
         ~Render(){};
+ 
+        // nid 
+        void setImage(RenderImage* i) {
+            if(m_pImage != i) {
+                m_pImage = i;
+                emit imageChanged();
+            }
+        };
+
+        RenderImage* image() { return m_pImage; };
+
         Q_INVOKABLE void render_buffer(int id);
+
+    signals:
+        void imageChanged();
+
+    private:
+        RenderImage* m_pImage;
 };
 
 

@@ -65,7 +65,7 @@ Rectangle {
     }
 
     RenderImage {
-        id: image
+        id: renderImage
         anchors.centerIn: parent
         width: 400
         height: 200
@@ -73,6 +73,7 @@ Rectangle {
 
     Render {
         id: render
+        image: renderImage
     }
 
     function render_buffer() {

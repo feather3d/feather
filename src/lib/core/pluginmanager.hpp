@@ -65,9 +65,11 @@ namespace feather
         //field::FieldBase* (*get_field)(int,int,field::Fields&);
         status (*get_fid_list)(int,field::connection::Type,field::Fields&,std::vector<field::FieldBase*>&);
         // RENDER
+        status (*render_start)(int,render::RenderProperties&);
+        status (*render_stop)(int,render::RenderProperties&);
         status (*render_properties)(int,render::RenderProperties&);
         bool (*render_exist)(int);
-        status (*render_buffer)(int);
+        status (*render_buffer)(int,render::RenderBuffer&);
         bool (*render_buffer_exist)(int);
         // COMMAND
         bool (*command_exist)(std::string cmd);
@@ -167,6 +169,46 @@ namespace feather
     };
 
 
+    // RENDER_START()
+
+    template <int _Id>
+    struct call_render_starts {
+        static status exec(int id, render::RenderProperties& props) { return call_render_starts<_Id-1>::exec(id,props); };
+    };
+
+    template <> struct call_render_starts<0> { static status exec(int id, render::RenderProperties& props) { return status(FAILED,"could not find render properties"); }; };
+
+    template <int _Id> status render_start(render::RenderProperties& props) { return status(FAILED,"render properties not found"); };
+   
+    struct call_render_start {
+        call_render_start(int id,render::RenderProperties& props): m_renderer(id), m_props(props){};
+        void operator()(PluginData n) { if(n.render_exist(m_renderer)) { n.render_start(m_renderer,m_props); } };
+        private:
+            int m_renderer;
+            render::RenderProperties& m_props;
+    };
+
+
+    // RENDER_STOP()
+
+    template <int _Id>
+    struct call_render_stops {
+        static status exec(int id, render::RenderProperties& props) { return call_render_stops<_Id-1>::exec(id,props); };
+    };
+
+    template <> struct call_render_stops<0> { static status exec(int id, render::RenderProperties& props) { return status(FAILED,"could not find render properties"); }; };
+
+    template <int _Id> status render_stop(render::RenderProperties& props) { return status(FAILED,"render properties not found"); };
+   
+    struct call_render_stop {
+        call_render_stop(int id,render::RenderProperties& props): m_renderer(id), m_props(props){};
+        void operator()(PluginData n) { if(n.render_exist(m_renderer)) { n.render_stop(m_renderer,m_props); } };
+        private:
+            int m_renderer;
+            render::RenderProperties& m_props;
+    };
+
+
     // RENDER_PROPERTIES()
 
     template <int _Id>
@@ -190,18 +232,19 @@ namespace feather
     // RENDER BUFFER()
     template <int _Id>
     struct call_render_buffers {
-        static status exec(int id) { return call_render_buffers<_Id-1>::exec(id); };
+        static status exec(int id, render::RenderBuffer& buffer) { return call_render_buffers<_Id-1>::exec(id,buffer); };
     };
 
-    template <> struct call_render_buffers<0> { static status exec(int id) { return status(FAILED,"could not find node"); }; };
+    template <> struct call_render_buffers<0> { static status exec(int id, render::RenderBuffer& buffer) { return status(FAILED,"could not find node"); }; };
 
-    template <int _Id> status render_buffer() { return status(FAILED,"no node found"); };
+    template <int _Id> status render_buffer(render::RenderBuffer& buffer) { return status(FAILED,"no node found"); };
    
     struct call_render_buffer {
-        call_render_buffer(int id): m_renderer(id) {};
-        void operator()(PluginData n) { if(n.render_buffer_exist(m_renderer)) { n.render_buffer(m_renderer); } };
+        call_render_buffer(int id, render::RenderBuffer &buffer): m_renderer(id), m_buffer(buffer) {};
+        void operator()(PluginData n) { if(n.render_buffer_exist(m_renderer)) { n.render_buffer(m_renderer,m_buffer); } };
         private:
             int m_renderer;
+            render::RenderBuffer& m_buffer;
     };
 
 
@@ -493,8 +536,10 @@ namespace feather
             void loaded_plugins(std::vector<PluginInfo>& list);
             status get_fid_list(int nid, field::connection::Type conn, field::Fields& fields, std::vector<field::FieldBase*>& list);
             // RENDER
+            status render_start(int render_id,render::RenderProperties& prop);
+            status render_stop(int render_id,render::RenderProperties& prop);
             status render_properties(int render_id,render::RenderProperties& prop);
-            status render_buffer(int render_id);
+            status render_buffer(int render_id, render::RenderBuffer& buffer);
 
         private:
             bool add_parameter_to_list(std::string cmd, int key, std::string val, parameter::ParameterList& list);
@@ -528,9 +573,11 @@ namespace feather
     \
     /* RENDER */\
     \
+    feather::status render_start(int, feather::render::RenderProperties&);\
+    feather::status render_stop(int, feather::render::RenderProperties&);\
     feather::status render_properties(int, feather::render::RenderProperties&);\
     bool render_exist(int);\
-    feather::status render_buffer(int);\
+    feather::status render_buffer(int, feather::render::RenderBuffer&);\
     bool render_buffer_exist(int);\
     \
     /* COMMAND */\
@@ -616,6 +663,16 @@ namespace feather
     \
     /* RENDER */\
     \
+    /* call plugin render_starts() */\
+    feather::status render_starts(int id, feather::render::RenderProperties& props) {\
+        return call_render_starts<MAX_RENDER_ID>::exec(id,props);\
+    };\
+    \
+    /* call plugin render_stops() */\
+    feather::status render_stops(int id, feather::render::RenderProperties& props) {\
+        return call_render_stops<MAX_RENDER_ID>::exec(id,props);\
+    };\
+    \
     /* call plugin render_properties() */\
     feather::status render_properties(int id, feather::render::RenderProperties& props) {\
         return call_render_properties<MAX_RENDER_ID>::exec(id,props);\
@@ -626,8 +683,8 @@ namespace feather
     };\
     \
     /* call render_buffer() */\
-    feather::status render_buffer(int id) {\
-        return call_render_buffers<MAX_NODE_ID>::exec(id);\
+    feather::status render_buffer(int id, feather::render::RenderBuffer& buffer) {\
+        return call_render_buffers<MAX_NODE_ID>::exec(id,buffer);\
     };\
     /* see if there is a render buffer for the plugin */\
     bool render_buffer_exist(int id) {\

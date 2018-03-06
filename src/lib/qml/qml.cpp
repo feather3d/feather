@@ -664,6 +664,20 @@ void Plugins::load()
         m_items.append(new PluginObject(QString(list[i].name.c_str()), QString(list[i].description.c_str()), QString(list[i].author.c_str())));
 }
 
+
 void Render::render_buffer(int id) {
-    qml::command::render_buffer(id);  
+    // if there is a render image to display, pass it's buffer
+    if(m_pImage) {
+        qml::command::render_buffer(id,m_pImage->getRenderBuffer());  
+        m_pImage->start_render_update();
+        //m_pImage->stop_render_update();
+        /*
+        int i = 100;
+        while(i<100) {
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+            std::this_thread::sleep_until(std::chrono::system_clock::now() + std::chrono::seconds(1));
+            i++;
+        }
+        */
+    }
 }

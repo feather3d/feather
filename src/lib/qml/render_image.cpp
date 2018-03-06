@@ -34,24 +34,59 @@
 
 RenderImage::RenderImage(QQuickItem* parent) : 
     QQuickPaintedItem(parent),
+    m_pTimer(new QTimer(this)),
     mouseX(0),
-    mouseY(0)
+    mouseY(0),
+    m_RenderBuffer(feather::render::RenderBuffer()),
+    mWidth(400),
+    mHeight(200)
 {
     setAcceptedMouseButtons(Qt::AllButtons);
     updateImage();
+
+    //m_RenderBuffer = feather::render::RenderBuffer();
+
+    connect(m_pTimer, SIGNAL(timeout()), this, SLOT(update()));
 }
+
 
 RenderImage::~RenderImage()
 {
     clearImage();
 }
 
+
+void RenderImage::start_render_update()
+{
+    m_pTimer->start(1000);
+}
+
+
+void RenderImage::stop_render_update()
+{
+    m_pTimer->stop();
+}
+
+
+void RenderImage::set_buffer(char* buffer)
+{
+    QFile file("/home/richard/tv.data");
+    if (!file.open(QFile::ReadOnly)) {
+        std::cout << "FILE FAILED TO LOAD\n";
+        return;
+    }
+
+    m_RenderBuffer.data=file.readAll().data();
+}
+
+
 void RenderImage::paint(QPainter* painter)
 {
-    setFillColor(QColor("#000000"));
-    painter->setRenderHints(QPainter::Antialiasing, true);
-
-    //std::for_each(m_links.begin(),m_links.end(),[painter](SceneGraphLink* l){ l->paint(painter); });
+    std::cout << "update paint\n";
+    //char* test;
+    //set_buffer(test);
+    QImage image(reinterpret_cast<uchar*>(m_RenderBuffer.data), mWidth, mHeight, QImage::Format_RGB888);
+    painter->drawImage(QRect(0,0,mWidth,mHeight),image);
 }
 
 void RenderImage::updateImage()

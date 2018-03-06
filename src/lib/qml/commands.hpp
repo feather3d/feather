@@ -142,7 +142,11 @@ namespace feather
 
             // RENDER
 
-            void render_buffer(int id);
+            //static int _id;
+            //static render::RenderBuffer* _buffer;
+
+            void render_thread();
+            void render_buffer(int id, render::RenderBuffer& buffer);
 
   
         } // namespace command

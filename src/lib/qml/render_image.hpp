@@ -27,6 +27,7 @@
 #include "deps.hpp"
 #include "qml_deps.hpp"
 #include "field_model.hpp"
+#include "render.hpp"
 
 class RenderImage : public QQuickPaintedItem
 {
@@ -38,9 +39,13 @@ class RenderImage : public QQuickPaintedItem
         RenderImage(QQuickItem* parent=0);
         ~RenderImage();
 
+        void start_render_update();
+        void stop_render_update();
         void paint(QPainter* painter);
         Q_INVOKABLE void update_render() { updateImage(); update(); };
-
+        
+        void set_buffer(char* buffer);
+        feather::render::RenderBuffer& getRenderBuffer() { return m_RenderBuffer; };
         inline int clickX() { return mouseX; };
         inline int clickY() { return mouseY; };
 
@@ -58,8 +63,13 @@ class RenderImage : public QQuickPaintedItem
     private:
         void updateImage();
         void clearImage();
+        QTimer* m_pTimer;
         int mouseX;
         int mouseY;
+        char* dataBuffer;
+        uint16_t mWidth;
+        uint16_t mHeight;
+        feather::render::RenderBuffer m_RenderBuffer;
 };
 
 #endif

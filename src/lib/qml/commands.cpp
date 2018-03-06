@@ -563,8 +563,22 @@ void qml::command::clear_selection()
     scenegraph::clear_selection();
 }
 
-void qml::command::render_buffer(int id) {
-    plugins.render_buffer(id);
+
+//int qml::command::_id=0;
+//render::RenderBuffer qml::command::_buffer=render::RenderBuffer();
+
+/*
+void qml::command::render_thread() {
+    plugins.render_buffer(_id,_buffer);
+}
+*/
+
+void qml::command::render_buffer(int id, render::RenderBuffer& buffer) {
+    //_id=id;
+    //_buffer=&buffer;
+    plugins.render_buffer(id,buffer);
+    //std::thread renderThread(render_thread);
+    //renderThread.detach();
 };
 
 

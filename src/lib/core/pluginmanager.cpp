@@ -134,9 +134,11 @@ status PluginManager::load_node(PluginData &node)
     node.create_fields = (status(*)(int,field::Fields&))dlsym(node.handle,"create_fields");
     //node.get_field = (field::FieldBase*(*)(int,int,field::Fields&))dlsym(node.handle, "get_field");
     node.get_fid_list = (status(*)(int,field::connection::Type,field::Fields&,std::vector<field::FieldBase*>&))dlsym(node.handle, "get_fid_list");
+    node.render_start = (status(*)(int,render::RenderProperties&))dlsym(node.handle, "render_start");
+    node.render_stop = (status(*)(int,render::RenderProperties&))dlsym(node.handle, "render_stop");
     node.render_properties = (status(*)(int,render::RenderProperties&))dlsym(node.handle, "render_properties");
     node.render_exist = (bool(*)(int))dlsym(node.handle, "render_exist");
-    node.render_buffer = (status(*)(int))dlsym(node.handle, "render_buffer");
+    node.render_buffer = (status(*)(int,render::RenderBuffer&))dlsym(node.handle, "render_buffer");
     node.render_buffer_exist = (bool(*)(int))dlsym(node.handle, "render_buffer_exist");
     node.command_exist = (bool(*)(std::string))dlsym(node.handle, "command_exist");
     node.command = (status(*)(std::string,parameter::ParameterList))dlsym(node.handle, "command");
@@ -395,10 +397,24 @@ bool PluginManager::add_parameter_to_list(std::string cmd, int key, std::string 
 
 // RENDER
 
-status PluginManager::render_buffer(int render_id)
+status PluginManager::render_start(int id, render::RenderProperties& props)
 {
-    std::cout << "calling render buffer " << render_id << std::endl;
-    std::for_each(m_plugins.begin(),m_plugins.end(), call_render_buffer(render_id) );
+    std::cout << "calling render start " << id << std::endl;
+    std::for_each(m_plugins.begin(),m_plugins.end(), call_render_start(id,props) );
+    return status();
+}
+
+status PluginManager::render_stop(int id, render::RenderProperties& props)
+{
+    std::cout << "calling render stop " << id << std::endl;
+    std::for_each(m_plugins.begin(),m_plugins.end(), call_render_stop(id,props) );
+    return status();
+}
+
+status PluginManager::render_buffer(int id, render::RenderBuffer& buffer)
+{
+    std::cout << "calling render buffer " << id << std::endl;
+    std::for_each(m_plugins.begin(),m_plugins.end(), call_render_buffer(id,buffer) );
     return status();
 }
 
