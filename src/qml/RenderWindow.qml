@@ -34,6 +34,7 @@ Rectangle {
     color: "grey" 
     
     property Properties properties: Null
+    property bool rendering: false
 
     ToolBar {
         id: toolBar
@@ -76,12 +77,21 @@ Rectangle {
         image: renderImage
     }
 
+    /*
     function render_buffer() {
         render.render_buffer(1);
     }
+    */
+
+    function render_button_pressed() {
+        //if(rendering)
+        //    render.render_stop(1)
+        //else
+            render.render_start(1)
+    }
 
     Component.onCompleted: {
-        renderButton.clicked.connect(render_buffer)
+        renderButton.clicked.connect(render_button_pressed)
     }
 }
 

@@ -573,6 +573,14 @@ void qml::command::render_thread() {
 }
 */
 
+void qml::command::render_start(int id, render::RenderProperties& props) {
+    plugins.render_start(id,props);
+}
+
+void qml::command::render_stop(int id, render::RenderProperties& props) {
+    plugins.render_stop(id,props);
+}
+
 void qml::command::render_buffer(int id, render::RenderBuffer& buffer) {
     //_id=id;
     //_buffer=&buffer;

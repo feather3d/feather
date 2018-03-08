@@ -821,6 +821,8 @@ class Render: public QObject
 
         RenderImage* image() { return m_pImage; };
 
+        Q_INVOKABLE void render_start(int id);
+        Q_INVOKABLE void render_stop(int id);
         Q_INVOKABLE void render_buffer(int id);
 
     signals:

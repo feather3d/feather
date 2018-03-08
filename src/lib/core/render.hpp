@@ -77,7 +77,7 @@ namespace feather
     template <> status render_start<__render_enum>(render::RenderProperties& props)
  
 #define RENDER_STOP(__render_enum)\
-   template <> status render_stop<__render_enum>(render::RenderProperties& props)
+    template <> status render_stop<__render_enum>(render::RenderProperties& props)
  
 #define RENDER_BUFFER(__render_enum)\
     template <> status render_buffer<__render_enum>(render::RenderBuffer& buffer)
@@ -89,7 +89,7 @@ namespace feather
                 if(id==__render_enum){\
                     return render_start<__render_enum>(props);\
                 } else {\
-                    return call_render_starts<__render_enum-1>::exec(id,props);\
+                    call_render_starts<__render_enum-1>::exec(id,props);\
                 }\
             };\
         };\
@@ -99,7 +99,7 @@ namespace feather
                 if(id==__render_enum){\
                     return render_stop<__render_enum>(props);\
                 } else {\
-                    return call_render_stops<__render_enum-1>::exec(id,props);\
+                    call_render_stops<__render_enum-1>::exec(id,props);\
                 }\
             };\
         };\
@@ -123,27 +123,27 @@ namespace feather
         template <> struct find_renderers<__render_enum> {\
             static bool exec(int id) {\
                 if(id==__render_enum)\
-                return true;\
+                    return true;\
                 else\
-                find_renderers<__render_enum-1>::exec(id);\
+                    find_renderers<__render_enum-1>::exec(id);\
             };\
         };\
         \
         template <> struct find_render_buffers<__render_enum> {\
             static bool exec(int id) {\
                 if(id==__render_enum)\
-                return true;\
+                    return true;\
                 else\
-                find_render_buffers<__render_enum-1>::exec(id);\
+                    find_render_buffers<__render_enum-1>::exec(id);\
             };\
         };\
         \
         template <> struct call_render_buffers<__render_enum> {\
             static status exec(int id, render::RenderBuffer& buffer) {\
                 if(id==__render_enum)\
-                return render_buffer<__render_enum>(buffer);\
+                    return render_buffer<__render_enum>(buffer);\
                 else\
-                call_render_buffers<__render_enum-1>::exec(id,buffer);\
+                    call_render_buffers<__render_enum-1>::exec(id,buffer);\
             };\
         };\
         \

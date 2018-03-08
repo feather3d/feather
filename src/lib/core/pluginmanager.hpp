@@ -664,12 +664,12 @@ namespace feather
     /* RENDER */\
     \
     /* call plugin render_starts() */\
-    feather::status render_starts(int id, feather::render::RenderProperties& props) {\
+    feather::status render_start(int id, feather::render::RenderProperties& props) {\
         return call_render_starts<MAX_RENDER_ID>::exec(id,props);\
     };\
     \
     /* call plugin render_stops() */\
-    feather::status render_stops(int id, feather::render::RenderProperties& props) {\
+    feather::status render_stop(int id, feather::render::RenderProperties& props) {\
         return call_render_stops<MAX_RENDER_ID>::exec(id,props);\
     };\
     \
@@ -684,7 +684,7 @@ namespace feather
     \
     /* call render_buffer() */\
     feather::status render_buffer(int id, feather::render::RenderBuffer& buffer) {\
-        return call_render_buffers<MAX_NODE_ID>::exec(id,buffer);\
+        return call_render_buffers<MAX_RENDER_ID>::exec(id,buffer);\
     };\
     /* see if there is a render buffer for the plugin */\
     bool render_buffer_exist(int id) {\

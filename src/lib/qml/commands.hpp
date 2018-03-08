@@ -146,6 +146,8 @@ namespace feather
             //static render::RenderBuffer* _buffer;
 
             void render_thread();
+            void render_start(int id, render::RenderProperties& props);
+            void render_stop(int id, render::RenderProperties& props);
             void render_buffer(int id, render::RenderBuffer& buffer);
 
   

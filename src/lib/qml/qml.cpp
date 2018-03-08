@@ -664,7 +664,16 @@ void Plugins::load()
         m_items.append(new PluginObject(QString(list[i].name.c_str()), QString(list[i].description.c_str()), QString(list[i].author.c_str())));
 }
 
-
+void Render::render_start(int id) {
+    render::RenderProperties props; // this is temp
+    qml::command::render_start(id,props);  
+}
+ 
+void Render::render_stop(int id) {
+    render::RenderProperties props; // this is temp
+    qml::command::render_stop(id,props);  
+}
+ 
 void Render::render_buffer(int id) {
     // if there is a render image to display, pass it's buffer
     if(m_pImage) {
