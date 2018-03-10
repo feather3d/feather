@@ -678,7 +678,8 @@ void Render::render_buffer(int id) {
     // if there is a render image to display, pass it's buffer
     if(m_pImage) {
         qml::command::render_buffer(id,m_pImage->getRenderBuffer());  
-        m_pImage->start_render_update();
+        //m_pImage->start_render_update();
+        m_pImage->update();
         //m_pImage->stop_render_update();
         /*
         int i = 100;

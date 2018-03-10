@@ -77,17 +77,24 @@ Rectangle {
         image: renderImage
     }
 
-    /*
-    function render_buffer() {
-        render.render_buffer(1);
+    Timer {
+        id: bufferUpdateTimer
+        repeat: true
+        running: false
+        interval: 500
+        onTriggered: { render.render_buffer(1) }
     }
-    */
 
     function render_button_pressed() {
-        //if(rendering)
-        //    render.render_stop(1)
-        //else
+        if(rendering) {
+            render.render_stop(1)
+            rendering=false
+            bufferUpdateTimer.stop()
+        } else {
             render.render_start(1)
+            rendering=true
+            bufferUpdateTimer.start()
+        }
     }
 
     Component.onCompleted: {

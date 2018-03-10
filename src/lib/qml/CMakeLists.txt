@@ -108,6 +108,6 @@ SET_TARGET_PROPERTIES(feather_qml
 )
 
 INSTALL(TARGETS feather_qml
-    LIBRARY DESTINATION /usr/lib64/feather)
+    LIBRARY DESTINATION /usr/lib/feather)
 
 add_subdirectory(shaders)

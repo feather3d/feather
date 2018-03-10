@@ -94,4 +94,4 @@ INSTALL(FILES ${CONFIG_FILES} DESTINATION /usr/share/feather)
 
 # INSTALL
 INSTALL( TARGETS feather
-    RUNTIME DESTINATION /usr/share/feather)
+    RUNTIME DESTINATION /usr/bin)

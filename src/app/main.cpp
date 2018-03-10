@@ -153,7 +153,7 @@ bool load_config(config& _config)
     typedef config_parsing::config_parser<iterator_type, skipper_type> config_parser;
 
     // add std::ios::binary flag to read binary data
-    std::ifstream fs("feather.rc", std::ios::in|std::ios::ate);
+    std::ifstream fs("/usr/share/feather/feather.rc", std::ios::in|std::ios::ate);
     long size;
     char* buffer;
     std::string input;

@@ -39,8 +39,6 @@ class RenderImage : public QQuickPaintedItem
         RenderImage(QQuickItem* parent=0);
         ~RenderImage();
 
-        void start_render_update();
-        void stop_render_update();
         void paint(QPainter* painter);
         Q_INVOKABLE void update_render() { updateImage(); update(); };
         
@@ -63,7 +61,6 @@ class RenderImage : public QQuickPaintedItem
     private:
         void updateImage();
         void clearImage();
-        QTimer* m_pTimer;
         int mouseX;
         int mouseY;
         char* dataBuffer;

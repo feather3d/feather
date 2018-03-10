@@ -39,4 +39,4 @@ INSTALL(FILES ${feather_plugin_HDRS}
     DESTINATION /usr/include/feather)
 
 INSTALL(TARGETS feather_plugin
-    LIBRARY DESTINATION /usr/lib64/feather)
+    LIBRARY DESTINATION /usr/lib/feather)

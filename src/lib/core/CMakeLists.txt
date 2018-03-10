@@ -75,4 +75,4 @@ INSTALL(FILES ${feather_core_HDRS}
     DESTINATION /usr/include/feather)
 
 INSTALL(TARGETS feather_core
-    LIBRARY DESTINATION /usr/lib64/feather)
+    LIBRARY DESTINATION /usr/lib/feather)

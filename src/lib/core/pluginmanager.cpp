@@ -24,7 +24,11 @@
 #include "pluginmanager.hpp"
 #include "types.hpp"
 
+
 using namespace feather;
+
+#define PLUGIN_DIRECTORY "/usr/lib/feather/plugins"
+
 
 PluginManager::PluginManager():m_pluginPath("~/.feather/plugins")
 {
@@ -39,7 +43,7 @@ PluginManager::~PluginManager()
 
 status PluginManager::load_plugins()
 {
-    boost::filesystem::path plugin_path("/usr/share/feather/plugins");
+    boost::filesystem::path plugin_path(PLUGIN_DIRECTORY);
     typedef std::vector<boost::filesystem::path> files;
     files plugin_paths;
 

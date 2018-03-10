@@ -34,7 +34,6 @@
 
 RenderImage::RenderImage(QQuickItem* parent) : 
     QQuickPaintedItem(parent),
-    m_pTimer(new QTimer(this)),
     mouseX(0),
     mouseY(0),
     m_RenderBuffer(feather::render::RenderBuffer()),
@@ -43,28 +42,12 @@ RenderImage::RenderImage(QQuickItem* parent) :
 {
     setAcceptedMouseButtons(Qt::AllButtons);
     updateImage();
-
-    //m_RenderBuffer = feather::render::RenderBuffer();
-
-    connect(m_pTimer, SIGNAL(timeout()), this, SLOT(update()));
 }
 
 
 RenderImage::~RenderImage()
 {
     clearImage();
-}
-
-
-void RenderImage::start_render_update()
-{
-    m_pTimer->start(1000);
-}
-
-
-void RenderImage::stop_render_update()
-{
-    m_pTimer->stop();
 }
 
 
@@ -83,8 +66,6 @@ void RenderImage::set_buffer(char* buffer)
 void RenderImage::paint(QPainter* painter)
 {
     std::cout << "update paint\n";
-    //char* test;
-    //set_buffer(test);
     QImage image(reinterpret_cast<uchar*>(m_RenderBuffer.data), mWidth, mHeight, QImage::Format_RGB888);
     painter->drawImage(QRect(0,0,mWidth,mHeight),image);
 }
@@ -97,34 +78,15 @@ void RenderImage::updateImage()
     clearImage();
 
     std::vector<int> uids;
-
-    // disabled selection as root for testing
-    //feather::qml::command::get_selected_nodes(uids);
-    //uids.push_back(0);
-
-    //std::cout << uids.size() << " nodes are selected\n";
-
-    /*
-    std::for_each(uids.begin(),uids.end(),[](int& n){ std::cout << n << ","; });
-
-    updateNode(nullptr,0,xpos,ypos);
-    for(auto n : m_nodes) 
-        updateLinks(n->uid());
-    */
 }
 
 void RenderImage::clearImage()
 {
-    //std::for_each(m_links.begin(), m_links.end(), [](SceneGraphLink* link){ delete link; });
-    //m_links.clear();
-    //std::for_each(m_nodes.begin(), m_nodes.end(), [](SceneGraphNode* node){ delete node; });
-    //m_nodes.clear();
 }
 
 void RenderImage::mousePressEvent(QMouseEvent* event)
 {
     std::cout << "mouse press\n";
-    // close and connection dialogs if the are open
 };
 
 void RenderImage::mouseReleaseEvent(QMouseEvent* event){ std::cout << "mouse release\n"; };
