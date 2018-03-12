@@ -30,19 +30,17 @@ namespace feather
     namespace ui
     {
 
-        enum Location {
-            Menu,
-            Popup,
-            FieldEditor
-        };
+        namespace plugin
+        {
 
-        template <int _Node>
-            void layout(std::string& msg) { };
-
-        template <int _Location, int _StartNode, int _EndNode>
-            struct get_layout {
-                static void exec(int n, std::string& msg) { return get_layout<_Location,_StartNode-1,_EndNode>::exec(n,msg); };
+            enum Interface {
+                MenuItem,
+                NodeCreation,
+                FieldEditor,
+                RenderGlobals
             };
+
+        } // namespace plugin
 
     } // namespace ui
 

@@ -609,6 +609,25 @@ void Command::append_parameter(QQmlListProperty<Parameter> *list, Parameter *par
     }
 }
 
+PluginInterface::PluginInterface()
+{
+
+}
+
+PluginInterface::~PluginInterface()
+{
+
+}
+
+void PluginInterface::load()
+{
+
+}
+
+bool PluginInterface::render_globals_interface(const int render_id, QString& path)
+{
+    return false;
+}
 
 // Plugins
 Plugins::Plugins(QObject* parent) : QAbstractListModel(parent)

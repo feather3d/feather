@@ -765,6 +765,30 @@ class PluginObject {
 };
 
 
+// PLUGINS
+struct PluginInterfaceObject
+{
+    int render_id;
+    std::string path;           // path to qml code
+};
+
+
+class PluginInterface : public QObject
+{
+    Q_OBJECT
+
+    public:
+        PluginInterface();
+        ~PluginInterface();
+
+        Q_INVOKABLE void load();
+        Q_INVOKABLE bool render_globals_interface(const int render_id, QString& path);
+
+    private:
+        QList<PluginInterfaceObject> m_aInterfaces;
+};
+
+
 class Plugins : public QAbstractListModel
 {
     Q_OBJECT
