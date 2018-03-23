@@ -25,6 +25,7 @@
 #include "field.hpp"
 #include "scenegraph.hpp"
 //#include "selection.hpp"
+#include "tools.hpp"
 
 using namespace feather;
 
@@ -589,4 +590,66 @@ void qml::command::render_buffer(int id, render::RenderBuffer& buffer) {
     //renderThread.detach();
 };
 
+
+// ATTRIBUTE
+
+status qml::command::attribute_type(uint16_t plugin_id, uint16_t attribute_id, attribute::Type& type) {
+    return plugins.attribute_type(plugin_id,attribute_id,type);
+};
+
+
+// GET VALUE
+
+// BOOL 
+status qml::command::attribute_get_bool_value(uint16_t plugin_id, uint16_t attribute_id, bool& value) {
+    return plugins.attribute_get_bool_value(plugin_id,attribute_id,value);
+};
+
+// UINT
+status qml::command::attribute_get_uint_value(uint16_t plugin_id, uint16_t attribute_id, uint32_t& value) {
+    return plugins.attribute_get_uint_value(plugin_id,attribute_id,value);
+};
+
+// INT
+status qml::command::attribute_get_int_value(uint16_t plugin_id, uint16_t attribute_id, int& value) {
+    return plugins.attribute_get_int_value(plugin_id,attribute_id,value);
+};
+
+// REAL 
+status qml::command::attribute_get_real_value(uint16_t plugin_id, uint16_t attribute_id, double& value) {
+    return plugins.attribute_get_real_value(plugin_id,attribute_id,value);
+};
+
+// STRING 
+status qml::command::attribute_get_string_value(uint16_t plugin_id, uint16_t attribute_id, std::string& value) {
+    return plugins.attribute_get_string_value(plugin_id,attribute_id,value);
+};
+
+
+// SET VALUE
+
+// BOOL 
+status qml::command::attribute_set_bool_value(uint16_t plugin_id, uint16_t attribute_id, bool value) {
+    return plugins.attribute_set_bool_value(plugin_id,attribute_id,value);
+};
+
+// UINT
+status qml::command::attribute_set_uint_value(uint16_t plugin_id, uint16_t attribute_id, uint32_t value) {
+    return plugins.attribute_set_uint_value(plugin_id,attribute_id,value);
+};
+
+// INT
+status qml::command::attribute_set_int_value(uint16_t plugin_id, uint16_t attribute_id, int value) {
+    return plugins.attribute_set_int_value(plugin_id,attribute_id,value);
+};
+
+// REAL 
+status qml::command::attribute_set_real_value(uint16_t plugin_id, uint16_t attribute_id, double value) {
+    return plugins.attribute_set_real_value(plugin_id,attribute_id,value);
+};
+
+// STRING 
+status qml::command::attribute_set_string_value(uint16_t plugin_id, uint16_t attribute_id, std::string value) {
+    return plugins.attribute_set_string_value(plugin_id,attribute_id,value);
+};
 

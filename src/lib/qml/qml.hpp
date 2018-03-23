@@ -857,4 +857,89 @@ class Render: public QObject
 };
 
 
+class Attribute: public QObject
+{
+    Q_OBJECT
+
+    Q_ENUMS(Type)
+ 
+    Q_PROPERTY(int plugin_id READ plugin_id WRITE setPlugin_id NOTIFY plugin_idChanged)
+    Q_PROPERTY(int attribute_id READ attribute_id WRITE setAttribute_id NOTIFY attribute_idChanged)
+    Q_PROPERTY(Type type READ type)
+    Q_PROPERTY(bool bval READ bval WRITE setBval NOTIFY bvalChanged)
+    Q_PROPERTY(unsigned int uival READ uival WRITE setUival NOTIFY uivalChanged)
+    Q_PROPERTY(int ival READ ival WRITE setIval NOTIFY ivalChanged)
+    Q_PROPERTY(double rval READ rval WRITE setRval NOTIFY rvalChanged)
+    Q_PROPERTY(QString sval READ sval WRITE setSval NOTIFY svalChanged)
+  
+    public:
+        Attribute(QObject* parent=0): m_Plugin_Id(0), m_Attribute_Id(0) {};
+        ~Attribute(){};
+
+        // Types
+        enum Type {
+            Bool = attribute::Bool,
+            Int = attribute::Int,
+            UInt = attribute::UInt,
+            Real = attribute::Real,
+            String = attribute::String,
+        };
+ 
+        // plugin id 
+        void setPlugin_id(int i) {
+            if(m_Plugin_Id != i) {
+                m_Plugin_Id = i;
+                emit plugin_idChanged();
+            }
+        };
+
+        int plugin_id() { return m_Plugin_Id; };
+ 
+        // attribute id 
+        void setAttribute_id(int i) {
+            if(m_Attribute_Id != i) {
+                m_Attribute_Id = i;
+                emit attribute_idChanged();
+            }
+        };
+
+        int attribute_id() { return m_Attribute_Id; };
+ 
+        Type type();
+
+        // bval 
+        void setBval(bool& val);
+        bool bval();
+
+        // uival
+        void setUival(uint32_t& val);
+        unsigned int uival();
+
+        // ival
+        void setIval(int& val);
+        int ival();
+
+        // rval
+        void setRval(double& val);
+        double rval();
+
+        // sval
+        void setSval(QString& val);
+        QString sval();
+
+    signals:
+        void plugin_idChanged();
+        void attribute_idChanged();
+        void bvalChanged();
+        void uivalChanged();
+        void ivalChanged();
+        void rvalChanged();
+        void svalChanged();
+
+    private:
+        int m_Plugin_Id;
+        int m_Attribute_Id;
+};
+
+
 #endif

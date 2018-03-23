@@ -69,6 +69,7 @@ SET(feather_core_HDRS
     shader.hpp
     draw.hpp
     render.hpp
+    attribute.hpp
 )
 
 INSTALL(FILES ${feather_core_HDRS}

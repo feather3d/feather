@@ -217,6 +217,7 @@ int main(int argc, char **argv)
     qmlRegisterType<LayerModel>("feather.layer", 1, 0, "LayerModel");
     qmlRegisterType<Parameter>("feather.command", 1, 0, "Parameter");
     qmlRegisterType<Command>("feather.command", 1, 0, "Command");
+    qmlRegisterType<Attribute>("feather.attribute", 1, 0, "Attribute");
     qmlRegisterType<Plugins>("feather.plugin", 1, 0, "Plugins");
     qmlRegisterType<PluginInterface>("feather.plugin", 1, 0, "PluginInterface");
     qmlRegisterType<Tools>("feather.tools", 1, 0, "Tools");

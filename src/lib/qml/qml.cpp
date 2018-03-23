@@ -710,3 +710,96 @@ void Render::render_buffer(int id) {
         */
     }
 }
+
+
+// ATTRIBUTE
+
+Attribute::Type Attribute::type() {
+    attribute::Type _t;
+    status p = qml::command::attribute_type(m_Plugin_Id, m_Attribute_Id, _t);
+    return static_cast<Type>(_t);
+}
+
+
+// BOOL
+
+void Attribute::setBval(bool& value) {
+    bool bv = bval();
+    if(bv != value) {
+        status p = qml::command::attribute_set_bool_value(m_Plugin_Id, m_Attribute_Id, value);
+        emit bvalChanged(); 
+    }
+}
+
+bool Attribute::bval() {
+    bool value;
+    status p = qml::command::attribute_get_bool_value(m_Plugin_Id, m_Attribute_Id, value);
+    return value;
+}
+
+
+// UINT
+
+void Attribute::setUival(uint32_t& value) {
+    uint32_t uiv = uival();
+    if(uiv != value) {
+        status p = qml::command::attribute_set_uint_value(m_Plugin_Id, m_Attribute_Id, value);
+        emit uivalChanged(); 
+    }
+}
+
+unsigned int Attribute::uival() {
+    uint32_t value;
+    status p = qml::command::attribute_get_uint_value(m_Plugin_Id, m_Attribute_Id, value);
+    return value;
+}
+
+// INT
+
+void Attribute::setIval(int& value) {
+    int iv = ival();
+    if(iv != value) {
+        status p = qml::command::attribute_set_int_value(m_Plugin_Id, m_Attribute_Id, value);
+        emit ivalChanged(); 
+    }
+}
+
+int Attribute::ival() {
+    int value;
+    status p = qml::command::attribute_get_int_value(m_Plugin_Id, m_Attribute_Id, value);
+    return value;
+}
+
+// REAL
+
+void Attribute::setRval(double& value) {
+    double rv = rval();
+    if(rv != value) {
+        status p = qml::command::attribute_set_real_value(m_Plugin_Id, m_Attribute_Id, value);
+        emit rvalChanged(); 
+    }
+}
+
+double Attribute::rval() {
+    double value;
+    status p = qml::command::attribute_get_real_value(m_Plugin_Id, m_Attribute_Id, value);
+    return value;
+}
+
+// STRING
+
+void Attribute::setSval(QString& value) {
+    QString sv = sval();
+    if(sv != value) {
+        std::string tval = value.toStdString();
+        status p = qml::command::attribute_set_string_value(m_Plugin_Id, m_Attribute_Id, tval);
+        emit svalChanged(); 
+    }
+}
+
+QString Attribute::sval() {
+    std::string value;
+    status p = qml::command::attribute_get_string_value(m_Plugin_Id, m_Attribute_Id, value);
+    return QString(value.c_str());
+}
+

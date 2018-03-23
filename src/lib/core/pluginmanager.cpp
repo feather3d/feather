@@ -24,7 +24,6 @@
 #include "pluginmanager.hpp"
 #include "types.hpp"
 
-
 using namespace feather;
 
 #define PLUGIN_DIRECTORY "/usr/lib/feather/plugins"
@@ -126,8 +125,11 @@ status PluginManager::load_node(PluginData &node)
     node.name = (std::string(*)())dlsym(node.handle, "name");
     node.description = (std::string(*)())dlsym(node.handle, "description");
     node.author = (std::string(*)())dlsym(node.handle, "author");
+    node.id = (int(*)())dlsym(node.handle, "id");
     node.fields_init = (status(*)(int,field::Fields&))dlsym(node.handle, "fields_init");
+    node.plugin_exist = (bool(*)(int))dlsym(node.handle, "plugin_exist");
     node.update_properties = (status(*)(int,field::Fields&))dlsym(node.handle, "update_properties");
+    // NODE
     node.do_it = (status(*)(int,field::Fields&))dlsym(node.handle, "do_it");
     //node.draw_it = (status(*)(int,draw::DrawItems&))dlsym(node.handle, "draw_it");
     node.node_exist = (bool(*)(int))dlsym(node.handle, "node_exist");
@@ -138,16 +140,34 @@ status PluginManager::load_node(PluginData &node)
     node.create_fields = (status(*)(int,field::Fields&))dlsym(node.handle,"create_fields");
     //node.get_field = (field::FieldBase*(*)(int,int,field::Fields&))dlsym(node.handle, "get_field");
     node.get_fid_list = (status(*)(int,field::connection::Type,field::Fields&,std::vector<field::FieldBase*>&))dlsym(node.handle, "get_fid_list");
+    // RENDER
     node.render_start = (status(*)(int,render::RenderProperties&))dlsym(node.handle, "render_start");
     node.render_stop = (status(*)(int,render::RenderProperties&))dlsym(node.handle, "render_stop");
     node.render_properties = (status(*)(int,render::RenderProperties&))dlsym(node.handle, "render_properties");
     node.render_exist = (bool(*)(int))dlsym(node.handle, "render_exist");
     node.render_buffer = (status(*)(int,render::RenderBuffer&))dlsym(node.handle, "render_buffer");
     node.render_buffer_exist = (bool(*)(int))dlsym(node.handle, "render_buffer_exist");
+    // COMMAND
     node.command_exist = (bool(*)(std::string))dlsym(node.handle, "command_exist");
     node.command = (status(*)(std::string,parameter::ParameterList))dlsym(node.handle, "command");
     node.parameter_name = (status(*)(std::string,int,std::string&))dlsym(node.handle, "parameter_name");
     node.parameter_type = (status(*)(std::string,int,parameter::Type&))dlsym(node.handle, "parameter_type");
+    // ATTRIBUTE
+    node.attribute_exist = (bool(*)(uint16_t))dlsym(node.handle, "attribute_exist");
+    node.attribute_type = (status(*)(uint16_t,attribute::Type&))dlsym(node.handle, "attribute_type");
+    // get values
+    node.attribute_get_bool_value = (status(*)(uint16_t,bool&))dlsym(node.handle, "attribute_get_bool_value");
+    node.attribute_get_uint_value = (status(*)(uint16_t,uint32_t&))dlsym(node.handle, "attribute_get_uint_value");
+    node.attribute_get_int_value = (status(*)(uint16_t,int&))dlsym(node.handle, "attribute_get_int_value");
+    node.attribute_get_real_value = (status(*)(uint16_t,double&))dlsym(node.handle, "attribute_get_real_value");
+    node.attribute_get_string_value = (status(*)(uint16_t,std::string&))dlsym(node.handle, "attribute_get_string_value");
+    // set values
+    node.attribute_set_bool_value = (status(*)(uint16_t,bool))dlsym(node.handle, "attribute_set_bool_value");
+    node.attribute_set_uint_value = (status(*)(uint16_t,uint32_t))dlsym(node.handle, "attribute_set_uint_value");
+    node.attribute_set_int_value = (status(*)(uint16_t,int))dlsym(node.handle, "attribute_set_int_value");
+    node.attribute_set_real_value = (status(*)(uint16_t,double))dlsym(node.handle, "attribute_set_real_value");
+    node.attribute_set_string_value = (status(*)(uint16_t,std::string))dlsym(node.handle, "attribute_set_string_value");
+
 
 
     if ((error = dlerror()) != NULL)  
@@ -421,4 +441,160 @@ status PluginManager::render_buffer(int id, render::RenderBuffer& buffer)
     std::for_each(m_plugins.begin(),m_plugins.end(), call_render_buffer(id,buffer) );
     return status();
 }
+
+
+// ATTRIBUTE
+
+status PluginManager::attribute_type(uint16_t plugin_id, uint16_t attribute_id, attribute::Type& type)
+{
+    std::for_each(m_plugins.begin(),m_plugins.end(), [&plugin_id,&attribute_id,&type](PluginData plugin){
+            if(plugin.id() == plugin_id && plugin.plugin_exist(plugin_id) && plugin.attribute_exist(attribute_id)){
+            call_attribute_type call(attribute_id,type);
+            call(plugin);
+            }
+            }
+            );
+    return status();
+}
+
+status PluginManager::attribute_set_bool_value(uint16_t plugin_id, uint16_t attribute_id, bool value)
+{
+    std::for_each(m_plugins.begin(),m_plugins.end(), [&plugin_id,&attribute_id,&value](PluginData plugin){
+            if(plugin.id()== plugin_id && plugin.attribute_exist(attribute_id)){
+            call_attribute_set_bool_value call(attribute_id,value);
+            call(plugin);
+            }
+            }
+            );
+
+   return status();
+}
+
+
+status PluginManager::attribute_set_uint_value(uint16_t plugin_id, uint16_t attribute_id, uint32_t value)
+{
+    std::for_each(m_plugins.begin(),m_plugins.end(), [&plugin_id,&attribute_id,&value](PluginData plugin){
+            if(plugin.id()==plugin_id && plugin.attribute_exist(attribute_id)){
+            call_attribute_set_uint_value call(attribute_id,value);
+            call(plugin);
+            }
+            }
+            );
+
+   return status();
+}
+
+
+status PluginManager::attribute_set_int_value(uint16_t plugin_id, uint16_t attribute_id, int value)
+{
+    std::for_each(m_plugins.begin(),m_plugins.end(), [&plugin_id,&attribute_id,&value](PluginData plugin){
+            if(plugin.id()==plugin_id && plugin.attribute_exist(attribute_id)){
+            call_attribute_set_int_value call(attribute_id,value);
+            call(plugin);
+            }
+            }
+            );
+
+   return status();
+}
+
+
+status PluginManager::attribute_set_real_value(uint16_t plugin_id, uint16_t attribute_id, double value)
+{
+    std::for_each(m_plugins.begin(),m_plugins.end(), [&plugin_id,&attribute_id,&value](PluginData plugin){
+            if(plugin.id()==plugin_id && plugin.attribute_exist(attribute_id)){
+            call_attribute_set_real_value call(attribute_id,value);
+            call(plugin);
+            }
+            }
+            );
+
+   return status();
+}
+
+status PluginManager::attribute_set_string_value(uint16_t plugin_id, uint16_t attribute_id, std::string value)
+{
+    std::for_each(m_plugins.begin(),m_plugins.end(), [&plugin_id,&attribute_id,&value](PluginData plugin){
+            if(plugin.id()==plugin_id && plugin.attribute_exist(attribute_id)){
+            call_attribute_set_string_value call(attribute_id,value);
+            call(plugin);
+            }
+            }
+            );
+
+   return status();
+}
+
+// ATTRIBUTE GET VALUES
+
+// BOOL
+status PluginManager::attribute_get_bool_value(uint16_t plugin_id, uint16_t attribute_id, bool& value)
+{
+    std::for_each(m_plugins.begin(),m_plugins.end(), [&plugin_id,&attribute_id,&value](PluginData plugin){
+            if(plugin.id()== plugin_id && plugin.attribute_exist(attribute_id)){
+            call_attribute_get_bool_value call(attribute_id,value);
+            call(plugin);
+            }
+            }
+            );
+
+    return status();
+}
+
+// UINT
+status PluginManager::attribute_get_uint_value(uint16_t plugin_id, uint16_t attribute_id, uint32_t& value)
+{
+    std::for_each(m_plugins.begin(),m_plugins.end(), [&plugin_id,&attribute_id,&value](PluginData plugin){
+            if(plugin.id()==plugin_id && plugin.attribute_exist(attribute_id)){
+            call_attribute_get_uint_value call(attribute_id,value);
+            call(plugin);
+            }
+            }
+            );
+
+    return status();
+}
+
+// INT
+status PluginManager::attribute_get_int_value(uint16_t plugin_id, uint16_t attribute_id, int& value)
+{
+    std::for_each(m_plugins.begin(),m_plugins.end(), [&plugin_id,&attribute_id,&value](PluginData plugin){
+            if(plugin.id()==plugin_id && plugin.attribute_exist(attribute_id)){
+            call_attribute_get_int_value call(attribute_id,value);
+            call(plugin);
+            }
+            }
+            );
+
+    return status();
+}
+
+// REAL
+status PluginManager::attribute_get_real_value(uint16_t plugin_id, uint16_t attribute_id, double& value)
+{
+    std::for_each(m_plugins.begin(),m_plugins.end(), [&plugin_id,&attribute_id,&value](PluginData plugin){
+            if(plugin.id()==plugin_id && plugin.attribute_exist(attribute_id)){
+            call_attribute_get_real_value call(attribute_id,value);
+            call(plugin);
+            }
+            }
+            );
+
+    return status();
+}
+
+// STRING
+status PluginManager::attribute_get_string_value(uint16_t plugin_id, uint16_t attribute_id, std::string& value)
+{
+    std::for_each(m_plugins.begin(),m_plugins.end(), [&plugin_id,&attribute_id,&value](PluginData plugin){
+            if(plugin.id()==plugin_id && plugin.attribute_exist(attribute_id)){
+            call_attribute_get_string_value call(attribute_id,value);
+            call(plugin);
+            }
+            }
+            );
+
+    return status();
+}
+
 

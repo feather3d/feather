@@ -150,6 +150,25 @@ namespace feather
             void render_stop(int id, render::RenderProperties& props);
             void render_buffer(int id, render::RenderBuffer& buffer);
 
+            // ATTRIBUTE
+            
+            status attribute_type(uint16_t plugin_id, uint16_t attribute_id, attribute::Type& type);
+
+            // get values
+
+            status attribute_get_bool_value(uint16_t plugin_id, uint16_t attribute_id, bool& value);
+            status attribute_get_uint_value(uint16_t plugin_id, uint16_t attribute_id, uint32_t& value);
+            status attribute_get_int_value(uint16_t plugin_id, uint16_t attribute_id, int& value);
+            status attribute_get_real_value(uint16_t plugin_id, uint16_t attribute_id, double& value);
+            status attribute_get_string_value(uint16_t plugin_id, uint16_t attribute_id, std::string& value);
+
+            // set values
+
+            status attribute_set_bool_value(uint16_t plugin_id, uint16_t attribute_id, bool value);
+            status attribute_set_uint_value(uint16_t plugin_id, uint16_t attribute_id, uint32_t value);
+            status attribute_set_int_value(uint16_t plugin_id, uint16_t attribute_id, int value);
+            status attribute_set_real_value(uint16_t plugin_id, uint16_t attribute_id, double value);
+            status attribute_set_string_value(uint16_t plugin_id, uint16_t attribute_id, std::string value);
   
         } // namespace command
 

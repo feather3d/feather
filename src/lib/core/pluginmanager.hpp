@@ -31,10 +31,12 @@
 #include "parameter.hpp"
 #include "field.hpp"
 #include "draw.hpp"
+#include "attribute.hpp"
 
 #define MAX_NODE_ID 800
 #define MAX_RENDER_ID 10 
-
+#define MAX_PLUGIN_ID 20
+#define MAX_ATTRIBUTE_ID 10
 
 namespace feather
 {
@@ -43,6 +45,7 @@ namespace feather
         std::string name;
         std::string description;
         std::string author;
+        int id;
     };
 
     struct PluginData {
@@ -51,6 +54,8 @@ namespace feather
         std::string (*name)();
         std::string (*description)();
         std::string (*author)();
+        int (*id)();
+        bool (*plugin_exist)(int);
         // NODE
         status (*fields_init)(int,field::Fields&);
         status (*update_properties)(int,field::Fields&);
@@ -76,6 +81,19 @@ namespace feather
         status (*command)(std::string cmd, parameter::ParameterList);
         status (*parameter_name)(std::string, int, std::string&);
         status (*parameter_type)(std::string, int, parameter::Type&);
+        // ATTRIBUTE
+        bool (*attribute_exist)(uint16_t);
+        status (*attribute_type)(uint16_t,attribute::Type&);
+        status (*attribute_get_bool_value)(uint16_t,bool&);
+        status (*attribute_get_uint_value)(uint16_t,uint32_t&);
+        status (*attribute_get_int_value)(uint16_t,int&);
+        status (*attribute_get_real_value)(uint16_t,double&);
+        status (*attribute_get_string_value)(uint16_t,std::string&);
+        status (*attribute_set_bool_value)(uint16_t,bool);
+        status (*attribute_set_uint_value)(uint16_t,uint32_t);
+        status (*attribute_set_int_value)(uint16_t,int);
+        status (*attribute_set_real_value)(uint16_t,double);
+        status (*attribute_set_string_value)(uint16_t,std::string);
     };
 
     struct get_name {
@@ -85,6 +103,7 @@ namespace feather
             info.name = n.name();
             info.description = n.description();
             info.author = n.author();
+            info.id = n.id();
             m_list.push_back(info);
         };
 
@@ -107,6 +126,16 @@ namespace feather
             field::Fields& m_fields;
             std::vector<field::FieldBase*>& m_list; 
     };
+
+
+    // PLUGIN MATCHING
+
+    template <int _Id>
+    struct find_plugins {
+        static bool exec(int id) { return find_plugins<_Id-1>::exec(id); };
+    };
+
+    template <> struct find_plugins<0> { static bool exec(int id) { return false; }; };
 
 
     // FIELD_INIT()
@@ -511,6 +540,145 @@ namespace feather
     template <> struct find_render_buffers<0> { static bool exec(int id) { return false; }; };
 
 
+    // NEW ATTRIBUTE CALLS
+
+    // FIND ATTRIBUTES
+
+    template <uint16_t __Attribute_Id>
+    struct find_attributes {
+        static bool exec(uint16_t attribute_id) { return find_attributes<__Attribute_Id-1>::exec(attribute_id); };
+    };
+
+    template <> struct find_attributes<0> { static bool exec(uint16_t attribute_id) { return false; }; };
+
+
+    // CALL ATTRIBUTES
+
+    template <uint16_t __Attribute_Id, uint16_t __Attribute_Function, typename __T>
+    struct call_attributes {
+        static status exec(uint16_t attribute_id, __T& type)
+        { 
+            return call_attributes<__Attribute_Id-1,__Attribute_Function,__T>::exec(attribute_id,type);
+        };
+    };
+
+    template <uint16_t __Attribute_Function, typename __T>
+    struct call_attributes<0,__Attribute_Function,__T> {
+        static status exec(uint16_t attribute_id, __T& type) {
+            return status(FAILED,"could not find plugin");
+        };
+    };
+    
+ 
+    // ATTRIBUTE TYPE
+
+    template <uint16_t __Attribute_Id> status attribute_type(attribute::Type& type) { return status(FAILED,"no attribute type found"); };
+  
+    struct call_attribute_type {
+        call_attribute_type(uint16_t attribute_id, attribute::Type& type): m_attribute_id(attribute_id), m_type(type) {};
+        void operator()(PluginData n) { n.attribute_type(m_attribute_id,m_type); };
+        private:
+            uint16_t m_attribute_id;
+            attribute::Type& m_type;
+    };
+
+
+    // ATTRIBUTE GET VALUE 
+
+    // BOOL 
+    struct call_attribute_get_bool_value {
+        call_attribute_get_bool_value(uint16_t attribute_id, bool& value): m_attribute_id(attribute_id), m_value(value) {};
+        void operator()(PluginData n) { n.attribute_get_bool_value(m_attribute_id,m_value); };
+        private:
+            uint16_t m_attribute_id;
+            bool& m_value;
+    };
+
+    // UINT
+    struct call_attribute_get_uint_value {
+        call_attribute_get_uint_value(uint16_t attribute_id, uint32_t& value): m_attribute_id(attribute_id), m_value(value) {};
+        void operator()(PluginData n) { n.attribute_get_uint_value(m_attribute_id,m_value); };
+        private:
+            uint16_t m_attribute_id;
+            uint32_t& m_value;
+    };
+
+    // INT
+    struct call_attribute_get_int_value {
+        call_attribute_get_int_value(uint16_t attribute_id, int& value): m_attribute_id(attribute_id), m_value(value) {};
+        void operator()(PluginData n) { n.attribute_get_int_value(m_attribute_id,m_value); };
+        private:
+            uint16_t m_attribute_id;
+            int& m_value;
+    };
+
+    // REAL 
+    struct call_attribute_get_real_value {
+        call_attribute_get_real_value(uint16_t attribute_id, double& value): m_attribute_id(attribute_id), m_value(value) {};
+        void operator()(PluginData n) { n.attribute_get_real_value(m_attribute_id,m_value); };
+        private:
+            uint16_t m_attribute_id;
+            double& m_value;
+    };
+
+    // STRING 
+    struct call_attribute_get_string_value {
+        call_attribute_get_string_value(uint16_t attribute_id, std::string& value): m_attribute_id(attribute_id), m_value(value) {};
+        void operator()(PluginData n) { n.attribute_get_string_value(m_attribute_id,m_value); };
+        private:
+            uint16_t m_attribute_id;
+            std::string& m_value;
+    };
+
+
+    // ATTRIBUTE SET VALUE 
+
+    // BOOL 
+    struct call_attribute_set_bool_value {
+        call_attribute_set_bool_value(uint16_t attribute_id, bool value): m_attribute_id(attribute_id), m_value(value) {};
+        void operator()(PluginData n) { n.attribute_set_bool_value(m_attribute_id,m_value); };
+        private:
+            uint16_t m_attribute_id;
+            bool m_value;
+    };
+
+    // UINT
+    struct call_attribute_set_uint_value {
+        call_attribute_set_uint_value(uint16_t attribute_id, uint32_t value): m_attribute_id(attribute_id), m_value(value) {};
+        void operator()(PluginData n) { n.attribute_set_uint_value(m_attribute_id,m_value); };
+        private:
+            uint16_t m_attribute_id;
+            uint32_t m_value;
+    };
+
+    // INT
+    struct call_attribute_set_int_value {
+        call_attribute_set_int_value(uint16_t attribute_id, int value): m_attribute_id(attribute_id), m_value(value) {};
+        void operator()(PluginData n) { n.attribute_set_int_value(m_attribute_id,m_value); };
+        private:
+            uint16_t m_attribute_id;
+            int m_value;
+    };
+
+    // REAL 
+    struct call_attribute_set_real_value {
+        call_attribute_set_real_value(uint16_t attribute_id, double value): m_attribute_id(attribute_id), m_value(value) {};
+        void operator()(PluginData n) { n.attribute_set_real_value(m_attribute_id,m_value); };
+        private:
+            uint16_t m_attribute_id;
+            double m_value;
+    };
+
+    // STRING 
+    struct call_attribute_set_string_value {
+        call_attribute_set_string_value(uint16_t attribute_id, std::string value): m_attribute_id(attribute_id), m_value(value) {};
+        void operator()(PluginData n) { n.attribute_set_string_value(m_attribute_id,m_value); };
+        private:
+            uint16_t m_attribute_id;
+            std::string m_value;
+    };
+
+
 
     // PLUGIN MANAGER
 
@@ -540,6 +708,20 @@ namespace feather
             status render_stop(int render_id,render::RenderProperties& prop);
             status render_properties(int render_id,render::RenderProperties& prop);
             status render_buffer(int render_id, render::RenderBuffer& buffer);
+            // ATTRIBUTE
+            status attribute_type(uint16_t plugin_id, uint16_t attribute_id, attribute::Type& type);
+            // set values
+            status attribute_set_bool_value(uint16_t plugin_id, uint16_t attribute_id, bool value);
+            status attribute_set_uint_value(uint16_t plugin_id, uint16_t attribute_id, uint32_t value);
+            status attribute_set_int_value(uint16_t plugin_id, uint16_t attribute_id, int value);
+            status attribute_set_real_value(uint16_t plugin_id, uint16_t attribute_id, double value);
+            status attribute_set_string_value(uint16_t plugin_id, uint16_t attribute_id, std::string value);
+            // get values
+            status attribute_get_bool_value(uint16_t plugin_id, uint16_t attribute_id, bool& value);
+            status attribute_get_uint_value(uint16_t plugin_id, uint16_t attribute_id, uint32_t& value);
+            status attribute_get_int_value(uint16_t plugin_id, uint16_t attribute_id, int& value);
+            status attribute_get_real_value(uint16_t plugin_id, uint16_t attribute_id, double& value);
+            status attribute_get_string_value(uint16_t plugin_id,uint16_t attribute_id,std::string& value);
 
         private:
             bool add_parameter_to_list(std::string cmd, int key, std::string val, parameter::ParameterList& list);
@@ -555,7 +737,9 @@ namespace feather
     std::string name();\
     std::string description();\
     std::string author();\
+    int id();\
     \
+    bool plugin_exist(int);\
     /* NODE */\
     \
     feather::status fields_init(int, feather::field::Fields&);\
@@ -586,15 +770,48 @@ namespace feather
     feather::status command(std::string cmd, feather::parameter::ParameterList);\
     feather::status parameter_name(std::string cmd, int key, std::string& name);\
     feather::status parameter_type(std::string cmd, int key, feather::parameter::Type& type);\
+    /* ATTRIBUTE */\
+    \
+    bool attribute_exist(uint16_t);\
+    feather::status attribute_type(uint16_t attribute_id, feather::attribute::Type&);\
+    feather::status attribute_set_bool_value(uint16_t plugin_id, bool value);\
+    feather::status attribute_set_uint_value(uint16_t plugin_id, uint32_t value);\
+    feather::status attribute_set_int_value(uint16_t plugin_id, int value);\
+    feather::status attribute_set_real_value(uint16_t plugin_id, double value);\
+    feather::status attribute_set_string_value(uint16_t plugin_id, std::string value);\
+    feather::status attribute_get_bool_value(uint16_t attribute_id, bool& value);\
+    feather::status attribute_get_uint_value(uint16_t attribute_id, uint32_t& value);\
+    feather::status attribute_get_int_value(uint16_t attribute_id, int& value);\
+    feather::status attribute_get_real_value(uint16_t attribute_id, double& value);\
+    feather::status attribute_get_string_value(uint16_t attribute_id, std::string& value);\
 
 
-#define PLUGIN_INIT(__name,__description,__author,startnode,endnode)\
+#define PLUGIN_INIT(__id,__name,__description,__author,startnode,endnode)\
     /* plugin name */\
     std::string name() { return __name; };\
     /* plugin description */\
     std::string description() { return __description; };\
     /* plugin name */\
     std::string author() { return __author; };\
+    /* plugin id */\
+    int id() { return __id; };\
+    \
+    /* see if the node is in the plugin */\
+    bool plugin_exist(int id) {\
+        return find_plugins<MAX_PLUGIN_ID>::exec(id);\
+    };\
+    \
+    namespace feather {\
+        template <> struct find_plugins<__id> {\
+            static bool exec(int id) {\
+                if(id==__id){\
+                    return true;\
+                } else {\
+                    return find_plugins<__id-1>::exec(id);\
+                }\
+            };\
+        };\
+    }\
     \
     /* NODES */\
     \
@@ -618,7 +835,7 @@ namespace feather
     /*feather::status draw_it(int id, feather::draw::DrawItems& items) {*/\
     /*    return call_draw_its<MAX_NODE_ID>::exec(id,items);*/\
     /*};*/\
-   \
+    \
     /* see if the node is in the plugin */\
     bool node_exist(int id) {\
         return find_nodes<MAX_NODE_ID>::exec(id);\
@@ -705,5 +922,73 @@ namespace feather
     feather::status parameter_name(std::string c, int k, std::string& n) {\
     return feather::command::get_parameter_name<20,800>::exec(c,k,n);\
     };\
+    \
+    /* ATTRIBUTE */\
+    \
+    /* see if the attribute is in the plugin */\
+    bool attribute_exist(uint16_t attribute_id) {\
+        return find_attributes<MAX_ATTRIBUTE_ID>::exec(attribute_id);\
+    };\
+    \
+    feather::status attribute_type(uint16_t attribute_id,attribute::Type& type) {\
+        return feather::call_attributes<MAX_ATTRIBUTE_ID,attribute::GetType,attribute::Type>::exec(attribute_id,type);\
+    };\
+    /* GET VALUES */\
+    \
+    /* BOOL */\
+    feather::status attribute_get_bool_value(uint16_t attribute_id,bool& value) {\
+        return feather::call_attributes<MAX_ATTRIBUTE_ID,attribute::GetValue,bool>::exec(attribute_id,value);\
+    };\
+    \
+    /* UINT */\
+    feather::status attribute_get_uint_value(uint16_t attribute_id,uint32_t& value) {\
+        return feather::call_attributes<MAX_ATTRIBUTE_ID,attribute::GetValue,uint32_t>::exec(attribute_id,value);\
+    };\
+    \
+    /* INT */\
+    feather::status attribute_get_int_value(uint16_t attribute_id,int& value) {\
+        return feather::call_attributes<MAX_ATTRIBUTE_ID,attribute::GetValue,int>::exec(attribute_id,value);\
+    };\
+    \
+    /* REAL */\
+    feather::status attribute_get_real_value(uint16_t attribute_id,double& value) {\
+        return feather::call_attributes<MAX_ATTRIBUTE_ID,attribute::GetValue,double>::exec(attribute_id,value);\
+    };\
+    \
+    /* STRING */\
+    feather::status attribute_get_string_value(uint16_t attribute_id,std::string& value) {\
+        return feather::call_attributes<MAX_ATTRIBUTE_ID,attribute::GetValue,std::string>::exec(attribute_id,value);\
+    };\
+    \
+    /* SET VALUES */\
+    \
+    /* BOOL */\
+    feather::status attribute_set_bool_value(uint16_t attribute_id,bool value) {\
+        return feather::call_attributes<MAX_ATTRIBUTE_ID,attribute::SetValue,bool>::exec(attribute_id,value);\
+    };\
+    \
+    /* UINT */\
+    feather::status attribute_set_uint_value(uint16_t attribute_id,uint32_t value) {\
+        return feather::call_attributes<MAX_ATTRIBUTE_ID,attribute::SetValue,uint32_t>::exec(attribute_id,value);\
+    };\
+    \
+    /* INT */\
+    feather::status attribute_set_int_value(uint16_t attribute_id,int value) {\
+        return feather::call_attributes<MAX_ATTRIBUTE_ID,attribute::SetValue,int>::exec(attribute_id,value);\
+    };\
+    \
+    /* REAL */\
+    feather::status attribute_set_real_value(uint16_t attribute_id,double value) {\
+        return feather::call_attributes<MAX_ATTRIBUTE_ID,attribute::SetValue,double>::exec(attribute_id,value);\
+    };\
+    \
+    /* STRING */\
+    feather::status attribute_set_string_value(uint16_t attribute_id,std::string value) {\
+        return feather::call_attributes<MAX_ATTRIBUTE_ID,attribute::SetValue,std::string>::exec(attribute_id,value);\
+    };\
+    \
+
+
+
 
 #endif

@@ -83,3 +83,107 @@ FVertex3D tools::get_matrix_scale(FMatrix4x4 *matrix)
             matrix->value[2][2]);
 }
 
+
+// Convert
+
+// source bool
+template <> void tools::convert<bool,uint32_t>(bool s, uint32_t& t) {
+    if(s)
+        t=1;
+    else
+        t=0;
+};
+template <> void tools::convert<bool,int>(bool s, int& t) {
+    if(s)
+        t=1;
+    else
+        t=0;
+};
+template <> void tools::convert<bool,double>(bool s, double& t) {
+    if(s)
+        t=1.0;
+    else
+        t=0.0;
+};
+template <> void tools::convert<bool,std::string>(bool s, std::string& t) {
+    if(s)
+        t="true";
+    else
+        t="false";
+};
+
+// source uint32_t
+template <> void tools::convert<uint32_t,bool>(uint32_t s, bool& t) {
+    if(s>0)
+        t=true;
+    else
+        t=false;
+};
+template <> void tools::convert<uint32_t,int>(uint32_t s, int& t) {
+    t=static_cast<int>(s);
+};
+template <> void tools::convert<uint32_t,double>(uint32_t s, double& t) {
+    t=static_cast<double>(s);
+};
+template <> void tools::convert<uint32_t,std::string>(uint32_t s, std::string& t) {
+    std::stringstream ss;
+    ss << s;
+    t=ss.str();
+};
+
+// source int
+template <> void tools::convert<int,bool>(int s, bool& t) {
+    if(s>0)
+        t="true";
+    else
+        t="false";
+};
+template <> void tools::convert<int,uint32_t>(int s, uint32_t& t) {
+    t=static_cast<uint32_t>(s);
+};
+template <> void tools::convert<int,double>(int s, double& t) {
+    t=static_cast<double>(s);
+};
+template <> void tools::convert<int,std::string>(int s, std::string& t) {
+    std::stringstream ss;
+    ss << s;
+    t=ss.str();
+};
+
+// source double
+template <> void tools::convert<double,bool>(double s, bool& t) {
+    if(s>=1.0)
+        t="true";
+    else
+        t="false";
+};
+template <> void tools::convert<double,uint32_t>(double s, uint32_t& t) {
+    t=static_cast<uint32_t>(s);
+};
+template <> void tools::convert<double,int>(double s, int& t) {
+    t=static_cast<int>(s);
+};
+template <> void tools::convert<double,std::string>(double s, std::string& t) {
+    std::stringstream ss;
+    ss << s;
+    t=ss.str();
+};
+
+// source std::string
+template <> void tools::convert<std::string,bool>(std::string s, bool& t) {
+    if(s=="true")
+        t=true;
+    else
+        t=false;
+};
+template <> void tools::convert<std::string,uint32_t>(std::string s, uint32_t& t) {
+    t=static_cast<uint32_t>(atoi(s.c_str()));
+};
+template <> void tools::convert<std::string,int>(std::string s, int& t) {
+    t=atoi(s.c_str());
+};
+template <> void tools::convert<std::string,double>(std::string s, double& t) {
+    t=static_cast<double>(atof(s.c_str()));
+};
+
+
