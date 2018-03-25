@@ -68,15 +68,24 @@ Rectangle {
                 width: 100
                 height: 32
             }
-        }
+ 
+            PushButton {
+                id: resizeButton
+                //width: 32
+                //height: 32
+                text: "Resize"
+                properties: renderWindow.properties 
+            }
+
+       }
 
     }
 
     RenderImage {
         id: renderImage
         anchors.centerIn: parent
-        width: 400
-        height: 200
+        width: 800
+        height: 400
     }
 
     Render {
@@ -92,6 +101,7 @@ Rectangle {
         onTriggered: { render.render_buffer(1) }
     }
 
+    /*
     Attribute {
         id: testBoolAttribute
         plugin_id: 6
@@ -121,8 +131,20 @@ Rectangle {
         plugin_id: 6
         attribute_id: 5
     }
+    */
 
 
+    Attribute {
+        id: frameWidth 
+        plugin_id: 6
+        attribute_id: 6
+    }
+
+    Attribute {
+        id: frameHeight
+        plugin_id: 6
+        attribute_id: 7
+    }
 
 
     function render_button_pressed() {
@@ -134,6 +156,7 @@ Rectangle {
 
         // READ VALUES
 
+        /*
         console.log("BOOL TEST")
         console.log("value for bool:" + testBoolAttribute.bval)
         console.log("value for bool value of uint:" + testUIntAttribute.bval)
@@ -213,22 +236,40 @@ Rectangle {
         console.log("value for string value of uint:" + testUIntAttribute.sval)
         console.log("value for string value of int:" + testIntAttribute.sval)
         console.log("value for string value of real:" + testRealAttribute.sval)
-
+        */
 
 
         if(rendering) {
+            bufferUpdateTimer.stop()
             render.render_stop(1)
             rendering=false
-            bufferUpdateTimer.stop()
         } else {
+            frameWidth.uival=800
+            frameHeight.uival=400
+            renderImage.width = frameWidth.uival
+            renderImage.height = frameHeight.uival
             render.render_start(1)
             rendering=true
             bufferUpdateTimer.start()
         }
     }
 
+    function resizeFrame() {
+        bufferUpdateTimer.stop()
+        render.render_stop(1)
+        rendering=false
+        frameWidth.uival=400
+        frameHeight.uival=200
+        renderImage.width=400
+        renderImage.height=200
+        render.render_start(1)
+        rendering=true
+        bufferUpdateTimer.start()
+    }
+
     Component.onCompleted: {
         renderButton.clicked.connect(render_button_pressed)
+        resizeButton.clicked.connect(resizeFrame)
     }
 }
 

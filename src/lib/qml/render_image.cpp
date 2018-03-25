@@ -37,7 +37,7 @@ RenderImage::RenderImage(QQuickItem* parent) :
     mouseX(0),
     mouseY(0),
     m_RenderBuffer(feather::render::RenderBuffer()),
-    mWidth(400),
+    mWidth(200),
     mHeight(200)
 {
     setAcceptedMouseButtons(Qt::AllButtons);
@@ -66,8 +66,11 @@ void RenderImage::set_buffer(char* buffer)
 void RenderImage::paint(QPainter* painter)
 {
     std::cout << "update paint\n";
-    QImage image(reinterpret_cast<uchar*>(m_RenderBuffer.data), mWidth, mHeight, QImage::Format_RGB888);
-    painter->drawImage(QRect(0,0,mWidth,mHeight),image);
+    std::cout << "width=" << width() << " height=" << height() << std::endl;
+    m_RenderBuffer.width = width();
+    m_RenderBuffer.height = height();
+    QImage image(reinterpret_cast<uchar*>(m_RenderBuffer.data), m_RenderBuffer.width, m_RenderBuffer.height, QImage::Format_RGB888);
+    painter->drawImage(QRect(0,0,width(),height()),image);
 }
 
 void RenderImage::updateImage()

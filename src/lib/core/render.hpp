@@ -53,7 +53,7 @@ namespace feather
 
 
         struct RenderBuffer {
-            RenderBuffer():layout(RGB888),width(400),height(200),data(nullptr){};
+            RenderBuffer():layout(RGB888),width(0),height(0),data(nullptr){};
             BufferLayout layout;
             uint16_t width;
             uint16_t height;
