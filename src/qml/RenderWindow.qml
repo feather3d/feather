@@ -242,6 +242,7 @@ Rectangle {
         if(rendering) {
             bufferUpdateTimer.stop()
             render.render_stop(1)
+            renderButton.text="Render"
             rendering=false
         } else {
             frameWidth.uival=800
@@ -250,6 +251,7 @@ Rectangle {
             renderImage.height = frameHeight.uival
             render.render_start(1)
             rendering=true
+            renderButton.text="Rendering"
             bufferUpdateTimer.start()
         }
     }
@@ -263,13 +265,14 @@ Rectangle {
         renderImage.width=400
         renderImage.height=200
         render.render_start(1)
+        renderButton.text="Rendering"
         rendering=true
         bufferUpdateTimer.start()
     }
 
     Component.onCompleted: {
-        renderButton.clicked.connect(render_button_pressed)
         resizeButton.clicked.connect(resizeFrame)
+        renderButton.clicked.connect(render_button_pressed)
     }
 }
 

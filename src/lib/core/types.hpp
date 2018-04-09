@@ -370,7 +370,7 @@ namespace feather
         FTextureCoordArray st;
         FVertex3DArray vn;
         FFaceArray f;
-
+   
         inline void print() {
             for(auto vertex : v){
                 std::cout << "x:" << vertex.x << " y:" << vertex.y << " z:" << vertex.z << std::endl;
@@ -397,6 +397,26 @@ namespace feather
         inline void assign_st(const FTextureCoordArray& _st) { st.assign(_st.begin(),_st.end()); };
         inline void assign_vn(const FVertex3DArray& _vn) { vn.assign(_vn.begin(),_vn.end()); };
         inline void assign_f(const FFaceArray& _f) { f.assign(_f.begin(),_f.end()); };
+
+        // If you are going to get tri data, this will tell you how many tri faces will be given
+        inline uint32_t tri_face_count() {
+            uint32_t count=0;
+            for(auto face : f) {
+                if(face.size() > 3)
+                    count += face.size() - 2;
+                else
+                    count++;
+            }
+        };
+
+        // does the mesh only have triangles
+        inline bool is_tri_mesh() {
+            for(auto face : f) {
+                if(face.size() != 3)
+                    return false;
+            }
+            return true;
+        };
 
         // remove all the vertex, normals, tex coords and faces from the mesh
         inline void clear() { v.clear(); st.clear(); vn.clear(); };

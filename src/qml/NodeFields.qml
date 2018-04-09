@@ -92,6 +92,9 @@ FieldModel {
         addFieldName("value",6,1)
         addFieldName("div",6,2)
         addFieldName("value",6,3)
+        
+        // RenderObject
+        addFieldName("mesh",7,1)
 
         // Polygon Shape 
         addFieldName("mesh",320,1)

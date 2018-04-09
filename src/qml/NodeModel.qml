@@ -25,7 +25,9 @@ import QtQuick 2.5
 import feather.node 1.0
 
 ListModel {
+    // COMMON
     //ListElement { text: "Null"; type: Node.Null }// will get an error if you use Null as an ListElement
+
     // Empty
     ListElement { text: "Empty"; nid: 1; type: Node.Empty }
     ListElement { text: "Camera"; nid: 2; type: Node.Camera }
@@ -33,17 +35,24 @@ ListModel {
     //ListElement { text: "Texture"; type: Node.Texture }
     //ListElement { text: "Modifier"; type: Node.Modifier }
     //ListElement { text: "Deformer"; type: Node.Deformer }
+    
     // Manipulator
     ListElement { text: "Time"; nid: 4; type: Node.Time }
     //ListElement { text: "Transform"; nid: 7; type: Node.Manipulator }
+
     // Tool
     ListElement { text: "Multiply"; nid: 5; type: Node.Tool }
     ListElement { text: "Divide"; nid: 6; type: Node.Tool }
     //ListElement { text: "Shader"; type: Node.Shader }
     // Object
     //ListElement { text: "Empty"; nid: 0; type: Node.Object }
+    // Shapes
+    ListElement { text: "RenderObject"; nid: 7; type: Node.Shape }
+
+
     // Curve
     //ListElement { text: "Curve"; type: Node.Curve }
+
     // Polygon
     ListElement { text: "Shape"; nid: 320; type: Node.Polygon }
     ListElement { text: "Plane"; nid: 321; type: Node.Polygon }
@@ -55,6 +64,7 @@ ListModel {
     ListElement { text: "Track"; nid: 420; type: Node.Animation }
     ListElement { text: "Bone"; nid: 421; type: Node.Animation }
     ListElement { text: "Morph"; nid: 426; type: Node.Animation }
+
 
     // DEFORMER PLUGIN
     ListElement { text: "Cluster"; nid: 440; type: Node.Deformer}
