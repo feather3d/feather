@@ -319,6 +319,25 @@ Menu {
         }
 
         Menu {
+            title: "Shape" 
+            id: shapeNodeMenu
+            style: mainMenuStyle
+
+            Instantiator {
+                model: nidModel
+
+                NodeMenuItem {
+                    nid: model.nid
+                    ntype: model.type
+                    name: model.text
+                }
+
+                onObjectAdded: if(object.ntype==Node.Object){ shapeNodeMenu.insertItem(index,object) }
+                onObjectRemoved: if(object.type==Node.Object){ shapeNodeMenu.removeItem(object) }
+            }
+        }
+
+        Menu {
             title: "Curve" 
             id: curveNodeMenu
             style: mainMenuStyle

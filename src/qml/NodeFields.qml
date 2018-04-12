@@ -42,7 +42,7 @@ FieldModel {
         addFieldName("centerpoint",0,212)
  
         // out
-        addFieldName("child",0,202)
+        addFieldName("out",0,202)
         addFieldName("local",0,213)
         addFieldName("world",0,214)
         addFieldName("rotation",0,215)
@@ -68,8 +68,9 @@ FieldModel {
         // Shape
         // in 
         addFieldName("mesh",3,1)
+        addFieldName("shader",3,2)
         // out
-        addFieldName("mesh",3,2)
+        addFieldName("mesh",3,3)
  
         // Time 
         addFieldName("stime",4,1)
@@ -95,12 +96,14 @@ FieldModel {
         
         // RenderObject
         addFieldName("mesh",7,1)
+        addFieldName("shader",7,2)
 
         // Polygon Shape 
         addFieldName("mesh",320,1)
         addFieldName("xform",320,2)
+        addFieldName("shader",320,3)
         // Out
-        addFieldName("mesh",320,3)
+        addFieldName("mesh",320,4)
 
         // Polygon Plane 
         addFieldName("subX",321,1)

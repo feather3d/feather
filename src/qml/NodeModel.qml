@@ -47,8 +47,7 @@ ListModel {
     // Object
     //ListElement { text: "Empty"; nid: 0; type: Node.Object }
     // Shapes
-    ListElement { text: "RenderObject"; nid: 7; type: Node.Shape }
-
+    ListElement { text: "RenderObject"; nid: 7; type: Node.Object }
 
     // Curve
     //ListElement { text: "Curve"; type: Node.Curve }

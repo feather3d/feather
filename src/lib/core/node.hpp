@@ -234,13 +234,13 @@ namespace feather
             parent->type = field::Node;\
             parent->conn_type = field::connection::In;\
             fields.push_back(parent);\
-            /* children */\
-            field::Field<FNode>* children = new field::Field<FNode>();\
-            children->id = 202;\
-            children->value = FNode();\
-            children->type = field::Node;\
-            children->conn_type = field::connection::Out;\
-            fields.push_back(children);\
+            /* out */\
+            field::Field<FNode>* out = new field::Field<FNode>();\
+            out->id = 202;\
+            out->value = FNode();\
+            out->type = field::Node;\
+            out->conn_type = field::connection::Out;\
+            fields.push_back(out);\
             /* transformation fields */\
             /* IN FIELDS */\
             /* translation */\
