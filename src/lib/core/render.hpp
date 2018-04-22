@@ -68,6 +68,8 @@ namespace feather
         template <int _Id>
         static bool render_buffer_exist() { return false; };
 
+        template <int _Id>
+        static bool render_modify_exist() { return false; };
 
     }
 
@@ -81,6 +83,9 @@ namespace feather
  
 #define RENDER_BUFFER(__render_enum)\
     template <> status render_buffer<__render_enum>(render::RenderBuffer& buffer)
+ 
+#define RENDER_MODIFY(__render_enum)\
+    template <> status render_modify<__render_enum>(uint32_t uid, uint32_t nid, uint32_t fid)
 
 #define RENDER_INIT(__render_enum, __name)\
     namespace feather {\
@@ -144,6 +149,24 @@ namespace feather
                     return render_buffer<__render_enum>(buffer);\
                 else\
                     call_render_buffers<__render_enum-1>::exec(id,buffer);\
+            };\
+        };\
+        \
+        template <> struct find_render_modifys<__render_enum> {\
+            static bool exec(int id) {\
+                if(id==__render_enum)\
+                    return true;\
+                else\
+                    find_render_modifys<__render_enum-1>::exec(id);\
+            };\
+        };\
+        \
+        template <> struct call_render_modifys<__render_enum> {\
+            static status exec(int id, uint32_t uid, uint32_t nid, uint32_t fid) {\
+                if(id==__render_enum)\
+                    return render_modify<__render_enum>(uid,nid,fid);\
+                else\
+                    call_render_modifys<__render_enum-1>::exec(id,uid,nid,fid);\
             };\
         };\
         \

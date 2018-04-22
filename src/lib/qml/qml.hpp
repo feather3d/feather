@@ -848,6 +848,7 @@ class Render: public QObject
         Q_INVOKABLE void render_start(int id);
         Q_INVOKABLE void render_stop(int id);
         Q_INVOKABLE void render_buffer(int id);
+        Q_INVOKABLE void render_modify(int id, unsigned int uid, unsigned int nid, unsigned int fid);
 
     signals:
         void imageChanged();

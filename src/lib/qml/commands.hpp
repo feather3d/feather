@@ -149,6 +149,8 @@ namespace feather
             void render_start(int id, render::RenderProperties& props);
             void render_stop(int id, render::RenderProperties& props);
             void render_buffer(int id, render::RenderBuffer& buffer);
+            void render_modify(int id, uint32_t uid, uint32_t nid, uint32_t fid);
+
 
             // ATTRIBUTE
             

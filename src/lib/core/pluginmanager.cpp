@@ -147,6 +147,8 @@ status PluginManager::load_node(PluginData &node)
     node.render_exist = (bool(*)(int))dlsym(node.handle, "render_exist");
     node.render_buffer = (status(*)(int,render::RenderBuffer&))dlsym(node.handle, "render_buffer");
     node.render_buffer_exist = (bool(*)(int))dlsym(node.handle, "render_buffer_exist");
+    node.render_modify = (status(*)(int,uint32_t,uint32_t,uint32_t))dlsym(node.handle, "render_modify");
+    node.render_modify_exist = (bool(*)(int))dlsym(node.handle, "render_modify_exist");
     // COMMAND
     node.command_exist = (bool(*)(std::string))dlsym(node.handle, "command_exist");
     node.command = (status(*)(std::string,parameter::ParameterList))dlsym(node.handle, "command");
@@ -439,6 +441,18 @@ status PluginManager::render_buffer(int id, render::RenderBuffer& buffer)
 {
     std::cout << "calling render buffer " << id << std::endl;
     std::for_each(m_plugins.begin(),m_plugins.end(), call_render_buffer(id,buffer) );
+    return status();
+}
+
+status PluginManager::render_modify(int id, uint32_t uid, uint32_t nid, uint32_t fid)
+{
+    std::cout << "calling render modify -"
+        << " id:" << id 
+        << " uid:" << uid 
+        << " nid:" << nid 
+        << " fid:" << fid 
+        << std::endl;
+    std::for_each(m_plugins.begin(),m_plugins.end(), call_render_modify(id,uid,nid,fid) );
     return status();
 }
 

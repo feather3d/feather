@@ -29,6 +29,7 @@ import "common"
 import feather.editors 1.0
 import feather.render 1.0
 import feather.attribute 1.0
+import feather.scenegraph 1.0
 
 Rectangle {
     id: renderWindow
@@ -146,6 +147,10 @@ Rectangle {
         attribute_id: 7
     }
 
+    function render_modify(uid,nid,fid) {
+        console.log("MODIFY RENDERER")
+        render.render_modify(1,uid,nid,fid)
+    }
 
     function render_button_pressed() {
         //var t
@@ -273,6 +278,7 @@ Rectangle {
     Component.onCompleted: {
         resizeButton.clicked.connect(resizeFrame)
         renderButton.clicked.connect(render_button_pressed)
+        SceneGraph.nodeFieldChanged.connect(render_modify)
     }
 }
 

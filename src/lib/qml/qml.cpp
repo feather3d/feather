@@ -710,6 +710,25 @@ void Render::render_buffer(int id) {
         */
     }
 }
+ 
+void Render::render_modify(int id, unsigned int uid, unsigned int nid, unsigned int fid) {
+    std::cout << "call render_modify for " << uid << std::endl;
+    // if there is a render image to display, pass it's modify
+    if(m_pImage) {
+        qml::command::render_modify(id,uid,nid,fid);  
+        //m_pImage->start_render_update();
+        m_pImage->update();
+        //m_pImage->stop_render_update();
+        /*
+        int i = 100;
+        while(i<100) {
+            std::this_thread::sleep_for(std::chrono::seconds(1));
+            std::this_thread::sleep_until(std::chrono::system_clock::now() + std::chrono::seconds(1));
+            i++;
+        }
+        */
+    }
+}
 
 
 // ATTRIBUTE

@@ -76,6 +76,10 @@ namespace feather
         bool (*render_exist)(int);
         status (*render_buffer)(int,render::RenderBuffer&);
         bool (*render_buffer_exist)(int);
+        status (*render_modify)(int,uint32_t,uint32_t,uint32_t);
+        bool (*render_modify_exist)(int);
+
+
         // COMMAND
         bool (*command_exist)(std::string cmd);
         status (*command)(std::string cmd, parameter::ParameterList);
@@ -275,6 +279,28 @@ namespace feather
             int m_renderer;
             render::RenderBuffer& m_buffer;
     };
+
+
+    // RENDER MODIFY()
+    template <int _Id>
+    struct call_render_modifys {
+        static status exec(int id, uint32_t uid, uint32_t nid, uint32_t fid) { return call_render_modifys<_Id-1>::exec(id,uid,nid,fid); };
+    };
+
+    template <> struct call_render_modifys<0> { static status exec(int id, uint32_t uid, uint32_t nid, uint32_t fid) { return status(FAILED,"could not find node"); }; };
+
+    template <int _Id> status render_modify(uint32_t uid, uint32_t nid, uint32_t fid) { return status(FAILED,"no node found"); };
+   
+    struct call_render_modify {
+        call_render_modify(int id, uint32_t uid, uint32_t nid, uint32_t fid): m_renderer(id), m_uid(uid), m_nid(nid), m_fid(fid) {};
+        void operator()(PluginData n) { if(n.render_modify_exist(m_renderer)) { n.render_modify(m_renderer,m_uid,m_nid,m_fid); } };
+        private:
+            int m_renderer;
+            uint32_t  m_uid;
+            uint32_t  m_nid;
+            uint32_t  m_fid;
+    };
+
 
 
     // DRAW_IT()
@@ -539,6 +565,16 @@ namespace feather
 
     template <> struct find_render_buffers<0> { static bool exec(int id) { return false; }; };
 
+    // RENDER MODIFY MATCHING
+
+    template <int _Id>
+    struct find_render_modifys {
+        static bool exec(int id) { return find_render_modifys<_Id-1>::exec(id); };
+    };
+
+    template <> struct find_render_modifys<0> { static bool exec(int id) { return false; }; };
+
+
 
     // NEW ATTRIBUTE CALLS
 
@@ -708,6 +744,7 @@ namespace feather
             status render_stop(int render_id,render::RenderProperties& prop);
             status render_properties(int render_id,render::RenderProperties& prop);
             status render_buffer(int render_id, render::RenderBuffer& buffer);
+            status render_modify(int render_id, uint32_t uid, uint32_t nid, uint32_t fid);
             // ATTRIBUTE
             status attribute_type(uint16_t plugin_id, uint16_t attribute_id, attribute::Type& type);
             // set values
@@ -763,6 +800,8 @@ namespace feather
     bool render_exist(int);\
     feather::status render_buffer(int, feather::render::RenderBuffer&);\
     bool render_buffer_exist(int);\
+    feather::status render_modify(int, uint32_t, uint32_t, uint32_t);\
+    bool render_modify_exist(int);\
     \
     /* COMMAND */\
     \
@@ -906,6 +945,15 @@ namespace feather
     /* see if there is a render buffer for the plugin */\
     bool render_buffer_exist(int id) {\
         return find_render_buffers<MAX_RENDER_ID>::exec(id);\
+    };\
+    \
+    /* call render_modify() */\
+    feather::status render_modify(int id, uint32_t uid, uint32_t nid, uint32_t fid) {\
+        return call_render_modifys<MAX_RENDER_ID>::exec(id,uid,nid,fid);\
+    };\
+    /* see if there is a render modify for the plugin */\
+    bool render_modify_exist(int id) {\
+        return find_render_modifys<MAX_RENDER_ID>::exec(id);\
     };\
     \
     /* COMMANDS */\

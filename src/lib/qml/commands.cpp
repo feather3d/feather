@@ -590,6 +590,11 @@ void qml::command::render_buffer(int id, render::RenderBuffer& buffer) {
     //renderThread.detach();
 };
 
+void qml::command::render_modify(int id, uint32_t uid, uint32_t nid, uint32_t fid) {
+    plugins.render_modify(id,uid,nid,fid);
+};
+
+
 
 // ATTRIBUTE
 
