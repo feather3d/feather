@@ -145,7 +145,19 @@ namespace feather
             }
             return false;
         }
-        
+
+        void get_nodes(std::vector<unsigned int> &uids);
+ 
+        bool node_name_exist(std::string name) {
+            std::vector<uint32_t> uids;
+            get_nodes(uids);
+            for(auto uid: uids) {
+                if(sg[uid].name == name)
+                    return true;
+            }
+            return false;
+        }
+ 
         /* Add Node
          * This function is called during specialization of nodes when
          * a new node is added to the scenegraph. It's called by add_node_to_sg
@@ -165,7 +177,22 @@ namespace feather
             sg[uid].type = ntype;
             sg[uid].uid = uid;
             sg[uid].node = n;
-            sg[uid].name = name;
+            if(node_name_exist(name)) {
+                bool dup=true;
+                uint32_t count=1;
+                while(dup) {
+                    std::stringstream newname;
+                    newname << name << "_" << count;
+                    if(node_name_exist(newname.str())) {
+                        count++;
+                    } else {
+                        sg[uid].name = newname.str();
+                        dup=false;
+                    }
+                }
+            } else {
+                sg[uid].name = name;
+            }
             sg[uid].layer = 0;
             plugins.fields_init(n,sg[uid].fields); // this creates the base properties that all nodes have
             plugins.create_fields(n,sg[uid].fields);
