@@ -275,6 +275,26 @@ void Field::get_real_val()
     qml::command::get_field_val(m_uid,m_nid,m_fid,m_realVal);
 }
 
+void Field::get_color_val()
+{
+    if(type()==RGB) { 
+        FColorRGB color;
+        qml::command::get_field_val(m_uid,m_nid,m_fid,color);
+        m_colorVal.setRed(color.int_red());
+        m_colorVal.setGreen(color.int_green());
+        m_colorVal.setBlue(color.int_blue());
+    }
+    if(type()==RGBA) { 
+        FColorRGBA color;
+        qml::command::get_field_val(m_uid,m_nid,m_fid,color);
+        m_colorVal.setRed(color.int_red());
+        m_colorVal.setGreen(color.int_green());
+        m_colorVal.setBlue(color.int_blue());
+        m_colorVal.setAlpha(color.int_alpha());
+    }
+
+}
+
 // SET FEILD VALUES
 
 void Field::set_bool_val()
@@ -292,6 +312,24 @@ void Field::set_real_val()
     qml::command::set_field_val(m_uid,m_nid,m_fid,m_realVal);
 }
 
+void Field::set_color_val()
+{
+    if(type()==RGB) { 
+        FColorRGB color;
+        color.set_red(m_colorVal.red());
+        color.set_green(m_colorVal.green());
+        color.set_blue(m_colorVal.blue());
+        qml::command::set_field_val(m_uid,m_nid,m_fid,color);
+    }
+    else if(type()==RGBA) {
+        FColorRGBA color;
+        color.set_red(m_colorVal.red());
+        color.set_green(m_colorVal.green());
+        color.set_blue(m_colorVal.blue());
+        color.set_alpha(m_colorVal.alpha());
+        qml::command::set_field_val(m_uid,m_nid,m_fid,color);
+    }
+}
 
 // Real Array
 

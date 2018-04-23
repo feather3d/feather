@@ -98,11 +98,15 @@ namespace feather
             status get_field_val(unsigned int uid, unsigned int nid, unsigned int fid, bool& val, unsigned int conn=0);
             status get_field_val(unsigned int uid, unsigned int nid, unsigned int fid, int& val, unsigned int conn=0);
             status get_field_val(unsigned int uid, unsigned int nid, unsigned int fid, FReal& val, unsigned int conn=0);
+            status get_field_val(unsigned int uid, unsigned int nid, unsigned int fid, FColorRGB& val, unsigned int conn=0);
+            status get_field_val(unsigned int uid, unsigned int nid, unsigned int fid, FColorRGBA& val, unsigned int conn=0);
             status get_field_val(unsigned int uid, unsigned int nid, unsigned int fid, FMesh& val, unsigned int conn=0);
             // set the field value
             status set_field_val(unsigned int uid, unsigned int nid, unsigned int fid, bool& val);
             status set_field_val(unsigned int uid, unsigned int nid, unsigned int fid, int& val);
             status set_field_val(unsigned int uid, unsigned int nid, unsigned int fid, FReal& val);
+            status set_field_val(unsigned int uid, unsigned int nid, unsigned int fid, FColorRGB& val);
+            status set_field_val(unsigned int uid, unsigned int nid, unsigned int fid, FColorRGBA& val);
             status set_field_val(unsigned int uid, unsigned int nid, unsigned int fid, FRealArray& val);
             status set_field_val(unsigned int uid, unsigned int nid, unsigned int fid, FKeyArray& val);
 

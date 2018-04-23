@@ -315,6 +315,39 @@ status qml::command::get_field_val(unsigned int uid, unsigned int nid, unsigned 
     return status();
 }
 
+// FColorRGB 
+status qml::command::get_field_val(unsigned int uid, unsigned int nid, unsigned int fid, FColorRGB& val, unsigned int conn)
+{
+    typedef field::Field<FColorRGB>* fielddata;
+    fielddata f = static_cast<fielddata>(scenegraph::get_fieldBase(uid,nid,fid,conn));
+    if(!f)
+        std::cout << uid << "," << nid << "," << fid << " NULL REAL FIELD\n";
+    else { 
+        val.r = f->value.r;
+        val.b = f->value.b;
+        val.g = f->value.g;
+    }
+
+    return status();
+}
+
+// FColorRGBA 
+status qml::command::get_field_val(unsigned int uid, unsigned int nid, unsigned int fid, FColorRGBA& val, unsigned int conn)
+{
+    typedef field::Field<FColorRGBA>* fielddata;
+    fielddata f = static_cast<fielddata>(scenegraph::get_fieldBase(uid,nid,fid,conn));
+    if(!f)
+        std::cout << uid << "," << nid << "," << fid << " NULL REAL FIELD\n";
+    else { 
+        val.r = f->value.r;
+        val.b = f->value.b;
+        val.g = f->value.g;
+        val.a = f->value.a;
+    }
+ 
+    return status();
+}
+
 // FMesh
 status qml::command::get_field_val(unsigned int uid, unsigned int nid, unsigned int fid, FMesh& val, unsigned int conn)
 {
@@ -364,6 +397,40 @@ status qml::command::set_field_val(unsigned int uid, unsigned int nid, unsigned 
         f->update=true;
         scenegraph::update();
     }
+    return status();
+}
+
+// FColorRGB 
+status qml::command::set_field_val(unsigned int uid, unsigned int nid, unsigned int fid, FColorRGB& val)
+{
+    typedef field::Field<FColorRGB>* fielddata;
+    fielddata f = static_cast<fielddata>(scenegraph::get_node_fieldBase(uid,nid,fid));
+    if(!f)
+        std::cout << "NULL COLORRGB FIELD\n";
+    else {
+        //std::cout << "setting real value for uid:" << uid << " nid:" << nid << " fid:" << fid << " value:" << val << std::endl; 
+        f->value=val;
+        f->update=true;
+        scenegraph::update();
+    }
+
+    return status();
+}
+
+// FColorRGBA 
+status qml::command::set_field_val(unsigned int uid, unsigned int nid, unsigned int fid, FColorRGBA& val)
+{
+    typedef field::Field<FColorRGBA>* fielddata;
+    fielddata f = static_cast<fielddata>(scenegraph::get_node_fieldBase(uid,nid,fid));
+    if(!f)
+        std::cout << "NULL COLORRGBA FIELD\n";
+    else {
+        //std::cout << "setting real value for uid:" << uid << " nid:" << nid << " fid:" << fid << " value:" << val << std::endl; 
+        f->value=val;
+        f->update=true;
+        scenegraph::update();
+    }
+
     return status();
 }
 

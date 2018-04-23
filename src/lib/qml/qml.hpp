@@ -310,6 +310,7 @@ class Field: public QObject
         Q_PROPERTY(bool boolVal READ boolVal WRITE setBoolVal NOTIFY boolValChanged)
         Q_PROPERTY(int intVal READ intVal WRITE setIntVal NOTIFY intValChanged)
         Q_PROPERTY(double realVal READ realVal WRITE setRealVal NOTIFY realValChanged)
+        Q_PROPERTY(QColor colorVal READ colorVal WRITE setColorVal NOTIFY colorValChanged)
         //Q_PROPERTY(QQmlListProperty<KeyValue> keyArrayVal READ keyArrayVal WRITE setKeyArrayVal NOTIFY keyArrayValChanged)
         Q_PROPERTY(QQmlListProperty<KeyValue> keyArrayVal READ keyArrayVal NOTIFY keyArrayValChanged)
         //Q_PROPERTY(QList<KeyValue> keyArrayVal READ keyArrayVal WRITE setKeyArrayVal NOTIFY keyArrayValChanged)
@@ -381,6 +382,19 @@ class Field: public QObject
         }
 
         FReal realVal() { get_real_val(); return m_realVal; };
+
+        // colorVal 
+        void setColorVal(QColor& v) {
+            if(m_colorVal != v) {
+                //std::cout << "real changed\n";
+                m_colorVal = v;
+                set_color_val();
+                emit colorValChanged();
+            }
+        }
+
+        QColor colorVal() { get_color_val(); return m_colorVal; };
+
 
         // keyArrayVal
         KeyValue* key(int i) {
@@ -524,6 +538,7 @@ class Field: public QObject
         void boolValChanged();
         void intValChanged();
         void realValChanged();
+        void colorValChanged();
         void realArrayValChanged();
         void keyArrayValChanged();
         void connectedChanged();
@@ -536,12 +551,14 @@ class Field: public QObject
         void get_bool_val();
         void get_int_val();
         void get_real_val();
+        void get_color_val();
         void get_key_array_val();
 
         // set field value
         void set_bool_val();
         void set_int_val();
         void set_real_val();
+        void set_color_val();
         void set_real_array_val();
         void set_key_array_val();
 
@@ -554,6 +571,7 @@ class Field: public QObject
         bool m_boolVal;
         int m_intVal;
         FReal m_realVal;
+        QColor m_colorVal;
         QList<double> m_realArrayVal;
         QList<KeyValue*> m_keyArrayVal;
         bool m_connected;

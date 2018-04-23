@@ -37,6 +37,7 @@ Rectangle {
     property alias boolValue: field.boolVal
     property alias intValue: field.intVal
     property alias realValue: field.realVal
+    // TODO - property alias colorValue: field.colorVal
     property double valueStep: 0.1
 
     Field {
@@ -44,7 +45,7 @@ Rectangle {
     }
 
     TextEdit {
-        id: label 
+        id: valueLabel 
         anchors.fill: parent
         anchors.margins: 2
         text: {
@@ -74,7 +75,7 @@ Rectangle {
             name: "Normal"
 
             PropertyChanges {
-                target: label 
+                target: valueLabel 
                 color: "black"
                 font.bold: false
             }
@@ -90,7 +91,7 @@ Rectangle {
             name: "Hover"
 
             PropertyChanges {
-                target: label 
+                target: valueLabel 
                 color: "black"
                 font.bold: true 
             }
@@ -106,7 +107,7 @@ Rectangle {
             name: "Pressed"
 
             PropertyChanges {
-                target: label 
+                target: valueLabel 
                 color: "black"
                 font.bold: true 
             }
@@ -207,16 +208,16 @@ Rectangle {
     function updateValue() {
         switch(field.type) {
             case Field.Bool:
-                label.text = field.boolVal
+                valueLabel.text = field.boolVal
                 break
             case Field.Int:
-                label.text = field.intVal
+                valueLabel.text = field.intVal
                 break
             case Field.Real:
-                label.text = field.realVal
+                valueLabel.text = field.realVal
                 break
             default:
-                label.text = field.intVal
+                valueLabel.text = field.intVal
         }
     }
 

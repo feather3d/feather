@@ -22,6 +22,8 @@
  ***********************************************************************/
 
 import QtQuick 2.5
+import QtQuick.Dialogs 1.0
+
 import feather.field 1.0
 import feather.scenegraph 1.0
 import "common"
@@ -57,6 +59,29 @@ Rectangle {
     //focus: true
 
     signal keyAdded(int uid)
+
+    ColorDialog {
+        id: colorDialog
+        title: "Pick Color"
+
+        /*
+        onCurrentColorChanged: {
+            valueColor.color = currentColor
+        }
+        */
+ 
+        onAccepted: {
+            //console.log("color " + colorDialog.color + " picked")
+            valueColor.color = color
+            field.colorVal = color
+            colorDialog.close()
+            SceneGraph.nodeFieldChanged(uidKey,nidKey,fidKey);
+        }
+
+        onRejected: {
+            colorDialog.close()
+        }
+    }
 
     Field { id: field }
 
@@ -135,10 +160,32 @@ Rectangle {
             }
         }
 
+        Rectangle {
+            id: valueColor 
+            anchors.fill: parent
+            visible: (field.type==Field.RGB || field.type==Field.RGBA) ? true : false
+            color: field.colorVal 
+
+            /*
+            MouseArea {
+                id: colorMouseArea
+                anchors.fill: parent
+                hoverEnabled: true 
+                acceptedButtons: Qt.LeftButton | Qt.RightButton
+
+                onDoubleClicked: {
+                    colorDialog.show()
+                }
+            }
+            */
+        }
+
+
         Text {
             id: valueText
             text: value 
             anchors.fill: parent
+            visible: (field.type==Field.RGB || field.type==Field.RGBA) ? false : true 
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
             font.bold: false 
@@ -274,10 +321,14 @@ Rectangle {
         }
 
         onDoubleClicked: {
-            valueEdit.visible=true
-            valueText.visible=false
-            valueText.focus=false
-            valueEdit.focus=true
+            if(valueColor.visible) {
+                colorDialog.open()
+            } else {
+                valueEdit.visible=true
+                valueText.visible=false
+                valueText.focus=false
+                valueEdit.focus=true
+            }
         }
 
         //onPositionChanged: { }

@@ -73,8 +73,8 @@ namespace feather
         inline FInt int_green() { return 255 * g; };
         inline FInt int_blue() { return 255 * b; };
         inline void set_red(FInt _r) { r = _r / 255.0; };
-        inline void set_green(FInt _g) { r = _g / 255.0; };
-        inline void set_blue(FInt _b) { r = _b / 255.0; };
+        inline void set_green(FInt _g) { g = _g / 255.0; };
+        inline void set_blue(FInt _b) { b = _b / 255.0; };
         FFloat r;
         FFloat g;
         FFloat b;
@@ -83,6 +83,14 @@ namespace feather
     struct FColorRGBA
     {
         FColorRGBA(FFloat _r=1.0, FFloat _g=1.0, FFloat _b=1.0, FFloat _a=1.0):r(_r),g(_g),b(_b),a(_a){};
+        inline FInt int_red() { return 255 * r; };
+        inline FInt int_green() { return 255 * g; };
+        inline FInt int_blue() { return 255 * b; };
+        inline FInt int_alpha() { return 255 * a; };
+        inline void set_red(FInt _r) { r = _r / 255.0; };
+        inline void set_green(FInt _g) { g = _g / 255.0; };
+        inline void set_blue(FInt _b) { b = _b / 255.0; };
+        inline void set_alpha(FInt _a) { a = _a / 255.0; };
         FFloat r;
         FFloat g;
         FFloat b;

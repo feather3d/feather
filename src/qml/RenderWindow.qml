@@ -84,7 +84,9 @@ Rectangle {
 
     RenderImage {
         id: renderImage
-        anchors.centerIn: parent
+        anchors.top: toolBar.bottom
+        anchors.left: parent.left
+        anchors.margins: 10
         width: 800
         height: 400
     }
