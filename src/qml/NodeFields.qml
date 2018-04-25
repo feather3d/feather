@@ -172,10 +172,17 @@ FieldModel {
         // In 
         addFieldName("color",511,1)
  
-        // Matte
+        // Glossy 
         // In 
-        addFieldName("color",512,1)
+        addFieldName("kd",512,1)
+        addFieldName("ks",512,2)
+        addFieldName("uroughness",512,3)
+        addFieldName("vroughness",512,4)
  
+        // Emission 
+        // In 
+        addFieldName("color",513,1)
+
         // Matte
         // In 
         addFieldName("fov",561,1)

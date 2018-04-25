@@ -70,7 +70,8 @@ ListModel {
 
     // LUX PLUGIN
     ListElement { text: "LuxMatte"; nid: 511; type: Node.Shader }
-    ListElement { text: "LuxEmission"; nid: 512; type: Node.Shader }
+    ListElement { text: "LuxGlossy"; nid: 512; type: Node.Shader }
+    ListElement { text: "LuxEmission"; nid: 513; type: Node.Shader }
     ListElement { text: "LuxCamera"; nid: 561; type: Node.Camera }
 
 
