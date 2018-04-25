@@ -86,6 +86,11 @@ QString SceneGraph::node_name(int uid)
     return QString(name.c_str());
 }
 
+void SceneGraph::set_node_name(unsigned int uid, QString name) {
+    status error; 
+    qml::command::set_node_name(uid,name.toStdString(),error);
+}
+
 int SceneGraph::get_node_by_name(QString name)
 {
     unsigned int uid=0;
@@ -510,6 +515,21 @@ Node::Node(QObject* parent):
 Node::~Node()
 {
 }
+
+void Node::setName(QString& n) {
+    status error; 
+    qml::command::set_node_name(m_uid,n.toStdString(),error);
+    emit nameChanged();
+}
+
+QString Node::name() {
+    std::string name;
+    status error;
+    qml::command::get_node_name(m_uid,name,error);
+    QString outname(name.c_str());
+    return outname;
+}
+
 
 /*
 QQmlListProperty<Field> Node::inFields()

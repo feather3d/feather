@@ -127,6 +127,7 @@ class SceneGraph : public QObject
         Q_INVOKABLE int add_node(int node, QString name);
         Q_INVOKABLE bool remove_node(int uid);
         Q_INVOKABLE QString node_name(int uid);
+        Q_INVOKABLE void set_node_name(unsigned int uid, QString name);
         Q_INVOKABLE int get_node_by_name(QString name);
         Q_INVOKABLE QList<int> get_nodes_by_type(unsigned int type);
         Q_INVOKABLE QList<int> get_nodes_by_id(unsigned int id);
@@ -588,6 +589,7 @@ class Node: public QObject
         //Q_PROPERTY(QQmlListProperty<Field> outFields READ outFields)
         Q_PROPERTY(unsigned int uid READ uid WRITE setUid NOTIFY uidChanged)
         Q_PROPERTY(unsigned int nid READ nid WRITE setNid NOTIFY nidChanged)
+        Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
  
     public:
         Node(QObject* parent=0);
@@ -614,6 +616,10 @@ class Node: public QObject
         };
 
         unsigned int nid() { return m_nid; };
+
+        // name
+        void setName(QString& n);
+        QString name();
 
         Q_INVOKABLE unsigned int field_count();
         Q_INVOKABLE unsigned int in_field_count();
@@ -642,6 +648,7 @@ class Node: public QObject
     signals:
        void uidChanged();
        void nidChanged();
+       void nameChanged();
 
     private:
         unsigned int m_uid; // node id

@@ -21,8 +21,10 @@
  *
  ***********************************************************************/
 
-import QtQuick 2.3
+import QtQuick 2.7
 import QtQuick.Window 2.2
+import QtQuick.Controls 1.4
+import QtQuick.Controls.Styles 1.4
 import feather.scenegraph 1.0
 import feather.field 1.0
 import "common"
@@ -37,7 +39,6 @@ Item {
     height: 500
     property Properties properties: Null
     property alias fieldModel: view.model
-    //focus: true
 
     Rectangle {
         id: nodeFrame
@@ -57,11 +58,11 @@ Item {
             anchors.top: parent.top
             anchors.left: parent.left
             anchors.right: parent.right
-            height: 15
+            height: 20
             border.color: "black"
             border.width: 1
             color: properties.getColor("windowBg")
- 
+
             Text {
                 id: nodeLabel
                 anchors.fill: parent
@@ -70,6 +71,56 @@ Item {
                 font.bold: false 
                 font.pixelSize: 12
                 color: "black"
+            }
+
+            TextField {
+                id: nodeLabelEdit 
+                anchors.top: parent.top
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.margins: 0
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+                height: 20
+                font.bold: false 
+                font.pixelSize: 12
+                visible: false
+                placeholderText: "Enter Node Name"
+                focus: true
+
+                style: TextFieldStyle {
+                    background: Rectangle {
+                        radius: 2
+                        border.width: 1
+                        border.color: "black"
+                        color: "darkgrey"
+                    }
+                }
+
+                onAccepted: {
+                    var uid = SceneGraph.selected_node()
+                    SceneGraph.set_node_name(uid,nodeLabelEdit.text)
+                    SceneGraph.triggerUpdate()
+                    nodeLabel.focus = true 
+                    visible = false
+                    nodeLabel.text = SceneGraph.node_name(uid)
+                    nodeLabel.visible = true
+                    console.log("EDITING FINISHED")
+                    update()
+                }
+            } 
+
+            MouseArea {
+                id: nodeTitleMouseArea
+                anchors.fill: parent
+                hoverEnabled: true 
+                acceptedButtons: Qt.LeftButton | Qt.RightButton
+
+                onDoubleClicked: {
+                    nodeLabel.visible=false
+                    nodeLabelEdit.visible=true
+                    nodeLabelEdit.focus=true
+                }
             }
         }
 

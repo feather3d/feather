@@ -565,6 +565,11 @@ void qml::command::get_node_name(const unsigned int uid, std::string& name, stat
     scenegraph::get_node_name(uid,name,error);
 }
 
+void qml::command::set_node_name(const uint32_t uid, std::string name, status& error)
+{
+    scenegraph::set_node_name(uid,name,error);
+}
+
 void qml::command::scenegraph_update()
 {
     scenegraph::update();

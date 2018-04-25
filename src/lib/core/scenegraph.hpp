@@ -157,6 +157,23 @@ namespace feather
             }
             return false;
         }
+
+        std::string get_unique_node_name(std::string name) {
+            if(node_name_exist(name)) {
+                bool dup=true;
+                uint32_t count=1;
+                while(dup) {
+                    std::stringstream newname;
+                    newname << name << "_" << count;
+                    if(node_name_exist(newname.str())) {
+                        count++;
+                    } else {
+                        return newname.str();
+                    }
+                }
+            }
+            return name; 
+        }
  
         /* Add Node
          * This function is called during specialization of nodes when
@@ -177,22 +194,7 @@ namespace feather
             sg[uid].type = ntype;
             sg[uid].uid = uid;
             sg[uid].node = n;
-            if(node_name_exist(name)) {
-                bool dup=true;
-                uint32_t count=1;
-                while(dup) {
-                    std::stringstream newname;
-                    newname << name << "_" << count;
-                    if(node_name_exist(newname.str())) {
-                        count++;
-                    } else {
-                        sg[uid].name = newname.str();
-                        dup=false;
-                    }
-                }
-            } else {
-                sg[uid].name = name;
-            }
+            sg[uid].name = get_unique_node_name(name);
             sg[uid].layer = 0;
             plugins.fields_init(n,sg[uid].fields); // this creates the base properties that all nodes have
             plugins.create_fields(n,sg[uid].fields);
@@ -297,6 +299,11 @@ namespace feather
         name = sg[uid].name;
     };
 
+    void set_node_name(const uint32_t uid, std::string name, status& error) {
+        // TODO verify that uid exist and set the error if it doesn't
+        //sg[uid].name.erase();
+        sg[uid].name = get_unique_node_name(name);
+    };
 
     void get_node_icon(const unsigned int nid, std::string& file, status& error) {
         error = plugins.node_icon_file(nid,file);

@@ -21,7 +21,7 @@
  *
  ***********************************************************************/
 
-import QtQuick 2.5
+import QtQuick 2.7
 import QtQuick.Dialogs 1.0
 
 import feather.field 1.0
@@ -165,19 +165,6 @@ Rectangle {
             anchors.fill: parent
             visible: (field.type==Field.RGB || field.type==Field.RGBA) ? true : false
             color: field.colorVal 
-
-            /*
-            MouseArea {
-                id: colorMouseArea
-                anchors.fill: parent
-                hoverEnabled: true 
-                acceptedButtons: Qt.LeftButton | Qt.RightButton
-
-                onDoubleClicked: {
-                    colorDialog.show()
-                }
-            }
-            */
         }
 
 
@@ -296,7 +283,7 @@ Rectangle {
         }
     } 
 
-    Keys.onReturnPressed: { console.log("return hit for FieldEditorValue") }
+    //Keys.onReturnPressed: { console.log("return hit for FieldEditorValue") }
 
 
     MouseArea {
