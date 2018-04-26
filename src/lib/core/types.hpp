@@ -97,6 +97,26 @@ namespace feather
         FFloat a;
     };
 
+    struct FTexture2D
+    {
+        FTexture2D(std::string _p=""):path(_p){};
+        std::string path;
+    };
+
+    struct FColor
+    {
+        enum Type {
+            Scalar,
+            Color,
+            Texture
+        };
+
+        FColor(Type _t=Scalar):type(_t){};
+
+        boost::variant<FReal,FColorRGBA,FTexture2D> value;
+        Type type;
+    };
+    
     struct FTransform
     {
         FVertex3D translate;

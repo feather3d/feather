@@ -526,7 +526,9 @@ class Field: public QObject
             CurvePoint2D=field::CurvePoint2D,
             CurvePoint3D=field::CurvePoint3D,
             CurvePoint2DArray=field::CurvePoint2DArray,
-            CurvePoint3DArray=field::CurvePoint3DArray
+            CurvePoint3DArray=field::CurvePoint3DArray,
+            Texture2D=field::Texture2D,
+            Color=field::Color
         };
 
         enum ConnectionType {

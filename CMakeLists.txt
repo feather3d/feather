@@ -49,6 +49,7 @@ SET(CMAKE_CXX_FLAGS_RELEASE "-O0")
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
 # for seg fault debugging
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -v -da -Q -std=c++11")
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
 
 #set(CMAKE_CXX_FLAGS_PROFILE "-pg")
 #set(CMAKE_CXX_LINK_FLAGS "-Wl")

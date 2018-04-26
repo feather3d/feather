@@ -101,6 +101,8 @@ namespace feather
             status get_field_val(unsigned int uid, unsigned int nid, unsigned int fid, FColorRGB& val, unsigned int conn=0);
             status get_field_val(unsigned int uid, unsigned int nid, unsigned int fid, FColorRGBA& val, unsigned int conn=0);
             status get_field_val(unsigned int uid, unsigned int nid, unsigned int fid, FMesh& val, unsigned int conn=0);
+            status get_field_val(unsigned int uid, unsigned int nid, unsigned int fid, FTexture2D& val, unsigned int conn=0);
+            status get_field_val(unsigned int uid, unsigned int nid, unsigned int fid, FColor& val, unsigned int conn=0);
             // set the field value
             status set_field_val(unsigned int uid, unsigned int nid, unsigned int fid, bool& val);
             status set_field_val(unsigned int uid, unsigned int nid, unsigned int fid, int& val);
@@ -109,6 +111,8 @@ namespace feather
             status set_field_val(unsigned int uid, unsigned int nid, unsigned int fid, FColorRGBA& val);
             status set_field_val(unsigned int uid, unsigned int nid, unsigned int fid, FRealArray& val);
             status set_field_val(unsigned int uid, unsigned int nid, unsigned int fid, FKeyArray& val);
+            status set_field_val(unsigned int uid, unsigned int nid, unsigned int fid, FTexture2D& val);
+            status set_field_val(unsigned int uid, unsigned int nid, unsigned int fid, FColor& val);
 
             status get_field_connection_status(int uid, int field, bool& val);
             status get_field_connection_status(int uid, int node, int field, bool& val);

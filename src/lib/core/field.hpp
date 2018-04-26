@@ -78,7 +78,9 @@ namespace feather
             CurvePoint3D=31,
             CurvePoint2DArray=32,
             CurvePoint3DArray=33,
-            START=34
+            Texture2D=34,
+            Color=35, // Color can hold Scalar, Texture2D and ColorRGBA types
+            START=36
         };
 
         // TODO
@@ -140,7 +142,12 @@ namespace feather
         template <> bool can_connect<CurvePoint2D,CurvePoint2DArray>() { return true; };
         template <> bool can_connect<CurvePoint3D,CurvePoint3D>() { return true; };
         template <> bool can_connect<CurvePoint3D,CurvePoint3DArray>() { return true; };
-      
+        template <> bool can_connect<Texture2D,Texture2D>() { return true; };
+        template <> bool can_connect<Real,Color>() { return true; };
+        template <> bool can_connect<Texture2D,Color>() { return true; };
+        template <> bool can_connect<RGBA,Color>() { return true; };
+        template <> bool can_connect<Color,Color>() { return true; };
+     
         template <int _Type1, int _Type2>
         struct can_types_connect {
             static bool exec(int t1, int t2) {

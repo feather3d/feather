@@ -62,6 +62,7 @@
 #include <boost/config.hpp>
 #include <boost/system/error_code.hpp>
 #include <boost/filesystem.hpp>
+#include <boost/variant.hpp>
 
 // boost::fusion
 #include <boost/fusion/include/adapt_struct.hpp>

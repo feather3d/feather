@@ -360,6 +360,34 @@ status qml::command::get_field_val(unsigned int uid, unsigned int nid, unsigned 
     return status();
 }
 
+// FTexture2D
+status qml::command::get_field_val(unsigned int uid, unsigned int nid, unsigned int fid, FTexture2D& val, unsigned int conn)
+{
+    typedef field::Field<FTexture2D>* fielddata;
+    fielddata f = static_cast<fielddata>(scenegraph::get_fieldBase(uid,nid,fid,conn));
+    if(!f)
+        std::cout << uid << "," << nid << "," << fid << " NULL TEXTURE2D FIELD\n";
+    else { 
+        val.path = f->value.path;
+    }
+ 
+    return status();
+}
+
+// FColor
+status qml::command::get_field_val(unsigned int uid, unsigned int nid, unsigned int fid, FColor& val, unsigned int conn)
+{
+    typedef field::Field<FColor>* fielddata;
+    fielddata f = static_cast<fielddata>(scenegraph::get_fieldBase(uid,nid,fid,conn));
+    if(!f)
+        std::cout << uid << "," << nid << "," << fid << " NULL COLOR FIELD\n";
+    else {
+        // TODO 
+    }
+ 
+    return status();
+}
+
 
 // SET FIELD VALUE
 
@@ -466,6 +494,39 @@ status qml::command::set_field_val(unsigned int uid, unsigned int nid, unsigned 
     return status();
 }
 
+// FTexture2D
+status qml::command::set_field_val(unsigned int uid, unsigned int nid, unsigned int fid, FTexture2D& val)
+{
+    typedef field::Field<FTexture2D>* fielddata;
+    fielddata f = static_cast<fielddata>(scenegraph::get_node_fieldBase(uid,nid,fid));
+    if(!f)
+        std::cout << "NULL COLORRGB FIELD\n";
+    else {
+        //std::cout << "setting real value for uid:" << uid << " nid:" << nid << " fid:" << fid << " value:" << val << std::endl; 
+        f->value=val;
+        f->update=true;
+        scenegraph::update();
+    }
+
+    return status();
+}
+
+// FColor
+status qml::command::set_field_val(unsigned int uid, unsigned int nid, unsigned int fid, FColor& val)
+{
+    typedef field::Field<FColor>* fielddata;
+    fielddata f = static_cast<fielddata>(scenegraph::get_node_fieldBase(uid,nid,fid));
+    if(!f)
+        std::cout << "NULL COLORRGB FIELD\n";
+    else {
+        //std::cout << "setting real value for uid:" << uid << " nid:" << nid << " fid:" << fid << " value:" << val << std::endl; 
+        f->value=val;
+        f->update=true;
+        scenegraph::update();
+    }
+
+    return status();
+}
 
 
 
